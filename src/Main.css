@@ -1,0 +1,19 @@
+.main-container{
+  display:flex;
+  flex-direction: column;
+  height:100%;
+  
+  .user-space{
+    background-color: red;
+    flex: 1 1 auto
+  }
+
+  .taskbar{
+    display: flex;
+    background-color: blue;
+    flex: 0 1 50px
+  }
+
+
+}
+
