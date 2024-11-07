@@ -1,19 +1,88 @@
-.main-container{
-  display:flex;
+.main-container {
+  display: flex;
   flex-direction: column;
-  height:100%;
-  
-  .user-space{
-    background-color: red;
-    flex: 1 1 auto
-  }
+  height: 100%;
+  overflow: hidden;
 
-  .taskbar{
-    display: flex;
-    background-color: blue;
+  .user-space {
+    background-color: rgba(255, 0, 0, 0.5);
+    flex: 1 1 auto;
+
+    .app-window {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 400px;
+      height: 300px;
+      background-color: white;
+
+
+      .titlebar {
+        background-color: blue;
+        user-select: none;
+        display: flex;
+        flex-direction: row;
+
+        .icon {
+          flex: 0 1 20px;
+        }
+
+        .name {
+          flex: 1 1 auto;
+        }
+
+        .close {
+          flex: 0 1 20px;
+        }
+
+
+      }
+
+      .app-window-content {}
+    }
+  }
+}
+
+.taskbar {
+  display: flex;
+  background-color: rgba(0, 0, 255, 0.5);
+  flex: 0 1 50px;
+  z-index: 999;
+  user-select: none;
+
+  .start-button {
     flex: 0 1 50px
   }
 
+  .start-menu {
+    position: absolute;
+    bottom: 50px;
+    height: 500px;
+    width: 300px;
+    background-color: green;
+    z-index: 999;
 
+    .app-entry {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      column-gap: 10px;
+
+      .app-entry-icon {
+        flex: 0 1 20px;
+      }
+
+      .app-entry-name {
+        flex: 1 1 auto
+      }
+
+    }
+  }
+
+  .active-apps {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+  }
 }
-
+}
