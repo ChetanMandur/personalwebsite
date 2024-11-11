@@ -1,15 +1,18 @@
 import React, { useState, createRef } from "react";
 import "./Main.css";
-import { AppList } from "./Apps/Apps";
+import { AppList, AppProperties } from "./Apps/Apps";
 
 
 type RunningAppProperties = {
   ref: React.MutableRefObject<null | HTMLDivElement>,
-  x: number | null,
-  y: number | null,
+  x: number ,
+  y: number,
   titlebarClicked: boolean,
   titlebarClickedDistanceX: number ,
   titlebarClickedDistanceY: number ,
+
+  width: number,
+  height:number,
 }
 
 
@@ -29,7 +32,7 @@ function Main() {
   const AppListArray = Object.entries(AppList)
   const RunningAppsArray = Object.entries(runningApps)
 
-  function DefaultRunningAppPropertiesGenerator(): RunningAppProperties {
+  function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
 
     return({
       ref:  createRef<HTMLDivElement>(),
@@ -38,20 +41,22 @@ function Main() {
       titlebarClicked: false,
       titlebarClickedDistanceX: 0,
       titlebarClickedDistanceY: 0,
+      height: app_properties.defaultHeight,
+      width: app_properties.defaultWidth
     })
   }
 
-  function addRunningApp(app_id:string){
+  function addRunningApp(app_running_id:string, app_properties:AppProperties){
     console.log("addRunningApp")
     let temp_running_apps = {...runningApps}
-    temp_running_apps[app_id] = {...DefaultRunningAppPropertiesGenerator()}
+    temp_running_apps[app_running_id] = {...DefaultRunningAppPropertiesGenerator(app_properties)}
     setRunningApps(temp_running_apps)
   }
 
-  function deleteRunningApp(app_id:string){
+  function deleteRunningApp(app_running_id:string){
     console.log("deleteRunningApp")
     let temp_running_apps = {...runningApps}
-    delete temp_running_apps[app_id]
+    delete temp_running_apps[app_running_id]
     setRunningApps(temp_running_apps)
   }
 
@@ -101,10 +106,10 @@ function Main() {
             RunningAppsArray.map((item)=>{
               let app_running_id = item[0]
               let app_id = app_running_id.split("#")[0]
-              let properties = item[1]
+              let running_properties = item[1]
               
               return(
-              <div className="app-window" ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={(properties.x != null && properties.y !=null) ? {left: properties.x+"px", top:properties.y+"px"} : {}}>
+              <div className="app-window" ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={{left: running_properties.x+"px", top:running_properties.y+"px", width:running_properties.width+"px", height:running_properties.height+"px" } }>
                 <div className="titlebar" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}} >
                   <div className="icon">{AppList[app_id].icon}</div>
                   <div className="name">{AppList[app_id].name}</div>
@@ -123,7 +128,7 @@ function Main() {
            {AppListArray.map( (item) => { 
             let app_running_id = item[0] + "#" + (Math.floor(Math.random() *100 ))
             return ( 
-            <div className="app-entry" key={Math.random()} onClick={()=>{addRunningApp(app_running_id); setStartMenuOpen(false)}}> 
+            <div className="app-entry" key={Math.random()} onClick={()=>{addRunningApp(app_running_id, item[1]); setStartMenuOpen(false)}}> 
               <div className="app-entry-icon"> {item[1].icon}</div>
               <div className="app-entry-name"> {item[1].name}</div>
             </div>
