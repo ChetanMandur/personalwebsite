@@ -107,9 +107,11 @@ function Main() {
               let app_running_id = item[0]
               let app_id = app_running_id.split("#")[0]
               let running_properties = item[1]
+              var app_window_style : React.CSSProperties = {left: running_properties.x+"px", top:running_properties.y+"px", width:running_properties.width+"px", height:running_properties.height+"px" }
+              
               
               return(
-              <div className="app-window" ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={{left: running_properties.x+"px", top:running_properties.y+"px", width:running_properties.width+"px", height:running_properties.height+"px" } }>
+              <div className="app-window" ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
                 <div className="titlebar" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}} >
                   <div className="icon">{AppList[app_id].icon}</div>
                   <div className="name">{AppList[app_id].name}</div>

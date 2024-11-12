@@ -1,0 +1,21 @@
+.hello-world {
+  background-color: red;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.long-form {
+  overflow-y: scroll;
+  height: 20%;
+  resize: vertical;
+}
+
+.image {
+  height: 100%;
+  object-fit: fill;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  overflow: hidden;
+}
