@@ -112,12 +112,21 @@ function Main() {
               
               return(
               <div className="app-window" ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
-                <div className="titlebar" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}} >
-                  <div className="icon">{AppList[app_id].icon}</div>
-                  <div className="name">{AppList[app_id].name}</div>
-                  <div className="close" onClick={()=>{deleteRunningApp(app_running_id)}}>X</div>
+                <div className="hitboxes">
+                  <div className="box" id="TopL"></div>
+                  <div className="box" id="TopR"></div>
+                  <div className="box" id="BotL"></div>
+                  <div className="box" id="BotR"></div>
+
                 </div>
-                <div className="content">{AppList[app_id].app()}</div>
+                <div className="app">
+                  <div className="titlebar" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}} >
+                    <div className="icon">{AppList[app_id].icon}</div>
+                    <div className="name">{AppList[app_id].name}</div>
+                    <div className="close" onClick={()=>{deleteRunningApp(app_running_id)}}>X</div>
+                  </div>
+                  <div className="content">{AppList[app_id].app()}</div>
+                </div>
               </div> 
               )
             })
