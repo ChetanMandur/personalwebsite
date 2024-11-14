@@ -13,6 +13,9 @@ type RunningAppProperties = {
 
   width: number,
   height:number,
+  resizeClicked: "TL" | "TR" | "BL" | "BR" | null,
+  resizeLocationX: number,
+  resizeLocationY: number,
 }
 
 
@@ -42,7 +45,10 @@ function Main() {
       titlebarClickedDistanceX: 0,
       titlebarClickedDistanceY: 0,
       height: app_properties.defaultHeight,
-      width: app_properties.defaultWidth
+      width: app_properties.defaultWidth,
+      resizeClicked: null,
+      resizeLocationX: 0,
+      resizeLocationY: 0,
     })
   }
 
@@ -86,11 +92,61 @@ function Main() {
     }
   }
 
+  function resizeClickedEvent(event:React.PointerEvent<HTMLDivElement>, app_running_id:string, location:RunningAppProperties["resizeClicked"]){
+    updateAppProperty(app_running_id, "resizeClicked", location);
+    updateAppProperty(app_running_id, "resizeLocationX", event.screenX);
+    updateAppProperty(app_running_id, "resizeLocationY", event.screenY);
+
+  }
+
+  function resizeUnClickedEvent(){
+    for (const i of RunningAppsArray){
+      if (runningApps[i[0]]["resizeClicked"]){
+        updateAppProperty(i[0], "resizeClicked", null)
+      }
+    }
+  }
+
   function windowMoveEvent(event:React.PointerEvent<HTMLDivElement>){
     for (const i of RunningAppsArray){
-      if (runningApps[i[0]]["titlebarClicked"]){
-        updateAppProperty(i[0], "x", event.clientX - runningApps[i[0]]["titlebarClickedDistanceX"] )
-        updateAppProperty(i[0], "y", event.clientY - runningApps[i[0]]["titlebarClickedDistanceY"])
+      const app_running_id = i[0]
+      const current_app = runningApps[app_running_id]
+      if (current_app["titlebarClicked"]){
+        updateAppProperty(app_running_id, "x", event.clientX - current_app["titlebarClickedDistanceX"] )
+        updateAppProperty(app_running_id, "y", event.clientY - current_app["titlebarClickedDistanceY"])
+      }
+      if (runningApps[app_running_id]["resizeClicked"] != null){
+        const distanceX = (event.screenX- current_app["resizeLocationX"]);
+        const distanceY = (event.screenY- current_app["resizeLocationY"]);
+        switch (runningApps[app_running_id]["resizeClicked"]) {
+          case "TL":
+            updateAppProperty(app_running_id, "x", current_app["x"] + distanceX )
+            updateAppProperty(app_running_id, "y", current_app["y"] + distanceY )
+            updateAppProperty(app_running_id, "width", current_app["width"] - distanceX)
+            updateAppProperty(app_running_id, "height", current_app["height"] - distanceY)
+            break;
+          case "TR":
+            updateAppProperty(app_running_id, "y", current_app["y"] + distanceY )
+            updateAppProperty(app_running_id, "width", current_app["width"] + distanceX  )
+            updateAppProperty(app_running_id, "height",current_app["height"] - distanceY)
+            break;
+          case "BL":
+            updateAppProperty(app_running_id, "x", current_app["x"] + distanceX )
+            updateAppProperty(app_running_id, "width", current_app["width"] - distanceX  )
+            updateAppProperty(app_running_id, "height",current_app["height"] + distanceY)
+            break;
+          case "BR":
+            updateAppProperty(app_running_id, "width", current_app["width"] + (event.screenX- current_app["resizeLocationX"])   )
+            updateAppProperty(app_running_id, "height",current_app["height"] + (event.screenY - current_app["resizeLocationY"]))
+            
+            
+            break;
+        }
+        updateAppProperty(app_running_id, "resizeLocationX", event.screenX);
+        updateAppProperty(app_running_id, "resizeLocationY", event.screenY);
+
+
+
       }
     }
 
@@ -100,7 +156,7 @@ function Main() {
 
   return (
     <div className="main-container">
-      <div className="user-space" onPointerUp={()=>{titlebarUnClickedEvent()}} onPointerMove={(event) => { windowMoveEvent(event)}}>
+      <div className="user-space" onPointerUp={()=>{titlebarUnClickedEvent();resizeUnClickedEvent()}} onPointerMove={(event) => { windowMoveEvent(event)}}>
         {/* Where each running app is rendered */}
         {
             RunningAppsArray.map((item)=>{
@@ -113,10 +169,10 @@ function Main() {
               return(
               <div className="app-window" ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
                 <div className="hitboxes">
-                  <div className="box" id="TopL"></div>
-                  <div className="box" id="TopR"></div>
-                  <div className="box" id="BotL"></div>
-                  <div className="box" id="BotR"></div>
+                  <div className="box" id="TopL" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TL")}}></div>
+                  <div className="box" id="TopR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TR")}}></div>
+                  <div className="box" id="BotL" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BL")}}></div>
+                  <div className="box" id="BotR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BR")}}></div>
 
                 </div>
                 <div className="app">

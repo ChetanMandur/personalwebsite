@@ -10,8 +10,6 @@
 
     .app-window {
       position: absolute;
-      overflow: auto;
-      resize: both;
       display: flex;
 
       .hitboxes {
@@ -25,28 +23,36 @@
           background-color: rgba(255, 0, 0, 0.377);
           position: absolute;
 
-
-          pointer-events: none;
-          width: 10px;
-          height: 10px;
+          user-select: none;
+          pointer-events: auto;
+          width: 9px;
+          height: 9px;
         }
 
-        #TopL {}
+        #TopL {
+          cursor: nw-resize;
+          border-bottom-right-radius: 100%;
+        }
 
         #TopR {
-          right: 0
+          right: 0;
+          cursor: ne-resize;
+          border-bottom-left-radius: 100%;
         }
 
         #BotL {
           bottom: 0;
           align-self: end;
-
+          cursor: sw-resize;
+          border-top-right-radius: 100%;
         }
 
         #BotR {
           align-self: end;
           bottom: 0;
           right: 0;
+          cursor: se-resize;
+          border-top-left-radius: 100%;
         }
 
       }
@@ -69,6 +75,7 @@
 
           .name {
             flex: 1 1 auto;
+            white-space: nowrap;
           }
 
           .close {
