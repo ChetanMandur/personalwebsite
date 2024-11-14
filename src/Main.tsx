@@ -60,7 +60,7 @@ function Main() {
     setRunningApps(temp_running_apps)
   }
 
-  function updateAppProperty<T extends keyof RunningAppListType>(app_running_id: T,key: keyof RunningAppListType[T], value: any){
+  function updateAppProperty<T extends keyof RunningAppListType>(app_running_id: T, key: keyof RunningAppListType[T], value: RunningAppListType[T][keyof RunningAppListType[T]] ){
     console.log("updateAppProperty")
     const temp_running_apps = {...runningApps}
 
