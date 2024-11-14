@@ -11,6 +11,8 @@
     .app-window {
       position: absolute;
       display: flex;
+      min-width: min-content;
+      min-height: 20px;
 
       .hitboxes {
         position: absolute;
