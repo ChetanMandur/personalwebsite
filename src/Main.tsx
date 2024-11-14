@@ -48,21 +48,21 @@ function Main() {
 
   function addRunningApp(app_running_id:string, app_properties:AppProperties){
     console.log("addRunningApp")
-    let temp_running_apps = {...runningApps}
+    const temp_running_apps = {...runningApps}
     temp_running_apps[app_running_id] = {...DefaultRunningAppPropertiesGenerator(app_properties)}
     setRunningApps(temp_running_apps)
   }
 
   function deleteRunningApp(app_running_id:string){
     console.log("deleteRunningApp")
-    let temp_running_apps = {...runningApps}
+    const temp_running_apps = {...runningApps}
     delete temp_running_apps[app_running_id]
     setRunningApps(temp_running_apps)
   }
 
   function updateAppProperty<T extends keyof RunningAppListType>(app_running_id: T,key: keyof RunningAppListType[T], value: any){
     console.log("updateAppProperty")
-    let temp_running_apps = {...runningApps}
+    const temp_running_apps = {...runningApps}
 
     temp_running_apps[app_running_id][key] = value
     setRunningApps(temp_running_apps)
@@ -73,8 +73,8 @@ function Main() {
     console.log("titlebarClickedEvent")
     updateAppProperty(app_running_id, "titlebarClicked", true); 
 
-    updateAppProperty(app_running_id, "titlebarClickedDistanceX", (event.clientX-runningApps[app_running_id]["ref"].current?.getBoundingClientRect().x!))
-    updateAppProperty(app_running_id, "titlebarClickedDistanceY", (event.clientY-runningApps[app_running_id]["ref"].current?.getBoundingClientRect().y!))
+    updateAppProperty(app_running_id, "titlebarClickedDistanceX", (event.clientX-runningApps[app_running_id]["ref"].current!.getBoundingClientRect().x))
+    updateAppProperty(app_running_id, "titlebarClickedDistanceY", (event.clientY-runningApps[app_running_id]["ref"].current!.getBoundingClientRect().y))
   }
 
   function titlebarUnClickedEvent(){
@@ -104,10 +104,10 @@ function Main() {
         {/* Where each running app is rendered */}
         {
             RunningAppsArray.map((item)=>{
-              let app_running_id = item[0]
-              let app_id = app_running_id.split("#")[0]
-              let running_properties = item[1]
-              var app_window_style : React.CSSProperties = {left: running_properties.x+"px", top:running_properties.y+"px", width:running_properties.width+"px", height:running_properties.height+"px" }
+              const app_running_id = item[0]
+              const app_id = app_running_id.split("#")[0]
+              const running_properties = item[1]
+              const app_window_style : React.CSSProperties = {left: running_properties.x+"px", top:running_properties.y+"px", width:running_properties.width+"px", height:running_properties.height+"px" }
               
               
               return(
@@ -128,7 +128,7 @@ function Main() {
         <div className="start-menu" style={{display:startMenuOpen ? "unset":"none"}}>
           {/* Where the start menu is genereated */}
            {AppListArray.map( (item) => { 
-            let app_running_id = item[0] + "#" + (Math.floor(Math.random() *100 ))
+            const app_running_id = item[0] + "#" + (Math.floor(Math.random() *100 ))
             return ( 
             <div className="app-entry" key={Math.random()} onClick={()=>{addRunningApp(app_running_id, item[1]); setStartMenuOpen(false)}}> 
               <div className="app-entry-icon"> {item[1].icon}</div>
@@ -141,8 +141,8 @@ function Main() {
           {/* Where the taskbar is genereated */}
            {
             RunningAppsArray.map((item)=>{ 
-              let app_running_id = item[0]
-              let app_id = app_running_id.split("#")[0]
+              const app_running_id = item[0]
+              const app_id = app_running_id.split("#")[0]
 
               
               return(
