@@ -16,6 +16,9 @@ type RunningAppProperties = {
   resizeClicked: "TL" | "TR" | "BL" | "BR" | null,
   resizeLocationX: number,
   resizeLocationY: number,
+
+  isMaximized: boolean,
+  isMinimized: boolean,
 }
 
 
@@ -49,6 +52,8 @@ function Main() {
       resizeClicked: null,
       resizeLocationX: 0,
       resizeLocationY: 0,
+      isMaximized: false,
+      isMinimized: false,
     })
   }
 
@@ -116,8 +121,8 @@ function Main() {
         updateAppProperty(app_running_id, "y", event.clientY - current_app["titlebarClickedDistanceY"])
       }
       if (runningApps[app_running_id]["resizeClicked"] != null){
-        const distanceX = (event.screenX- current_app["resizeLocationX"]);
-        const distanceY = (event.screenY- current_app["resizeLocationY"]);
+        const distanceX = (event.screenX- current_app["resizeLocationX"]); //left is positive
+        const distanceY = (event.screenY- current_app["resizeLocationY"]); //down is positive
         switch (runningApps[app_running_id]["resizeClicked"]) {
           case "TL":
             updateAppProperty(app_running_id, "x", current_app["x"] + distanceX )
@@ -163,7 +168,24 @@ function Main() {
               const app_running_id = item[0]
               const app_id = app_running_id.split("#")[0]
               const running_properties = item[1]
-              const app_window_style : React.CSSProperties = {left: running_properties.x+"px", top:running_properties.y+"px", width:running_properties.width+"px", height:running_properties.height+"px" }
+              const app_window_style : React.CSSProperties = {
+                left: running_properties.x+"px",
+                top:running_properties.y+"px", 
+                width:running_properties.width+"px", 
+                height:running_properties.height+"px",
+                display:"flex"
+              }
+
+              if (running_properties.isMaximized){
+                app_window_style["left"] = 0;
+                app_window_style["top"] = 0;
+                app_window_style["width"] = "100%";
+                app_window_style["height"] = "calc(100% - 50px)";
+              }
+
+              if (running_properties.isMinimized){
+                app_window_style["display"] = "none"
+              }
               
               
               return(
@@ -179,7 +201,9 @@ function Main() {
                   <div className="titlebar" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}} >
                     <div className="icon">{AppList[app_id].icon}</div>
                     <div className="name">{AppList[app_id].name}</div>
-                    <div className="close" onClick={()=>{deleteRunningApp(app_running_id)}}>X</div>
+                    <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMinimized", !running_properties.isMinimized)}}>-</div>
+                    <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMaximized", !running_properties.isMaximized)}}>[]</div>
+                    <div className="titlebar-option" onClick={()=>{deleteRunningApp(app_running_id)}}>X</div>
                   </div>
                   <div className="content">{AppList[app_id].app()}</div>
                 </div>
@@ -208,10 +232,10 @@ function Main() {
             RunningAppsArray.map((item)=>{ 
               const app_running_id = item[0]
               const app_id = app_running_id.split("#")[0]
-
+              const running_properties = item[1]
               
               return(
-              <div className="active-app" key={Math.random()}>
+              <div className="active-app" key={Math.random()} onClick={()=>{updateAppProperty(app_running_id,"isMinimized", !running_properties.isMinimized)}}>
                 {AppList[app_id].icon}
               </div>
 
