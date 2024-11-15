@@ -21,7 +21,7 @@ const defaultAppProperties: AppProperties = {
   defaultHeight: 300,
 }
 
-export var AppList : AppListType = {
+export const AppList : AppListType = {
   "HelloWorld": {
     ...defaultAppProperties,
     name:"Hello World",
