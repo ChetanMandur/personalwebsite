@@ -106,8 +106,16 @@ function Main() {
 
   function resizeUnClickedEvent(){
     for (const i of RunningAppsArray){
-      if (runningApps[i[0]]["resizeClicked"]){
-        updateAppProperty(i[0], "resizeClicked", null)
+      const app_running_id = i[0]
+      if (runningApps[app_running_id]["resizeClicked"]){
+        updateAppProperty(app_running_id, "resizeClicked", null)
+        if (runningApps[app_running_id]["width"] < 140){
+          updateAppProperty(app_running_id, "width", 140)
+        }
+        if (runningApps[app_running_id]["height"] < 140){
+          updateAppProperty(app_running_id, "height", 140)                  
+        }
+
       }
     }
   }
