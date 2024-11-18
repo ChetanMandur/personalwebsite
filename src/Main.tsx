@@ -139,24 +139,24 @@ function Main() {
 
         switch (runningApps[app_running_id]["resizeClicked"]) {
           case "TL":
-            new_x = current_app["x"] + distanceX 
-            new_y = current_app["y"] + distanceY 
-            new_width = current_app["width"] - distanceX
-            new_height = current_app["height"] - distanceY
+            new_x += distanceX 
+            new_y += distanceY 
+            new_width -= distanceX
+            new_height -= distanceY
             break;
           case "TR":
-            new_y = current_app["y"] + distanceY 
-            new_width =  current_app["width"] + distanceX  
-            new_height= current_app["height"] - distanceY
+            new_y += distanceY 
+            new_width += distanceX  
+            new_height -= distanceY
             break;
           case "BL":
-            new_x = current_app["x"] + distanceX 
-            new_width = current_app["width"] - distanceX  
-            new_height = current_app["height"] + distanceY
+            new_x += distanceX 
+            new_width -= distanceX  
+            new_height += distanceY
             break;
           case "BR":
-            new_width = current_app["width"] + (event.screenX- current_app["resizeLocationX"])
-            new_height = current_app["height"] + (event.screenY - current_app["resizeLocationY"])
+            new_width += distanceX
+            new_height += distanceY
             break;
         }
         updateAppProperty(app_running_id, "x", new_x)
