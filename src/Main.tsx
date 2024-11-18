@@ -72,7 +72,7 @@ function Main() {
   }
 
   function updateAppProperty<T extends keyof RunningAppListType>(app_running_id: T, key: keyof RunningAppListType[T], value: RunningAppListType[T][keyof RunningAppListType[T]] ){
-    console.log("updateAppProperty")
+    // console.log("updateAppProperty")
     const temp_running_apps = {...runningApps}
 
     temp_running_apps[app_running_id][key] = value
@@ -98,6 +98,7 @@ function Main() {
   }
 
   function resizeClickedEvent(event:React.PointerEvent<HTMLDivElement>, app_running_id:string, location:RunningAppProperties["resizeClicked"]){
+    console.log("resizeClickedEvent")
     updateAppProperty(app_running_id, "resizeClicked", location);
     updateAppProperty(app_running_id, "resizeLocationX", event.screenX);
     updateAppProperty(app_running_id, "resizeLocationY", event.screenY);
@@ -105,15 +106,16 @@ function Main() {
   }
 
   function resizeUnClickedEvent(){
+    console.log("resizeUnClickedEvent")
     for (const i of RunningAppsArray){
       const app_running_id = i[0]
       if (runningApps[app_running_id]["resizeClicked"]){
         updateAppProperty(app_running_id, "resizeClicked", null)
-        if (runningApps[app_running_id]["width"] < 140){
-          updateAppProperty(app_running_id, "width", 140)
+        if (runningApps[app_running_id]["width"] < 200){
+          updateAppProperty(app_running_id, "width", 200)
         }
-        if (runningApps[app_running_id]["height"] < 140){
-          updateAppProperty(app_running_id, "height", 140)                  
+        if (runningApps[app_running_id]["height"] < 200){
+          updateAppProperty(app_running_id, "height", 200 )                  
         }
 
       }
@@ -129,7 +131,7 @@ function Main() {
         updateAppProperty(app_running_id, "y", event.clientY - current_app["titlebarClickedDistanceY"])
       }
       if (runningApps[app_running_id]["resizeClicked"] != null){
-        const distanceX = (event.screenX- current_app["resizeLocationX"]); //left is positive
+        const distanceX = (event.screenX- current_app["resizeLocationX"]); // right is positive
         const distanceY = (event.screenY- current_app["resizeLocationY"]); //down is positive
 
         let new_x = current_app["x"]
@@ -159,12 +161,20 @@ function Main() {
             new_height += distanceY
             break;
         }
-        updateAppProperty(app_running_id, "x", new_x)
-        updateAppProperty(app_running_id, "y", new_y)
-        updateAppProperty(app_running_id, "height", new_height)
-        updateAppProperty(app_running_id, "width", new_width)
-        updateAppProperty(app_running_id, "resizeLocationX", event.screenX);
-        updateAppProperty(app_running_id, "resizeLocationY", event.screenY);
+
+        if (new_width >= 200){
+          updateAppProperty(app_running_id, "x", new_x)
+          updateAppProperty(app_running_id, "width", new_width)
+          updateAppProperty(app_running_id, "resizeLocationX", event.screenX);
+
+        }
+        if (new_height >= 200){
+          updateAppProperty(app_running_id, "y", new_y)
+          updateAppProperty(app_running_id, "height", new_height)
+          updateAppProperty(app_running_id, "resizeLocationY", event.screenY);
+
+        }
+
 
       }
     }
@@ -185,7 +195,7 @@ function Main() {
               const app_window_style : React.CSSProperties = {
                 left: running_properties.x+"px",
                 top:running_properties.y+"px", 
-                width:running_properties.width+"px", 
+                width:(running_properties.width)+"px", 
                 height:running_properties.height+"px",
                 display:"flex"
               }
