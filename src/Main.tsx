@@ -82,10 +82,30 @@ function Main() {
 
   function titlebarClickedEvent(event:React.PointerEvent<HTMLDivElement>, app_running_id:string){
     console.log("titlebarClickedEvent")
+    const current_app = runningApps[app_running_id]
     updateAppProperty(app_running_id, "titlebarClicked", true); 
 
-    updateAppProperty(app_running_id, "titlebarClickedDistanceX", (event.clientX-runningApps[app_running_id]["ref"].current!.getBoundingClientRect().x))
-    updateAppProperty(app_running_id, "titlebarClickedDistanceY", (event.clientY-runningApps[app_running_id]["ref"].current!.getBoundingClientRect().y))
+    if (current_app["isMaximized"]){
+      updateAppProperty(app_running_id, "isMaximized", false)
+
+      const xRatio = event.screenX / current_app["ref"].current!.getBoundingClientRect().width
+      const yRatio = event.screenY / current_app["ref"].current!.getBoundingClientRect().height
+
+      const width_chunk = current_app["width"]*xRatio
+      const height_chunk = current_app["height"]*yRatio 
+
+
+      updateAppProperty(app_running_id,"x", event.screenX -  width_chunk)
+      updateAppProperty(app_running_id,"y", event.screenY - height_chunk)
+      updateAppProperty(app_running_id,"titlebarClickedDistanceX", width_chunk   )
+      updateAppProperty(app_running_id,"titlebarClickedDistanceY", height_chunk )
+
+    } else{
+
+      updateAppProperty(app_running_id, "titlebarClickedDistanceX", (event.screenX-current_app["ref"].current!.getBoundingClientRect().x))
+      updateAppProperty(app_running_id, "titlebarClickedDistanceY", (event.screenY-current_app["ref"].current!.getBoundingClientRect().y))
+    }
+    
   }
 
   function titlebarUnClickedEvent(){
@@ -127,8 +147,8 @@ function Main() {
       const app_running_id = i[0]
       const current_app = runningApps[app_running_id]
       if (current_app["titlebarClicked"]){
-        updateAppProperty(app_running_id, "x", event.clientX - current_app["titlebarClickedDistanceX"] )
-        updateAppProperty(app_running_id, "y", event.clientY - current_app["titlebarClickedDistanceY"])
+        updateAppProperty(app_running_id, "x", event.screenX - current_app["titlebarClickedDistanceX"] )
+        updateAppProperty(app_running_id, "y", event.screenY - current_app["titlebarClickedDistanceY"])
       }
       if (runningApps[app_running_id]["resizeClicked"] != null){
         const distanceX = (event.screenX- current_app["resizeLocationX"]); // right is positive
