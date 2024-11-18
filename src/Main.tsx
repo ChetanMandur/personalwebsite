@@ -123,34 +123,40 @@ function Main() {
       if (runningApps[app_running_id]["resizeClicked"] != null){
         const distanceX = (event.screenX- current_app["resizeLocationX"]); //left is positive
         const distanceY = (event.screenY- current_app["resizeLocationY"]); //down is positive
+
+        let new_x = current_app["x"]
+        let new_y = current_app["y"]
+        let new_width = current_app["width"]
+        let new_height = current_app["height"]
+
         switch (runningApps[app_running_id]["resizeClicked"]) {
           case "TL":
-            updateAppProperty(app_running_id, "x", current_app["x"] + distanceX )
-            updateAppProperty(app_running_id, "y", current_app["y"] + distanceY )
-            updateAppProperty(app_running_id, "width", current_app["width"] - distanceX)
-            updateAppProperty(app_running_id, "height", current_app["height"] - distanceY)
+            new_x = current_app["x"] + distanceX 
+            new_y = current_app["y"] + distanceY 
+            new_width = current_app["width"] - distanceX
+            new_height = current_app["height"] - distanceY
             break;
           case "TR":
-            updateAppProperty(app_running_id, "y", current_app["y"] + distanceY )
-            updateAppProperty(app_running_id, "width", current_app["width"] + distanceX  )
-            updateAppProperty(app_running_id, "height",current_app["height"] - distanceY)
+            new_y = current_app["y"] + distanceY 
+            new_width =  current_app["width"] + distanceX  
+            new_height= current_app["height"] - distanceY
             break;
           case "BL":
-            updateAppProperty(app_running_id, "x", current_app["x"] + distanceX )
-            updateAppProperty(app_running_id, "width", current_app["width"] - distanceX  )
-            updateAppProperty(app_running_id, "height",current_app["height"] + distanceY)
+            new_x = current_app["x"] + distanceX 
+            new_width = current_app["width"] - distanceX  
+            new_height = current_app["height"] + distanceY
             break;
           case "BR":
-            updateAppProperty(app_running_id, "width", current_app["width"] + (event.screenX- current_app["resizeLocationX"])   )
-            updateAppProperty(app_running_id, "height",current_app["height"] + (event.screenY - current_app["resizeLocationY"]))
-            
-            
+            new_width = current_app["width"] + (event.screenX- current_app["resizeLocationX"])
+            new_height = current_app["height"] + (event.screenY - current_app["resizeLocationY"])
             break;
         }
+        updateAppProperty(app_running_id, "x", new_x)
+        updateAppProperty(app_running_id, "y", new_y)
+        updateAppProperty(app_running_id, "height", new_height)
+        updateAppProperty(app_running_id, "width", new_width)
         updateAppProperty(app_running_id, "resizeLocationX", event.screenX);
         updateAppProperty(app_running_id, "resizeLocationY", event.screenY);
-
-
 
       }
     }
