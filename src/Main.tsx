@@ -88,22 +88,22 @@ function Main() {
     if (current_app["isMaximized"]){
       updateAppProperty(app_running_id, "isMaximized", false)
 
-      const xRatio = event.screenX / current_app["ref"].current!.getBoundingClientRect().width
-      const yRatio = event.screenY / current_app["ref"].current!.getBoundingClientRect().height
+      const xRatio = event.clientX / current_app["ref"].current!.getBoundingClientRect().width
+      const yRatio = event.clientY / current_app["ref"].current!.getBoundingClientRect().height
 
       const width_chunk = current_app["width"]*xRatio
       const height_chunk = current_app["height"]*yRatio 
 
 
-      updateAppProperty(app_running_id,"x", event.screenX -  width_chunk)
-      updateAppProperty(app_running_id,"y", event.screenY - height_chunk)
+      updateAppProperty(app_running_id,"x", event.clientX -  width_chunk)
+      updateAppProperty(app_running_id,"y", event.clientY - height_chunk)
       updateAppProperty(app_running_id,"titlebarClickedDistanceX", width_chunk   )
       updateAppProperty(app_running_id,"titlebarClickedDistanceY", height_chunk )
 
     } else{
 
-      updateAppProperty(app_running_id, "titlebarClickedDistanceX", (event.screenX-current_app["ref"].current!.getBoundingClientRect().x))
-      updateAppProperty(app_running_id, "titlebarClickedDistanceY", (event.screenY-current_app["ref"].current!.getBoundingClientRect().y))
+      updateAppProperty(app_running_id, "titlebarClickedDistanceX", (event.clientX-current_app["ref"].current!.getBoundingClientRect().x))
+      updateAppProperty(app_running_id, "titlebarClickedDistanceY", (event.clientY-current_app["ref"].current!.getBoundingClientRect().y))
     }
     
   }
@@ -120,8 +120,8 @@ function Main() {
   function resizeClickedEvent(event:React.PointerEvent<HTMLDivElement>, app_running_id:string, location:RunningAppProperties["resizeClicked"]){
     console.log("resizeClickedEvent")
     updateAppProperty(app_running_id, "resizeClicked", location);
-    updateAppProperty(app_running_id, "resizeLocationX", event.screenX);
-    updateAppProperty(app_running_id, "resizeLocationY", event.screenY);
+    updateAppProperty(app_running_id, "resizeLocationX", event.clientX);
+    updateAppProperty(app_running_id, "resizeLocationY", event.clientY);
 
   }
 
@@ -147,12 +147,12 @@ function Main() {
       const app_running_id = i[0]
       const current_app = runningApps[app_running_id]
       if (current_app["titlebarClicked"]){
-        updateAppProperty(app_running_id, "x", event.screenX - current_app["titlebarClickedDistanceX"] )
-        updateAppProperty(app_running_id, "y", event.screenY - current_app["titlebarClickedDistanceY"])
+        updateAppProperty(app_running_id, "x", event.clientX - current_app["titlebarClickedDistanceX"] )
+        updateAppProperty(app_running_id, "y", event.clientY - current_app["titlebarClickedDistanceY"])
       }
       if (runningApps[app_running_id]["resizeClicked"] != null){
-        const distanceX = (event.screenX- current_app["resizeLocationX"]); // right is positive
-        const distanceY = (event.screenY- current_app["resizeLocationY"]); //down is positive
+        const distanceX = (event.clientX- current_app["resizeLocationX"]); // right is positive
+        const distanceY = (event.clientY- current_app["resizeLocationY"]); //down is positive
 
         let new_x = current_app["x"]
         let new_y = current_app["y"]
@@ -185,13 +185,13 @@ function Main() {
         if (new_width >= 200){
           updateAppProperty(app_running_id, "x", new_x)
           updateAppProperty(app_running_id, "width", new_width)
-          updateAppProperty(app_running_id, "resizeLocationX", event.screenX);
+          updateAppProperty(app_running_id, "resizeLocationX", event.clientX);
 
         }
         if (new_height >= 200){
           updateAppProperty(app_running_id, "y", new_y)
           updateAppProperty(app_running_id, "height", new_height)
-          updateAppProperty(app_running_id, "resizeLocationY", event.screenY);
+          updateAppProperty(app_running_id, "resizeLocationY", event.clientY);
 
         }
 
