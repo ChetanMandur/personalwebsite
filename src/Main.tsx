@@ -234,13 +234,12 @@ function Main() {
               
               return(
               <div className="app-window" ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
-                <div className="hitboxes">
+                {!running_properties["isMaximized"] ? <div className="hitboxes">
                   <div className="box" id="TopL" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TL")}}></div>
                   <div className="box" id="TopR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TR")}}></div>
                   <div className="box" id="BotL" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BL")}}></div>
                   <div className="box" id="BotR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BR")}}></div>
-
-                </div>
+                </div> : <></>}
                 <div className="app">
                   <div className="titlebar"  >
                     <div className="icon" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].icon}</div>
