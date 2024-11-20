@@ -13,6 +13,7 @@
       display: flex;
       min-width: 200px;
       min-height: 200px;
+      --app-border-size: 3px;
 
       .hitboxes {
         position: absolute;
@@ -20,6 +21,8 @@
         height: 100%;
         pointer-events: none;
         overflow: hidden;
+        --corner-hitbox-size: calc(var(--app-border-size)*2);
+        --side-hitbox-size: calc(var(--corner-hitbox-size)*2);
 
         .box {
           /* background-color: rgba(255, 0, 0, 0.377); */
@@ -27,8 +30,8 @@
 
           user-select: none;
           pointer-events: auto;
-          width: 9px;
-          height: 9px;
+          width: var(--corner-hitbox-size);
+          height: var(--corner-hitbox-size);
         }
 
         #TopL {
@@ -55,6 +58,53 @@
           right: 0;
           cursor: se-resize;
           border-top-left-radius: 100%;
+        }
+
+        #Top {
+          width: calc(100% - var(--side-hitbox-size));
+          height: var(--app-border-size);
+
+          left: var(--corner-hitbox-size);
+          right: var(--corner-hitbox-size);
+
+          cursor: ns-resize;
+        }
+
+        #Bot {
+          width: calc(100% - var(--side-hitbox-size));
+          height: var(--app-border-size);
+
+          bottom: 0;
+
+          left: var(--corner-hitbox-size);
+          right: var(--corner-hitbox-size);
+
+
+          cursor: ns-resize;
+        }
+
+        #Left {
+          width: var(--app-border-size);
+          height: calc(100% - var(--side-hitbox-size));
+
+          top: var(--corner-hitbox-size);
+          bottom: var(--corner-hitbox-size);
+
+          cursor: ew-resize;
+
+        }
+
+        #Right {
+          width: var(--app-border-size);
+          height: calc(100% - var(--side-hitbox-size));
+
+          top: var(--corner-hitbox-size);
+          bottom: var(--corner-hitbox-size);
+
+          right: 0;
+
+          cursor: ew-resize;
+
         }
 
       }
@@ -88,6 +138,10 @@
         }
 
         .content {
+          background-color: blue;
+
+          padding: var(--app-border-size);
+          padding-top: 0;
           flex: 1 1 auto;
           overflow: hidden;
         }

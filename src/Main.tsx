@@ -13,7 +13,7 @@ type RunningAppProperties = {
 
   width: number,
   height:number,
-  resizeClicked: "TL" | "TR" | "BL" | "BR" | null,
+  resizeClicked: "TL" | "TR" | "BL" | "BR" | "TOP" | "BOT" | "LEFT" | "RIGHT" | null,
   resizeLocationX: number,
   resizeLocationY: number,
 
@@ -180,6 +180,24 @@ function Main() {
             new_width += distanceX
             new_height += distanceY
             break;
+          case "TOP":
+            new_y += distanceY
+            new_height -= distanceY
+            break;
+
+          case "BOT":
+            new_height += distanceY
+            break;
+
+          case "LEFT":
+            new_x += distanceX
+            new_width -= distanceX
+            break;
+
+          case "RIGHT":
+            new_width += distanceX
+            break;
+
         }
 
         if (new_width >= 200){
@@ -239,6 +257,12 @@ function Main() {
                   <div className="box" id="TopR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TR")}}></div>
                   <div className="box" id="BotL" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BL")}}></div>
                   <div className="box" id="BotR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BR")}}></div>
+                  <div className="box" id="Top" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TOP")}}></div>
+                  <div className="box" id="Bot" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BOT")}}></div>
+                  <div className="box" id="Left" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "LEFT")}}></div>
+                  <div className="box" id="Right" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "RIGHT")}}></div>
+
+                  
                 </div> : <></>}
                 <div className="app">
                   <div className="titlebar"  >
