@@ -108,13 +108,10 @@ function Main() {
     
   }
 
-  function titlebarUnClickedEvent(){
+  function titlebarUnClickedEvent(app_running_id:string){
     console.log("titlebarUnClickedEvent")
-    for (const i of RunningAppsArray){
-      if (runningApps[i[0]]["titlebarClicked"]){
-        updateAppProperty(i[0], "titlebarClicked", false)
-      }
-    }
+    updateAppProperty(app_running_id, "titlebarClicked", false)
+
   }
 
   function resizeClickedEvent(event:React.PointerEvent<HTMLDivElement>, app_running_id:string, location:RunningAppProperties["resizeClicked"]){
@@ -125,21 +122,16 @@ function Main() {
 
   }
 
-  function resizeUnClickedEvent(){
+  function resizeUnClickedEvent(app_running_id:string){
     console.log("resizeUnClickedEvent")
-    for (const i of RunningAppsArray){
-      const app_running_id = i[0]
-      if (runningApps[app_running_id]["resizeClicked"]){
-        updateAppProperty(app_running_id, "resizeClicked", null)
-        if (runningApps[app_running_id]["width"] < 200){
-          updateAppProperty(app_running_id, "width", 200)
-        }
-        if (runningApps[app_running_id]["height"] < 200){
-          updateAppProperty(app_running_id, "height", 200 )                  
-        }
-
-      }
+    updateAppProperty(app_running_id, "resizeClicked", null)
+    if (runningApps[app_running_id]["width"] < 200){
+      updateAppProperty(app_running_id, "width", 200)
     }
+    if (runningApps[app_running_id]["height"] < 200){
+      updateAppProperty(app_running_id, "height", 200 )                  
+    }
+
   }
 
   function windowMoveEvent(event:React.PointerEvent<HTMLDivElement>){
@@ -260,7 +252,7 @@ function Main() {
 
   return (
     <div className="main-container">
-      <div className="user-space" onPointerUp={()=>{titlebarUnClickedEvent();resizeUnClickedEvent()}} onPointerMove={(event) => { windowMoveEvent(event)}}>
+      <div className="user-space"  onPointerMove={(event) => { windowMoveEvent(event)}}>
         {/* Where each running app is rendered */}
         {
             RunningAppsArray.map((item)=>{
@@ -291,21 +283,21 @@ function Main() {
               return(
               <div className="app-window" onPointerDown={()=>{updateRunningAppFocus(app_running_id)}} ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
                 {!running_properties["isMaximized"] ? <div className="hitboxes">
-                  <div className="box" id="TopL" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TL")}}></div>
-                  <div className="box" id="TopR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TR")}}></div>
-                  <div className="box" id="BotL" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BL")}}></div>
-                  <div className="box" id="BotR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BR")}}></div>
-                  <div className="box" id="Top" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TOP")}}></div>
-                  <div className="box" id="Bot" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BOT")}}></div>
-                  <div className="box" id="Left" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "LEFT")}}></div>
-                  <div className="box" id="Right" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "RIGHT")}}></div>
+                  <div className="box" id="TopL" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TL")}}></div>
+                  <div className="box" id="TopR" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TR")}}></div>
+                  <div className="box" id="BotL" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BL")}}></div>
+                  <div className="box" id="BotR" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BR")}}></div>
+                  <div className="box" id="Top" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TOP")}}></div>
+                  <div className="box" id="Bot" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BOT")}}></div>
+                  <div className="box" id="Left" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "LEFT")}}></div>
+                  <div className="box" id="Right" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "RIGHT")}}></div>
 
                   
                 </div> : <></>}
                 <div className="app">
                   <div className="titlebar" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}} >
-                    <div className="icon" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].icon}</div>
-                    <div className="name" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].name}</div>
+                    <div className="icon" onClick={()=>{titlebarUnClickedEvent(app_running_id)}} onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].icon}</div>
+                    <div className="name" onPointerUp={()=>{titlebarUnClickedEvent(app_running_id)}} onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].name}</div>
                     <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMinimized", !running_properties.isMinimized)}}>-</div>
                     <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMaximized", !running_properties.isMaximized)}}>[]</div>
                     <div className="titlebar-option" onClick={()=>{deleteRunningApp(app_running_id)}}>X</div>
