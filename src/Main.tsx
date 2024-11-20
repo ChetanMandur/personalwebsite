@@ -303,14 +303,14 @@ function Main() {
                   
                 </div> : <></>}
                 <div className="app">
-                  <div className="titlebar"  >
+                  <div className="titlebar" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}} >
                     <div className="icon" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].icon}</div>
                     <div className="name" onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].name}</div>
                     <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMinimized", !running_properties.isMinimized)}}>-</div>
                     <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMaximized", !running_properties.isMaximized)}}>[]</div>
                     <div className="titlebar-option" onClick={()=>{deleteRunningApp(app_running_id)}}>X</div>
                   </div>
-                  <div className="content">{AppList[app_id].app()}</div>
+                  <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}}>{AppList[app_id].app()}</div>
                 </div>
               </div> 
               )
