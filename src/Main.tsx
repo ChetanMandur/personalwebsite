@@ -214,7 +214,6 @@ function Main() {
   function updateRunningAppFocus(app_running_id:string | undefined){
     for (const i of RunningAppsArray){
       if (i[0] == app_running_id){
-        console.log("hit!", app_running_id)
         updateAppProperty(app_running_id, "zIndex", 999)
       } else {
         updateAppProperty(i[0], "zIndex", i[1]["zIndex"]-1)
@@ -252,7 +251,7 @@ function Main() {
 
   return (
     <div className="main-container">
-      <div className="user-space"  onPointerMove={(event) => { windowMoveEvent(event)}}>
+      <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerMove={(event) => { windowMoveEvent(event)}}>
         {/* Where each running app is rendered */}
         {
             RunningAppsArray.map((item)=>{
