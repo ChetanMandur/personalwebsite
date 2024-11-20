@@ -19,6 +19,8 @@ type RunningAppProperties = {
 
   isMaximized: boolean,
   isMinimized: boolean,
+
+  zIndex:number,
 }
 
 
@@ -28,10 +30,6 @@ type RunningAppListType = {
 }
 
 function Main() {
-
-
-  
-  
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [runningApps, setRunningApps] = useState<RunningAppListType>({})
 
@@ -54,6 +52,7 @@ function Main() {
       resizeLocationY: 0,
       isMaximized: false,
       isMinimized: false,
+      zIndex: 999,
     })
   }
 
@@ -61,6 +60,7 @@ function Main() {
     console.log("addRunningApp")
     const temp_running_apps = {...runningApps}
     temp_running_apps[app_running_id] = {...DefaultRunningAppPropertiesGenerator(app_properties)}
+    updateRunningAppFocus(undefined)
     setRunningApps(temp_running_apps)
   }
 
@@ -219,6 +219,43 @@ function Main() {
 
   }
 
+  function updateRunningAppFocus(app_running_id:string | undefined){
+    for (const i of RunningAppsArray){
+      if (i[0] == app_running_id){
+        console.log("hit!", app_running_id)
+        updateAppProperty(app_running_id, "zIndex", 999)
+      } else {
+        updateAppProperty(i[0], "zIndex", i[1]["zIndex"]-1)
+      }
+    }
+  }
+
+
+  function updateTaskbarMinimizeEvent(app_running_id:string, running_properties:RunningAppProperties){
+    let currently_open = 0
+    let currently_open_app_running_id = ""
+    for (const i of RunningAppsArray){
+      if (i[1]["isMinimized"] != true){
+        currently_open +=1
+        currently_open_app_running_id = i[0]
+      }
+    }
+
+    if (running_properties.isMinimized){
+      updateAppProperty(app_running_id, "isMinimized", false)
+      updateRunningAppFocus(app_running_id)
+    } else{
+      if (currently_open == 1 && currently_open_app_running_id == app_running_id){
+        updateAppProperty(app_running_id, "isMinimized", true)
+      } else{
+        if (running_properties.zIndex != 999){
+          updateRunningAppFocus(app_running_id)
+        } else{
+          updateAppProperty(app_running_id, "isMinimized", true)
+        }
+      }
+    }
+  }
 
 
   return (
@@ -235,7 +272,8 @@ function Main() {
                 top:running_properties.y+"px", 
                 width:(running_properties.width)+"px", 
                 height:running_properties.height+"px",
-                display:"flex"
+                display:"flex",
+                zIndex: running_properties.zIndex
               }
 
               if (running_properties.isMaximized){
@@ -251,7 +289,7 @@ function Main() {
               
               
               return(
-              <div className="app-window" ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
+              <div className="app-window" onPointerDown={()=>{updateRunningAppFocus(app_running_id)}} ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
                 {!running_properties["isMaximized"] ? <div className="hitboxes">
                   <div className="box" id="TopL" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TL")}}></div>
                   <div className="box" id="TopR" onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TR")}}></div>
@@ -302,7 +340,7 @@ function Main() {
               const running_properties = item[1]
               
               return(
-              <div className="active-app" key={Math.random()} onClick={()=>{updateAppProperty(app_running_id,"isMinimized", !running_properties.isMinimized)}}>
+              <div className="active-app" key={Math.random()} onClick={()=>{updateTaskbarMinimizeEvent(app_running_id,running_properties)}}>
                 {AppList[app_id].icon}
               </div>
 
