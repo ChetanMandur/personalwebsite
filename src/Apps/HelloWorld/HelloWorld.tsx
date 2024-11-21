@@ -1,11 +1,14 @@
 import "./HelloWorld.css"
+import { useState} from "react";
+
 
 export default function HelloWorld (){
+  const [test, setTest] = useState(false)
   return(
   <div className="hello-world">
     Hello world
     <form action="">
-      <input type="checkbox" name="" id="" />
+      <input type="checkbox" checked={!test} onChange={()=>{setTest(!test); console.log(test)}} name="" id="" />
     </form>
     <div className="long-form">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis placerat aliquam quam sed ultricies. Aliquam molestie, ex aliquam efficitur facilisis, mauris felis commodo risus, eget consequat justo dui at est. Sed vitae tortor velit. Fusce fringilla odio ut bibendum efficitur. Sed in augue fringilla tellus volutpat semper. Suspendisse at magna in sapien dapibus gravida nec at neque. Nullam sollicitudin mauris lorem, egestas semper elit elementum sit amet. In volutpat urna id facilisis sagittis.

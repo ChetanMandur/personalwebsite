@@ -3,7 +3,7 @@ import HelloWorld from "./HelloWorld/HelloWorld";
 export type AppProperties = {
   name: string;
   icon: string;
-  app: () => JSX.Element;
+  app: JSX.Element;
 
 
   defaultWidth: number;
@@ -16,7 +16,7 @@ type AppListType = {
 const defaultAppProperties: AppProperties = {
   name:"undefined-app",
   icon:"🗿",
-  app: HelloWorld,
+  app:<HelloWorld/> ,
   defaultWidth: 400,
   defaultHeight: 300,
 }
@@ -26,7 +26,7 @@ export const AppList : AppListType = {
     ...defaultAppProperties,
     name:"Hello World",
     icon:"🌍",
-    app: HelloWorld,
+    app: <HelloWorld/>,
     defaultHeight:500,
     defaultWidth:500
   },

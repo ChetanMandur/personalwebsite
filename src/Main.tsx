@@ -301,7 +301,7 @@ function Main() {
                     <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMaximized", !running_properties.isMaximized)}}>[]</div>
                     <div className="titlebar-option" onClick={()=>{deleteRunningApp(app_running_id)}}>X</div>
                   </div>
-                  <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}}>{AppList[app_id].app()}</div>
+                  <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}}>{AppList[app_id].app}</div>
                 </div>
               </div> 
               )
