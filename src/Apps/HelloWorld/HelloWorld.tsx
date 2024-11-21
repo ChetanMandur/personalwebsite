@@ -8,7 +8,7 @@ export default function HelloWorld (){
   <div className="hello-world">
     Hello world
     <form action="">
-      <input type="checkbox" checked={!test} onChange={()=>{setTest(!test); console.log(test)}} name="" id="" />
+      <input type="checkbox" checked={test} onChange={()=>{setTest(!test); console.log(test)}} name="" id="" />
     </form>
     <div className="long-form">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis placerat aliquam quam sed ultricies. Aliquam molestie, ex aliquam efficitur facilisis, mauris felis commodo risus, eget consequat justo dui at est. Sed vitae tortor velit. Fusce fringilla odio ut bibendum efficitur. Sed in augue fringilla tellus volutpat semper. Suspendisse at magna in sapien dapibus gravida nec at neque. Nullam sollicitudin mauris lorem, egestas semper elit elementum sit amet. In volutpat urna id facilisis sagittis.
@@ -17,6 +17,7 @@ export default function HelloWorld (){
       Sed quis ultrices nulla, a sagittis libero. Sed aliquet diam non massa tempor, sit amet suscipit odio pellentesque. Nullam congue non est ac vehicula. Proin sed finibus lorem. Phasellus ac ipsum sit amet est hendrerit tincidunt. Aenean egestas facilisis odio eu consectetur. Proin nisl libero, aliquet id bibendum vitae, interdum quis ante. Donec vulputate, justo vel tempor iaculis, nulla mi consequat sapien, eu varius urna leo a ante.
       Nunc ut varius ante. Quisque vel sapien eros. Vivamus tempor elementum ex sed bibendum. Quisque vitae nibh et erat aliquet euismod nec at diam. Aenean vitae elit lorem. Sed eget auctor sem. Vestibulum non velit varius, accumsan massa vel, scelerisque ante. Etiam dignissim justo magna, sed consequat nibh dictum sit amet.
     </div>
+    {test ? <div className="image2" style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> : <></>}
     <div className="image" style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div>
   </div>) 
 } 
