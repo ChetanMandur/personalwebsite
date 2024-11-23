@@ -1,4 +1,4 @@
-import React, { useState, createRef } from "react";
+import React, { useState, createRef, createContext } from "react";
 import "./Desktop.css";
 import { AppList, AppProperties } from "../Apps/Apps";
 
@@ -23,11 +23,14 @@ type RunningAppProperties = {
   zIndex:number,
 }
 
-
-
 type RunningAppListType = {
   [key:string] : RunningAppProperties
 }
+
+const RunningAppsContext = createContext<null|{
+  runningApps: RunningAppListType, 
+  setRunningApps: React.Dispatch<React.SetStateAction<RunningAppListType>>
+}>(null)
 
 export default function Desktop() {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
@@ -250,7 +253,8 @@ export default function Desktop() {
 
 
   return (
-    <div className="main-container">
+    <RunningAppsContext.Provider value = {{runningApps, setRunningApps}}>
+      <div className="main-container">
       <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerMove={(event) => { windowMoveEvent(event)}}>
         {/* Where each running app is rendered */}
         {
@@ -342,5 +346,7 @@ export default function Desktop() {
         </div>
       </div>
     </div>
+    </RunningAppsContext.Provider>
+    
   );
 }
