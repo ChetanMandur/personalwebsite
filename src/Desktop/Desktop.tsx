@@ -1,9 +1,10 @@
 import React, { useState, createRef, createContext } from "react";
 import "./Desktop.css";
 import { AppList, AppProperties } from "../Apps/Apps";
+import RunningApp from "./RunningApp/RunningApp";
 
 
-type RunningAppProperties = {
+export type RunningAppProperties = {
   ref: React.MutableRefObject<null | HTMLDivElement>,
   x: number ,
   y: number,
@@ -223,7 +224,7 @@ export default function Desktop() {
       }
     }
   }
-
+  
 
   function updateTaskbarMinimizeEvent(app_running_id:string, running_properties:RunningAppProperties){
     let currently_open = 0
