@@ -1,7 +1,6 @@
-import React, { useState, createRef, createContext } from "react";
+import React, { useState, createRef, createContext, useReducer } from "react";
 import "./Desktop.css";
 import { AppList, AppProperties } from "../Apps/Apps";
-import RunningApp from "./RunningApp/RunningApp";
 
 
 export type RunningAppProperties = {
@@ -28,233 +27,262 @@ type RunningAppListType = {
   [key:string] : RunningAppProperties
 }
 
+function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
+
+  return({
+    ref:  createRef<HTMLDivElement>(),
+    x: Math.floor(Math.random() *100),
+    y: Math.floor(Math.random() *100),
+    titlebarClicked: false,
+    titlebarClickedDistanceX: 0,
+    titlebarClickedDistanceY: 0,
+    height: app_properties.defaultHeight,
+    width: app_properties.defaultWidth,
+    resizeClicked: null,
+    resizeLocationX: 0,
+    resizeLocationY: 0,
+    isMaximized: false,
+    isMinimized: false,
+    zIndex: 999,
+  })
+}
+
+type RunningAppsReducerAction = {
+  type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "TASKBAR-ICON-CLICKED"
+  app_running_id: string,
+  running_properties?: RunningAppProperties,
+  app_properties?: AppProperties ,
+  event?: React.PointerEvent<HTMLDivElement>,
+  resizeClickedLocation?: RunningAppProperties["resizeClicked"],
+}
+
+
+
+
+function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAppsReducerAction):RunningAppListType{
+  switch (action.type){
+    case "ADD": {
+      console.log("ADD")
+      const temp_task = {...runningAppsTask}
+      temp_task[action.app_running_id] = {...DefaultRunningAppPropertiesGenerator(action.app_properties!)}
+      return(temp_task)
+    }
+    case "DELETE":{
+      const temp_task = {...runningAppsTask}
+      delete temp_task[action.app_running_id]
+      return(temp_task)
+
+    }
+    case "RESIZE-CLICKED":{
+      const temp_task = {...runningAppsTask}
+      temp_task[action.app_running_id]["resizeClicked"] = action.resizeClickedLocation!
+      temp_task[action.app_running_id]["resizeLocationX"] = action.event!.clientX
+      temp_task[action.app_running_id]["resizeLocationY"] = action.event!.clientY
+
+      return temp_task
+    }
+    case "RESIZE-UNCLICKED":{
+      const temp_task = {...runningAppsTask}
+      const current_app = temp_task[action.app_running_id]
+      temp_task[action.app_running_id]["resizeClicked"] = null
+
+      if (current_app["width"] < 200){
+        temp_task[action.app_running_id]["width"] = 200
+      }
+      if (current_app["height"] < 200){
+        temp_task[action.app_running_id]["height"] = 200
+      }
+
+      return temp_task
+
+    }
+    case "TASKBAR-ICON-CLICKED":{
+      let currently_open = 0
+      let currently_open_app_running_id = ""
+      const temp_task = {...runningAppsTask}
+
+      for (const i of Object.entries(runningAppsTask)){
+        if (i[1]["isMinimized"] != true){
+          currently_open +=1
+          currently_open_app_running_id = i[0]
+        }
+      }
+
+      if (temp_task[action.app_running_id]["isMinimized"]){
+        temp_task[action.app_running_id]["isMinimized"] = false
+        for (const i of Object.entries(runningAppsTask)){
+          if (i[0] == action.app_running_id){
+            temp_task[action.app_running_id]["zIndex"] = 999
+          } else {
+            temp_task[action.app_running_id]["zIndex"] = i[1]["zIndex"]-1
+          }
+        }
+      } else{
+        if (currently_open == 1 && currently_open_app_running_id == action.app_running_id){
+          temp_task[action.app_running_id]["isMinimized"] = true
+        } else{
+          if (temp_task[action.app_running_id]["zIndex"] != 999){
+            for (const i of Object.entries(runningAppsTask)){
+              if (i[0] == action.app_running_id){
+                temp_task[action.app_running_id]["zIndex"] = 999
+              } else {
+                temp_task[action.app_running_id]["zIndex"] = i[1]["zIndex"]-1
+              }
+            }
+          } else{
+            temp_task[action.app_running_id]["isMinimized"] = true
+          }
+        }
+      }
+      return temp_task
+    }
+    case "UPDATE-APP-FOCUS":{
+      const temp_task = {...runningAppsTask}
+      for (const i of Object.entries(runningAppsTask)){
+        if (i[0] == action.app_running_id){
+          temp_task[action.app_running_id]["zIndex"] = 999
+        } else {
+          temp_task[action.app_running_id]["zIndex"] = i[1]["zIndex"]-1
+        }
+      }
+      return temp_task
+    }
+
+    case "TITLEBAR-CLICKED":{
+      const temp_task = {...runningAppsTask}
+      const current_app = temp_task[action.app_running_id]
+      temp_task[action.app_running_id]["titlebarClicked"] = true
+
+      if (current_app["isMaximized"]){
+        temp_task[action.app_running_id]["isMaximized"] = false
+        const xRatio = action.event!.clientX / current_app["ref"].current!.getBoundingClientRect().width
+        const yRatio = action.event!.clientY / current_app["ref"].current!.getBoundingClientRect().height
+
+        const width_chunk = current_app["width"]*xRatio
+        const height_chunk = current_app["height"]*yRatio 
+
+        temp_task[action.app_running_id]["x"] = action.event!.clientX -  width_chunk
+        temp_task[action.app_running_id]["y"] = action.event!.clientX -  width_chunk
+
+        temp_task[action.app_running_id]["titlebarClickedDistanceX"] = width_chunk
+        temp_task[action.app_running_id]["titlebarClickedDistanceY"] = height_chunk
+
+      } else{
+        temp_task[action.app_running_id]["titlebarClickedDistanceX"] = action.event!.clientX-current_app["ref"].current!.getBoundingClientRect().x
+        temp_task[action.app_running_id]["titlebarClickedDistanceY"] = action.event!.clientY-current_app["ref"].current!.getBoundingClientRect().y
+      }
+
+      return temp_task
+
+    }
+    case "TITLEBAR-UNCLICKED":{
+      const temp_task = {...runningAppsTask}
+      temp_task[action.app_running_id]["titlebarClicked"] = false
+      return temp_task
+
+    }
+
+    case "WINDOW-MOVE":{
+      const temp_task = {...runningAppsTask}
+      for (const i of Object.entries(runningAppsTask)){
+        const current_app_running_id = i[0]
+        const current_app = temp_task[current_app_running_id]
+
+        if (current_app["titlebarClicked"]){
+          temp_task[action.app_running_id]["x"]= action.event!.clientX - current_app["titlebarClickedDistanceX"] 
+          temp_task[action.app_running_id]["y"] =  action.event!.clientY - current_app["titlebarClickedDistanceY"]
+        }
+
+        if (current_app["resizeClicked"] != null){
+          const distanceX = (action.event!.clientX- current_app["resizeLocationX"]); // right is positive
+          const distanceY = (action.event!.clientY- current_app["resizeLocationY"]); //down is positive
+
+          let new_x = current_app["x"]
+          let new_y = current_app["y"]
+          let new_width = current_app["width"]
+          let new_height = current_app["height"]
+
+          switch (current_app["resizeClicked"]) {
+            case "TL":
+              new_x += distanceX 
+              new_y += distanceY 
+              new_width -= distanceX
+              new_height -= distanceY
+              break;
+            case "TR":
+              new_y += distanceY 
+              new_width += distanceX  
+              new_height -= distanceY
+              break;
+            case "BL":
+              new_x += distanceX 
+              new_width -= distanceX  
+              new_height += distanceY
+              break;
+            case "BR":
+              new_width += distanceX
+              new_height += distanceY
+              break;
+            case "TOP":
+              new_y += distanceY
+              new_height -= distanceY
+              break;
+
+            case "BOT":
+              new_height += distanceY
+              break;
+
+            case "LEFT":
+              new_x += distanceX
+              new_width -= distanceX
+              break;
+
+            case "RIGHT":
+              new_width += distanceX
+              break;
+
+          }
+
+          if (new_width >= 200){
+            temp_task[action.app_running_id]["x"] = new_x
+            temp_task[action.app_running_id]["width"] =new_width
+            temp_task[action.app_running_id]["resizeLocationX"]= action.event!.clientX
+
+          }
+          if (new_height >= 200){
+            temp_task[action.app_running_id]["y"]= new_y
+            temp_task[action.app_running_id]["height"]=  new_height
+            temp_task[action.app_running_id]["resizeLocationY"] = action.event!.clientY
+          }
+
+        }
+      }
+      return temp_task
+    }
+    default:
+      return runningAppsTask
+
+  }
+}
+
+
 const RunningAppsContext = createContext<null|{
-  runningApps: RunningAppListType, 
-  setRunningApps: React.Dispatch<React.SetStateAction<RunningAppListType>>
+  runningAppsTask: RunningAppListType, 
+  runningAppsDispatch:  React.Dispatch<RunningAppsReducerAction>
 }>(null)
 
 export default function Desktop() {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [runningApps, setRunningApps] = useState<RunningAppListType>({})
+  const [runningAppsTask, runningAppsDispatch] = useReducer(runningAppsReducer, {})
 
   const AppListArray = Object.entries(AppList)
   const RunningAppsArray = Object.entries(runningApps)
 
-  function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
-
-    return({
-      ref:  createRef<HTMLDivElement>(),
-      x: Math.floor(Math.random() *100),
-      y: Math.floor(Math.random() *100),
-      titlebarClicked: false,
-      titlebarClickedDistanceX: 0,
-      titlebarClickedDistanceY: 0,
-      height: app_properties.defaultHeight,
-      width: app_properties.defaultWidth,
-      resizeClicked: null,
-      resizeLocationX: 0,
-      resizeLocationY: 0,
-      isMaximized: false,
-      isMinimized: false,
-      zIndex: 999,
-    })
-  }
-
-  function addRunningApp(app_running_id:string, app_properties:AppProperties){
-    console.log("addRunningApp")
-    const temp_running_apps = {...runningApps}
-    temp_running_apps[app_running_id] = {...DefaultRunningAppPropertiesGenerator(app_properties)}
-    updateRunningAppFocus(undefined)
-    setRunningApps(temp_running_apps)
-  }
-
-  function deleteRunningApp(app_running_id:string){
-    console.log("deleteRunningApp")
-    const temp_running_apps = {...runningApps}
-    delete temp_running_apps[app_running_id]
-    setRunningApps(temp_running_apps)
-  }
-
-  function updateAppProperty<T extends keyof RunningAppListType>(app_running_id: T, key: keyof RunningAppListType[T], value: RunningAppListType[T][keyof RunningAppListType[T]] ){
-    // console.log("updateAppProperty")
-    const temp_running_apps = {...runningApps}
-
-    temp_running_apps[app_running_id][key] = value
-    setRunningApps(temp_running_apps)
-  }
-
-
-  function titlebarClickedEvent(event:React.PointerEvent<HTMLDivElement>, app_running_id:string){
-    console.log("titlebarClickedEvent")
-    const current_app = runningApps[app_running_id]
-    updateAppProperty(app_running_id, "titlebarClicked", true); 
-
-    if (current_app["isMaximized"]){
-      updateAppProperty(app_running_id, "isMaximized", false)
-
-      const xRatio = event.clientX / current_app["ref"].current!.getBoundingClientRect().width
-      const yRatio = event.clientY / current_app["ref"].current!.getBoundingClientRect().height
-
-      const width_chunk = current_app["width"]*xRatio
-      const height_chunk = current_app["height"]*yRatio 
-
-
-      updateAppProperty(app_running_id,"x", event.clientX -  width_chunk)
-      updateAppProperty(app_running_id,"y", event.clientY - height_chunk)
-      updateAppProperty(app_running_id,"titlebarClickedDistanceX", width_chunk   )
-      updateAppProperty(app_running_id,"titlebarClickedDistanceY", height_chunk )
-
-    } else{
-
-      updateAppProperty(app_running_id, "titlebarClickedDistanceX", (event.clientX-current_app["ref"].current!.getBoundingClientRect().x))
-      updateAppProperty(app_running_id, "titlebarClickedDistanceY", (event.clientY-current_app["ref"].current!.getBoundingClientRect().y))
-    }
-    
-  }
-
-  function titlebarUnClickedEvent(app_running_id:string){
-    console.log("titlebarUnClickedEvent")
-    updateAppProperty(app_running_id, "titlebarClicked", false)
-
-  }
-
-  function resizeClickedEvent(event:React.PointerEvent<HTMLDivElement>, app_running_id:string, location:RunningAppProperties["resizeClicked"]){
-    console.log("resizeClickedEvent")
-    updateAppProperty(app_running_id, "resizeClicked", location);
-    updateAppProperty(app_running_id, "resizeLocationX", event.clientX);
-    updateAppProperty(app_running_id, "resizeLocationY", event.clientY);
-
-  }
-
-  function resizeUnClickedEvent(app_running_id:string){
-    console.log("resizeUnClickedEvent")
-    updateAppProperty(app_running_id, "resizeClicked", null)
-    if (runningApps[app_running_id]["width"] < 200){
-      updateAppProperty(app_running_id, "width", 200)
-    }
-    if (runningApps[app_running_id]["height"] < 200){
-      updateAppProperty(app_running_id, "height", 200 )                  
-    }
-
-  }
-
-  function windowMoveEvent(event:React.PointerEvent<HTMLDivElement>){
-    for (const i of RunningAppsArray){
-      const app_running_id = i[0]
-      const current_app = runningApps[app_running_id]
-      if (current_app["titlebarClicked"]){
-        updateAppProperty(app_running_id, "x", event.clientX - current_app["titlebarClickedDistanceX"] )
-        updateAppProperty(app_running_id, "y", event.clientY - current_app["titlebarClickedDistanceY"])
-      }
-      if (runningApps[app_running_id]["resizeClicked"] != null){
-        const distanceX = (event.clientX- current_app["resizeLocationX"]); // right is positive
-        const distanceY = (event.clientY- current_app["resizeLocationY"]); //down is positive
-
-        let new_x = current_app["x"]
-        let new_y = current_app["y"]
-        let new_width = current_app["width"]
-        let new_height = current_app["height"]
-
-        switch (runningApps[app_running_id]["resizeClicked"]) {
-          case "TL":
-            new_x += distanceX 
-            new_y += distanceY 
-            new_width -= distanceX
-            new_height -= distanceY
-            break;
-          case "TR":
-            new_y += distanceY 
-            new_width += distanceX  
-            new_height -= distanceY
-            break;
-          case "BL":
-            new_x += distanceX 
-            new_width -= distanceX  
-            new_height += distanceY
-            break;
-          case "BR":
-            new_width += distanceX
-            new_height += distanceY
-            break;
-          case "TOP":
-            new_y += distanceY
-            new_height -= distanceY
-            break;
-
-          case "BOT":
-            new_height += distanceY
-            break;
-
-          case "LEFT":
-            new_x += distanceX
-            new_width -= distanceX
-            break;
-
-          case "RIGHT":
-            new_width += distanceX
-            break;
-
-        }
-
-        if (new_width >= 200){
-          updateAppProperty(app_running_id, "x", new_x)
-          updateAppProperty(app_running_id, "width", new_width)
-          updateAppProperty(app_running_id, "resizeLocationX", event.clientX);
-
-        }
-        if (new_height >= 200){
-          updateAppProperty(app_running_id, "y", new_y)
-          updateAppProperty(app_running_id, "height", new_height)
-          updateAppProperty(app_running_id, "resizeLocationY", event.clientY);
-
-        }
-
-
-      }
-    }
-
-  }
-
-  function updateRunningAppFocus(app_running_id:string | undefined){
-    for (const i of RunningAppsArray){
-      if (i[0] == app_running_id){
-        updateAppProperty(app_running_id, "zIndex", 999)
-      } else {
-        updateAppProperty(i[0], "zIndex", i[1]["zIndex"]-1)
-      }
-    }
-  }
-  
-
-  function updateTaskbarMinimizeEvent(app_running_id:string, running_properties:RunningAppProperties){
-    let currently_open = 0
-    let currently_open_app_running_id = ""
-    for (const i of RunningAppsArray){
-      if (i[1]["isMinimized"] != true){
-        currently_open +=1
-        currently_open_app_running_id = i[0]
-      }
-    }
-
-    if (running_properties.isMinimized){
-      updateAppProperty(app_running_id, "isMinimized", false)
-      updateRunningAppFocus(app_running_id)
-    } else{
-      if (currently_open == 1 && currently_open_app_running_id == app_running_id){
-        updateAppProperty(app_running_id, "isMinimized", true)
-      } else{
-        if (running_properties.zIndex != 999){
-          updateRunningAppFocus(app_running_id)
-        } else{
-          updateAppProperty(app_running_id, "isMinimized", true)
-        }
-      }
-    }
-  }
 
 
   return (
-    <RunningAppsContext.Provider value = {{runningApps, setRunningApps}}>
+    <RunningAppsContext.Provider value = {{runningAppsTask, runningAppsDispatch}}>
       <div className="main-container">
       <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerMove={(event) => { windowMoveEvent(event)}}>
         {/* Where each running app is rendered */}
@@ -347,7 +375,7 @@ export default function Desktop() {
         </div>
       </div>
     </div>
-    </RunningAppsContext.Provider>
+    </RunningAppsTaskContext.Provider>
     
   );
 }
