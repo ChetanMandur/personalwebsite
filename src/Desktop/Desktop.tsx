@@ -48,8 +48,8 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
 }
 
 type RunningAppsReducerAction = {
-  type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "TASKBAR-ICON-CLICKED"
-  app_running_id: string,
+  type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "TASKBAR-ICON-CLICKED" | "MINIMIZE" | "MAXIMIZE"
+  app_running_id?: string,
   running_properties?: RunningAppProperties,
   app_properties?: AppProperties ,
   event?: React.PointerEvent<HTMLDivElement>,
@@ -64,33 +64,38 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
     case "ADD": {
       console.log("ADD")
       const temp_task = {...runningAppsTask}
-      temp_task[action.app_running_id] = {...DefaultRunningAppPropertiesGenerator(action.app_properties!)}
+      temp_task[action.app_running_id!] = {...DefaultRunningAppPropertiesGenerator(action.app_properties!)}
       return(temp_task)
     }
     case "DELETE":{
       const temp_task = {...runningAppsTask}
-      delete temp_task[action.app_running_id]
+      delete temp_task[action.app_running_id!]
       return(temp_task)
 
     }
     case "RESIZE-CLICKED":{
       const temp_task = {...runningAppsTask}
-      temp_task[action.app_running_id]["resizeClicked"] = action.resizeClickedLocation!
-      temp_task[action.app_running_id]["resizeLocationX"] = action.event!.clientX
-      temp_task[action.app_running_id]["resizeLocationY"] = action.event!.clientY
+      temp_task[action.app_running_id!]["resizeClicked"] = action.resizeClickedLocation!
+      temp_task[action.app_running_id!]["resizeLocationX"] = action.event!.clientX
+      temp_task[action.app_running_id!]["resizeLocationY"] = action.event!.clientY
 
       return temp_task
     }
     case "RESIZE-UNCLICKED":{
       const temp_task = {...runningAppsTask}
-      const current_app = temp_task[action.app_running_id]
-      temp_task[action.app_running_id]["resizeClicked"] = null
+      for (const i of Object.entries(temp_task)){
+        const current_app = temp_task[i[0]]
+        if (current_app["resizeClicked"]){
+          temp_task[i[0]]["resizeClicked"] = null
 
-      if (current_app["width"] < 200){
-        temp_task[action.app_running_id]["width"] = 200
-      }
-      if (current_app["height"] < 200){
-        temp_task[action.app_running_id]["height"] = 200
+          if (current_app["width"] < 200){
+            temp_task[i[0]]["width"] = 200
+          }
+          if (current_app["height"] < 200){
+            temp_task[i[0]]["height"] = 200
+          }
+        }
+
       }
 
       return temp_task
@@ -108,29 +113,29 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
         }
       }
 
-      if (temp_task[action.app_running_id]["isMinimized"]){
-        temp_task[action.app_running_id]["isMinimized"] = false
+      if (temp_task[action.app_running_id!]["isMinimized"]){
+        temp_task[action.app_running_id!]["isMinimized"] = false
         for (const i of Object.entries(runningAppsTask)){
           if (i[0] == action.app_running_id){
-            temp_task[action.app_running_id]["zIndex"] = 999
+            temp_task[action.app_running_id!]["zIndex"] = 999
           } else {
-            temp_task[action.app_running_id]["zIndex"] = i[1]["zIndex"]-1
+            temp_task[action.app_running_id!]["zIndex"] = i[1]["zIndex"]-1
           }
         }
       } else{
         if (currently_open == 1 && currently_open_app_running_id == action.app_running_id){
           temp_task[action.app_running_id]["isMinimized"] = true
         } else{
-          if (temp_task[action.app_running_id]["zIndex"] != 999){
+          if (temp_task[action.app_running_id!]["zIndex"] != 999){
             for (const i of Object.entries(runningAppsTask)){
               if (i[0] == action.app_running_id){
-                temp_task[action.app_running_id]["zIndex"] = 999
+                temp_task[action.app_running_id!]["zIndex"] = 999
               } else {
-                temp_task[action.app_running_id]["zIndex"] = i[1]["zIndex"]-1
+                temp_task[action.app_running_id!]["zIndex"] = i[1]["zIndex"]-1
               }
             }
           } else{
-            temp_task[action.app_running_id]["isMinimized"] = true
+            temp_task[action.app_running_id!]["isMinimized"] = true
           }
         }
       }
@@ -140,9 +145,9 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       const temp_task = {...runningAppsTask}
       for (const i of Object.entries(runningAppsTask)){
         if (i[0] == action.app_running_id){
-          temp_task[action.app_running_id]["zIndex"] = 999
+          temp_task[action.app_running_id!]["zIndex"] = 999
         } else {
-          temp_task[action.app_running_id]["zIndex"] = i[1]["zIndex"]-1
+          temp_task[action.app_running_id!]["zIndex"] = i[1]["zIndex"]-1
         }
       }
       return temp_task
@@ -150,26 +155,26 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
 
     case "TITLEBAR-CLICKED":{
       const temp_task = {...runningAppsTask}
-      const current_app = temp_task[action.app_running_id]
-      temp_task[action.app_running_id]["titlebarClicked"] = true
+      const current_app = temp_task[action.app_running_id!]
+      temp_task[action.app_running_id!]["titlebarClicked"] = true
 
       if (current_app["isMaximized"]){
-        temp_task[action.app_running_id]["isMaximized"] = false
+        temp_task[action.app_running_id!]["isMaximized"] = false
         const xRatio = action.event!.clientX / current_app["ref"].current!.getBoundingClientRect().width
         const yRatio = action.event!.clientY / current_app["ref"].current!.getBoundingClientRect().height
 
         const width_chunk = current_app["width"]*xRatio
         const height_chunk = current_app["height"]*yRatio 
 
-        temp_task[action.app_running_id]["x"] = action.event!.clientX -  width_chunk
-        temp_task[action.app_running_id]["y"] = action.event!.clientX -  width_chunk
+        temp_task[action.app_running_id!]["x"] = action.event!.clientX -  width_chunk
+        temp_task[action.app_running_id!]["y"] = action.event!.clientX -  width_chunk
 
-        temp_task[action.app_running_id]["titlebarClickedDistanceX"] = width_chunk
-        temp_task[action.app_running_id]["titlebarClickedDistanceY"] = height_chunk
+        temp_task[action.app_running_id!]["titlebarClickedDistanceX"] = width_chunk
+        temp_task[action.app_running_id!]["titlebarClickedDistanceY"] = height_chunk
 
       } else{
-        temp_task[action.app_running_id]["titlebarClickedDistanceX"] = action.event!.clientX-current_app["ref"].current!.getBoundingClientRect().x
-        temp_task[action.app_running_id]["titlebarClickedDistanceY"] = action.event!.clientY-current_app["ref"].current!.getBoundingClientRect().y
+        temp_task[action.app_running_id!]["titlebarClickedDistanceX"] = action.event!.clientX-current_app["ref"].current!.getBoundingClientRect().x
+        temp_task[action.app_running_id!]["titlebarClickedDistanceY"] = action.event!.clientY-current_app["ref"].current!.getBoundingClientRect().y
       }
 
       return temp_task
@@ -177,7 +182,11 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
     }
     case "TITLEBAR-UNCLICKED":{
       const temp_task = {...runningAppsTask}
-      temp_task[action.app_running_id]["titlebarClicked"] = false
+      for (const i of Object.entries(temp_task)){
+        if (temp_task[i[0]]["titlebarClicked"]){
+          temp_task[i[0]]["titlebarClicked"] = false
+        } 
+      }
       return temp_task
 
     }
@@ -189,8 +198,8 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
         const current_app = temp_task[current_app_running_id]
 
         if (current_app["titlebarClicked"]){
-          temp_task[action.app_running_id]["x"]= action.event!.clientX - current_app["titlebarClickedDistanceX"] 
-          temp_task[action.app_running_id]["y"] =  action.event!.clientY - current_app["titlebarClickedDistanceY"]
+          temp_task[action.app_running_id!]["x"]= action.event!.clientX - current_app["titlebarClickedDistanceX"] 
+          temp_task[action.app_running_id!]["y"] =  action.event!.clientY - current_app["titlebarClickedDistanceY"]
         }
 
         if (current_app["resizeClicked"] != null){
@@ -244,20 +253,30 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
           }
 
           if (new_width >= 200){
-            temp_task[action.app_running_id]["x"] = new_x
-            temp_task[action.app_running_id]["width"] =new_width
-            temp_task[action.app_running_id]["resizeLocationX"]= action.event!.clientX
+            temp_task[action.app_running_id!]["x"] = new_x
+            temp_task[action.app_running_id!]["width"] =new_width
+            temp_task[action.app_running_id!]["resizeLocationX"]= action.event!.clientX
 
           }
           if (new_height >= 200){
-            temp_task[action.app_running_id]["y"]= new_y
-            temp_task[action.app_running_id]["height"]=  new_height
-            temp_task[action.app_running_id]["resizeLocationY"] = action.event!.clientY
+            temp_task[action.app_running_id!]["y"]= new_y
+            temp_task[action.app_running_id!]["height"]=  new_height
+            temp_task[action.app_running_id!]["resizeLocationY"] = action.event!.clientY
           }
 
         }
       }
       return temp_task
+    }
+    case "MAXIMIZE":{
+      const temp = {...runningAppsTask}
+      temp[action.app_running_id!].isMaximized = !temp[action.app_running_id!].isMaximized
+      return (temp)
+    }
+    case "MINIMIZE":{
+      const temp = {...runningAppsTask}
+      temp[action.app_running_id!].isMinimized = !temp[action.app_running_id!].isMinimized
+      return (temp)
     }
     default:
       return runningAppsTask
@@ -273,11 +292,11 @@ const RunningAppsContext = createContext<null|{
 
 export default function Desktop() {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
-  const [runningApps, setRunningApps] = useState<RunningAppListType>({})
+  // const [runningApps, setRunningApps] = useState<RunningAppListType>({})
   const [runningAppsTask, runningAppsDispatch] = useReducer(runningAppsReducer, {})
 
   const AppListArray = Object.entries(AppList)
-  const RunningAppsArray = Object.entries(runningApps)
+  // const RunningAppsArray = Object.entries(runningAppsTask)
 
 
 
@@ -287,7 +306,7 @@ export default function Desktop() {
       <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerMove={(event) => { windowMoveEvent(event)}}>
         {/* Where each running app is rendered */}
         {
-            RunningAppsArray.map((item)=>{
+            Object.entries(runningAppsTask).map((item)=>{
               const app_running_id = item[0]
               const app_id = app_running_id.split("#")[0]
               const running_properties = item[1]
@@ -375,7 +394,7 @@ export default function Desktop() {
         </div>
       </div>
     </div>
-    </RunningAppsTaskContext.Provider>
+    </RunningAppsContext.Provider>
     
   );
 }
