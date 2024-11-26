@@ -84,24 +84,26 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
     case "RESIZE-UNCLICKED":{
       const temp_task = {...runningAppsTask}
       for (const i of Object.entries(temp_task)){
-        const current_app = temp_task[i[0]]
+        const current_app = {...temp_task[i[0]]}
         if (current_app["resizeClicked"]){
-          temp_task[i[0]]["resizeClicked"] = null
+          current_app["resizeClicked"] = null
 
           if (current_app["width"] < 200){
-            temp_task[i[0]]["width"] = 200
+            current_app["width"] = 200
           }
           if (current_app["height"] < 200){
-            temp_task[i[0]]["height"] = 200
+            current_app["height"] = 200
           }
+
+          temp_task[i[0]] = current_app
         }
 
       }
-
-      return temp_task
+      return ({...temp_task})
 
     }
     case "TASKBAR-ICON-CLICKED":{
+      console.log("taskbar-icon-clicked")
       let currently_open = 0
       let currently_open_app_running_id = ""
       const temp_task = {...runningAppsTask}
@@ -113,79 +115,100 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
         }
       }
 
-      if (temp_task[action.app_running_id!]["isMinimized"]){
-        temp_task[action.app_running_id!]["isMinimized"] = false
-        for (const i of Object.entries(runningAppsTask)){
+
+      const current_app = {...temp_task[action.app_running_id!]}
+
+      if (current_app["isMinimized"]){
+        current_app["isMinimized"] = false
+        for (const i of Object.entries(temp_task)){
+          const temp_app = {...temp_task[i[0]]}
           if (i[0] == action.app_running_id){
-            temp_task[action.app_running_id!]["zIndex"] = 999
+            current_app["zIndex"] = 999
           } else {
-            temp_task[action.app_running_id!]["zIndex"] = i[1]["zIndex"]-1
+            temp_app["zIndex"] = temp_app["zIndex"]-1
           }
+          temp_task[i[0]] = temp_app
         }
       } else{
-        if (currently_open == 1 && currently_open_app_running_id == action.app_running_id){
-          temp_task[action.app_running_id]["isMinimized"] = true
+        if (currently_open == 1 && currently_open_app_running_id == action.app_running_id!){
+          current_app["isMinimized"] = true
         } else{
           if (temp_task[action.app_running_id!]["zIndex"] != 999){
-            for (const i of Object.entries(runningAppsTask)){
-              if (i[0] == action.app_running_id){
-                temp_task[action.app_running_id!]["zIndex"] = 999
+            for (const i of Object.entries(temp_task)){
+              const temp_app = {...temp_task[i[0]]}
+              if (i[0] == action.app_running_id!){
+                current_app["zIndex"] = 999
               } else {
-                temp_task[action.app_running_id!]["zIndex"] = i[1]["zIndex"]-1
+                temp_app["zIndex"] = temp_app["zIndex"] - 1
               }
+              temp_task[i[0]] = temp_app
             }
           } else{
-            temp_task[action.app_running_id!]["isMinimized"] = true
+            current_app["isMinimized"] = true
           }
         }
       }
+
+      temp_task[action.app_running_id!] = current_app
       return temp_task
     }
     case "UPDATE-APP-FOCUS":{
       const temp_task = {...runningAppsTask}
-      for (const i of Object.entries(runningAppsTask)){
+      const current_app = {...temp_task[action.app_running_id!]}
+      for (const i of Object.entries(temp_task)){
+        const temp_app = temp_task[i[0]]
         if (i[0] == action.app_running_id){
-          temp_task[action.app_running_id!]["zIndex"] = 999
+          current_app["zIndex"] = 999
         } else {
-          temp_task[action.app_running_id!]["zIndex"] = i[1]["zIndex"]-1
+          temp_app["zIndex"] = temp_app["zIndex"]-1
         }
+        temp_task[i[0]] = temp_app
       }
+      temp_task[action.app_running_id!] = current_app
       return temp_task
     }
 
     case "TITLEBAR-CLICKED":{
       const temp_task = {...runningAppsTask}
-      const current_app = temp_task[action.app_running_id!]
-      temp_task[action.app_running_id!]["titlebarClicked"] = true
+      const current_app = {...temp_task[action.app_running_id!]}
+      current_app["titlebarClicked"] = true
 
+      
       if (current_app["isMaximized"]){
-        temp_task[action.app_running_id!]["isMaximized"] = false
+        current_app["isMaximized"] = false
         const xRatio = action.event!.clientX / current_app["ref"].current!.getBoundingClientRect().width
         const yRatio = action.event!.clientY / current_app["ref"].current!.getBoundingClientRect().height
+
 
         const width_chunk = current_app["width"]*xRatio
         const height_chunk = current_app["height"]*yRatio 
 
-        temp_task[action.app_running_id!]["x"] = action.event!.clientX -  width_chunk
-        temp_task[action.app_running_id!]["y"] = action.event!.clientX -  width_chunk
+        console.log(width_chunk, height_chunk)
 
-        temp_task[action.app_running_id!]["titlebarClickedDistanceX"] = width_chunk
-        temp_task[action.app_running_id!]["titlebarClickedDistanceY"] = height_chunk
+
+        current_app["x"] = action.event!.clientX -  width_chunk
+        current_app["y"] = action.event!.clientY -  height_chunk
+
+        current_app["titlebarClickedDistanceX"] = width_chunk
+        current_app["titlebarClickedDistanceY"] = height_chunk
 
       } else{
-        temp_task[action.app_running_id!]["titlebarClickedDistanceX"] = action.event!.clientX-current_app["ref"].current!.getBoundingClientRect().x
-        temp_task[action.app_running_id!]["titlebarClickedDistanceY"] = action.event!.clientY-current_app["ref"].current!.getBoundingClientRect().y
+        current_app["titlebarClickedDistanceX"] = action.event!.clientX-current_app["ref"].current!.getBoundingClientRect().x
+        current_app["titlebarClickedDistanceY"] = action.event!.clientY-current_app["ref"].current!.getBoundingClientRect().y
       }
 
+      temp_task[action.app_running_id!] = current_app
       return temp_task
 
     }
     case "TITLEBAR-UNCLICKED":{
       const temp_task = {...runningAppsTask}
       for (const i of Object.entries(temp_task)){
-        if (temp_task[i[0]]["titlebarClicked"]){
-          temp_task[i[0]]["titlebarClicked"] = false
+        const temp_app = {...temp_task[i[0]]}
+        if (temp_app["titlebarClicked"]){
+          temp_app["titlebarClicked"] = false
         } 
+        temp_task[i[0]] = temp_app
       }
       return temp_task
 
@@ -194,24 +217,26 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
     case "WINDOW-MOVE":{
       const temp_task = {...runningAppsTask}
       for (const i of Object.entries(runningAppsTask)){
-        const current_app_running_id = i[0]
-        const current_app = temp_task[current_app_running_id]
+        const temp_app_running_id = i[0]
+        const temp_app = {...temp_task[temp_app_running_id]}
 
-        if (current_app["titlebarClicked"]){
-          temp_task[action.app_running_id!]["x"]= action.event!.clientX - current_app["titlebarClickedDistanceX"] 
-          temp_task[action.app_running_id!]["y"] =  action.event!.clientY - current_app["titlebarClickedDistanceY"]
+        
+
+        if (temp_app["titlebarClicked"]){
+          temp_app["x"]= action.event!.clientX - temp_app["titlebarClickedDistanceX"] 
+          temp_app["y"] =  action.event!.clientY - temp_app["titlebarClickedDistanceY"]
         }
 
-        if (current_app["resizeClicked"] != null){
-          const distanceX = (action.event!.clientX- current_app["resizeLocationX"]); // right is positive
-          const distanceY = (action.event!.clientY- current_app["resizeLocationY"]); //down is positive
+        if (temp_app["resizeClicked"] != null){
+          const distanceX = (action.event!.clientX- temp_app["resizeLocationX"]); // right is positive
+          const distanceY = (action.event!.clientY- temp_app["resizeLocationY"]); //down is positive
 
-          let new_x = current_app["x"]
-          let new_y = current_app["y"]
-          let new_width = current_app["width"]
-          let new_height = current_app["height"]
+          let new_x = temp_app["x"]
+          let new_y = temp_app["y"]
+          let new_width = temp_app["width"]
+          let new_height = temp_app["height"]
 
-          switch (current_app["resizeClicked"]) {
+          switch (temp_app["resizeClicked"]) {
             case "TL":
               new_x += distanceX 
               new_y += distanceY 
@@ -253,33 +278,37 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
           }
 
           if (new_width >= 200){
-            temp_task[action.app_running_id!]["x"] = new_x
-            temp_task[action.app_running_id!]["width"] =new_width
-            temp_task[action.app_running_id!]["resizeLocationX"]= action.event!.clientX
+            temp_app["x"] = new_x
+            temp_app["width"] =new_width
+            temp_app["resizeLocationX"]= action.event!.clientX
 
           }
           if (new_height >= 200){
-            temp_task[action.app_running_id!]["y"]= new_y
-            temp_task[action.app_running_id!]["height"]=  new_height
-            temp_task[action.app_running_id!]["resizeLocationY"] = action.event!.clientY
+            temp_app["y"]= new_y
+            temp_app["height"]=  new_height
+            temp_app["resizeLocationY"] = action.event!.clientY
           }
 
         }
+        temp_task[temp_app_running_id] = temp_app
+
       }
       return temp_task
     }
     case "MAXIMIZE":{
-      const temp = {...runningAppsTask}
-      temp[action.app_running_id!].isMaximized = !temp[action.app_running_id!].isMaximized
-      return (temp)
+      const temp_task = {...runningAppsTask}
+      const currentApp = {...temp_task[action.app_running_id!]}
+      currentApp["isMaximized"] = !currentApp["isMaximized"]
+      temp_task[action.app_running_id!] = currentApp
+      return ({...temp_task})
     }
     case "MINIMIZE":{
-      const temp = {...runningAppsTask}
-      temp[action.app_running_id!].isMinimized = !temp[action.app_running_id!].isMinimized
-      return (temp)
+      const temp_task = {...runningAppsTask}
+      const currentApp = {...temp_task[action.app_running_id!]}
+      currentApp["isMinimized"] = !currentApp["isMinimized"]
+      temp_task[action.app_running_id!] = currentApp
+      return ({...temp_task})
     }
-    default:
-      return runningAppsTask
 
   }
 }
@@ -291,25 +320,24 @@ const RunningAppsContext = createContext<null|{
 }>(null)
 
 export default function Desktop() {
+
+  
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   // const [runningApps, setRunningApps] = useState<RunningAppListType>({})
   const [runningAppsTask, runningAppsDispatch] = useReducer(runningAppsReducer, {})
 
   const AppListArray = Object.entries(AppList)
   // const RunningAppsArray = Object.entries(runningAppsTask)
-
-
-
   return (
     <RunningAppsContext.Provider value = {{runningAppsTask, runningAppsDispatch}}>
       <div className="main-container">
-      <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerMove={(event) => { windowMoveEvent(event)}}>
+      <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerUp={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerMove={(event) => { runningAppsDispatch({type:"WINDOW-MOVE", event:event})}}>
         {/* Where each running app is rendered */}
         {
             Object.entries(runningAppsTask).map((item)=>{
               const app_running_id = item[0]
               const app_id = app_running_id.split("#")[0]
-              const running_properties = item[1]
+              const running_properties = runningAppsTask[app_running_id]
               const app_window_style : React.CSSProperties = {
                 left: running_properties.x+"px",
                 top:running_properties.y+"px", 
@@ -319,39 +347,39 @@ export default function Desktop() {
                 zIndex: running_properties.zIndex
               }
 
-              if (running_properties.isMaximized){
+              if (running_properties["isMaximized"]){
                 app_window_style["left"] = 0;
                 app_window_style["top"] = 0;
                 app_window_style["width"] = "100%";
                 app_window_style["height"] = "calc(100% - 50px)";
               }
 
-              if (running_properties.isMinimized){
+              if (running_properties["isMinimized"]){
                 app_window_style["display"] = "none"
               }
               
               
               return(
-              <div className="app-window" onPointerDown={()=>{updateRunningAppFocus(app_running_id)}} ref={runningApps[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
+              <div className="app-window"  onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsTask[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
                 {!running_properties["isMaximized"] ? <div className="hitboxes">
-                  <div className="box" id="TopL" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TL")}}></div>
-                  <div className="box" id="TopR" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TR")}}></div>
-                  <div className="box" id="BotL" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BL")}}></div>
-                  <div className="box" id="BotR" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BR")}}></div>
-                  <div className="box" id="Top" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "TOP")}}></div>
-                  <div className="box" id="Bot" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "BOT")}}></div>
-                  <div className="box" id="Left" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "LEFT")}}></div>
-                  <div className="box" id="Right" onPointerUp={()=>{resizeUnClickedEvent(app_running_id)}} onPointerDown={(event)=>{resizeClickedEvent(event, app_running_id, "RIGHT")}}></div>
+                  <div className="box" id="TopL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TL"})}}></div>
+                  <div className="box" id="TopR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TR"})}}></div>
+                  <div className="box" id="BotL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"BL"})}}></div>
+                  <div className="box" id="BotR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"BR"})}}></div>
+                  <div className="box" id="Top"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TOP"})}}></div>
+                  <div className="box" id="Bot"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"BOT"})}}></div>
+                  <div className="box" id="Left"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"LEFT"})}}></div>
+                  <div className="box" id="Right"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"RIGHT"})}}></div>
 
                   
                 </div> : <></>}
                 <div className="app">
                   <div className="titlebar" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}} >
-                    <div className="icon" onClick={()=>{titlebarUnClickedEvent(app_running_id)}} onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].icon}</div>
-                    <div className="name" onPointerUp={()=>{titlebarUnClickedEvent(app_running_id)}} onPointerDown={(event) =>{titlebarClickedEvent(event, app_running_id)}}>{AppList[app_id].name}</div>
-                    <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMinimized", !running_properties.isMinimized)}}>-</div>
-                    <div className="titlebar-option" onClick={()=>{updateAppProperty(app_running_id,"isMaximized", !running_properties.isMaximized)}}>[]</div>
-                    <div className="titlebar-option" onClick={()=>{deleteRunningApp(app_running_id)}}>X</div>
+                    <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>{AppList[app_id].icon}</div>
+                    <div className="name"  onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>{AppList[app_id].name}</div>
+                    <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"MINIMIZE", app_running_id:app_running_id})}}>-</div>
+                    <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"MAXIMIZE", app_running_id:app_running_id})}}>[]</div>
+                    <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
                   </div>
                   <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}}>{AppList[app_id].app}</div>
                 </div>
@@ -367,7 +395,7 @@ export default function Desktop() {
            {AppListArray.map( (item) => { 
             const app_running_id = item[0] + "#" + (Math.floor(Math.random() *100 ))
             return ( 
-            <div className="app-entry" key={Math.random()} onClick={()=>{addRunningApp(app_running_id, item[1]); setStartMenuOpen(false)}}> 
+            <div className="app-entry" key={Math.random()} onClick={()=>{runningAppsDispatch({type:"ADD", app_running_id:app_running_id, app_properties:item[1]});runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id}); setStartMenuOpen(false)}}> 
               <div className="app-entry-icon"> {item[1].icon}</div>
               <div className="app-entry-name"> {item[1].name}</div>
             </div>
@@ -377,13 +405,13 @@ export default function Desktop() {
         <div className="active-apps"> 
           {/* Where the taskbar is genereated */}
            {
-            RunningAppsArray.map((item)=>{ 
+            Object.entries(runningAppsTask).map((item)=>{ 
               const app_running_id = item[0]
               const app_id = app_running_id.split("#")[0]
-              const running_properties = item[1]
+              // const running_properties = item[1]
               
               return(
-              <div className="active-app" key={Math.random()} onClick={()=>{updateTaskbarMinimizeEvent(app_running_id,running_properties)}}>
+              <div className="active-app" key={Math.random()} onClick={()=>{runningAppsDispatch({type:"TASKBAR-ICON-CLICKED", app_running_id:app_running_id});}}>
                 {AppList[app_id].icon}
               </div>
 
