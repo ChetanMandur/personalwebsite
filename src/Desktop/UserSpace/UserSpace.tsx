@@ -1,7 +1,8 @@
-import {RunningAppProperties, RunningAppsContext, RunningAppsContextType} from "../Desktop"
-import "./RunningApp.css"
+
+import "./UserSpace.css"
 import {AppList} from "../../Apps/Apps"
 import { useContext } from "react"
+import { RunningAppProperties, RunningAppsContext, StartMenuContext } from "../StateContext"
 
 
 type RunningAppPropsType = {
@@ -11,7 +12,7 @@ type RunningAppPropsType = {
 }
 
 
-export default function RunningApp({app_running_id, running_properties, app_id}:RunningAppPropsType){
+export function RunningApp({app_running_id, running_properties, app_id}:RunningAppPropsType){
   const {runningAppsTask,runningAppsDispatch}= useContext(RunningAppsContext)
 
   const app_window_style : React.CSSProperties = {
@@ -60,5 +61,27 @@ export default function RunningApp({app_running_id, running_properties, app_id}:
       <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}}>{AppList[app_id].app}</div>
     </div>
   </div> 
+  )
+}
+
+
+export default function UserSpace(){
+  const {runningAppsTask,runningAppsDispatch}= useContext(RunningAppsContext)
+  const {setStartMenuOpen} = useContext(StartMenuContext)
+
+
+  return(
+
+    <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerUp={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerMove={(event) => { runningAppsDispatch({type:"WINDOW-MOVE", event:event})}}>
+        {/* Where each running app is rendered */}
+        {
+            Object.entries(runningAppsTask).map((item)=>{
+              const app_running_id = item[0]
+              const app_id = app_running_id.split("#")[0]
+              const running_properties = runningAppsTask[app_running_id]
+              return(<RunningApp key={app_running_id} app_running_id={app_running_id} app_id={app_id} running_properties={running_properties}/>)
+            })
+          }
+    </div>
   )
 }

@@ -1,7 +1,8 @@
 import { useContext } from "react"
 import "./Taskbar.css"
-import { RunningAppsContext, StartMenuContext } from "../Desktop"
+
 import { AppList } from "../../Apps/Apps"
+import { StartMenuContext, RunningAppsContext } from "../StateContext"
 
 
 
