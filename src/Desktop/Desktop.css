@@ -10,46 +10,4 @@
 
   }
 
-  .taskbar {
-    display: flex;
-    background-color: rgba(0, 0, 255, 0.5);
-    flex: 0 1 50px;
-    z-index: 1000;
-    user-select: none;
-
-    .start-button {
-      flex: 0 1 50px
-    }
-
-    .start-menu {
-      position: absolute;
-      bottom: 50px;
-      height: 500px;
-      width: 300px;
-      background-color: green;
-      z-index: 999;
-
-      .app-entry {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        column-gap: 10px;
-
-        .app-entry-icon {
-          flex: 0 1 20px;
-        }
-
-        .app-entry-name {
-          flex: 1 1 auto
-        }
-
-      }
-    }
-
-    .active-apps {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: row;
-    }
-  }
 }

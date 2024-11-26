@@ -1,7 +1,8 @@
 import React, { useState, createRef, createContext, useReducer } from "react";
 import "./Desktop.css";
-import { AppList, AppProperties } from "../Apps/Apps";
+import {AppProperties } from "../Apps/Apps";
 import RunningApp from "./RunningApp/RunningApp";
+import Taskbar from "./Taskbar/Taskbar";
 
 
 export type RunningAppProperties = {
@@ -321,64 +322,36 @@ export type RunningAppsContextType = {
 
 export const RunningAppsContext = createContext<RunningAppsContextType>({runningAppsTask:{}, runningAppsDispatch:()=>{}})
 
+export type StartMenuContextType = {
+  startMenuOpen: boolean,
+  setStartMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
+export const StartMenuContext = createContext<StartMenuContextType>({startMenuOpen: false, setStartMenuOpen: ()=>{}})
+
 export default function Desktop() {
-
-  
   const [startMenuOpen, setStartMenuOpen] = useState(false);
-
   const [runningAppsTask, runningAppsDispatch] = useReducer(runningAppsReducer, {})
-
   const RunningAppsArray = Object.entries(runningAppsTask)
-  const AppListArray = Object.entries(AppList)
-
+  
   return (
     <RunningAppsContext.Provider value = {{runningAppsTask, runningAppsDispatch}}>
-      <div className="main-container">
-      <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerUp={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerMove={(event) => { runningAppsDispatch({type:"WINDOW-MOVE", event:event})}}>
-        {/* Where each running app is rendered */}
-        {
-            RunningAppsArray.map((item)=>{
-              const app_running_id = item[0]
-              const app_id = app_running_id.split("#")[0]
-              const running_properties = runningAppsTask[app_running_id]
-              return(<RunningApp app_running_id={app_running_id} app_id={app_id} running_properties={running_properties}/>)
-            })
-          }
-      </div>
-      <div className="taskbar"> 
-        <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}>😱</div>
-        <div className="start-menu" style={{display:startMenuOpen ? "unset":"none"}}>
-          {/* Where the start menu is genereated */}
-           {AppListArray.map( (item) => { 
-            const app_running_id = item[0] + "#" + (Math.floor(Math.random() *100 ))
-            return ( 
-            <div className="app-entry" key={Math.random()} onClick={()=>{runningAppsDispatch({type:"ADD", app_running_id:app_running_id, app_properties:item[1]});runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id}); setStartMenuOpen(false)}}> 
-              <div className="app-entry-icon"> {item[1].icon}</div>
-              <div className="app-entry-name"> {item[1].name}</div>
-            </div>
-             )  
-            })}
-        </div>
-        <div className="active-apps"> 
-          {/* Where the taskbar is genereated */}
-           {
-            Object.entries(runningAppsTask).map((item)=>{ 
-              const app_running_id = item[0]
-              const app_id = app_running_id.split("#")[0]
-              // const running_properties = item[1]
-              
-              return(
-              <div className="active-app" key={Math.random()} onClick={()=>{runningAppsDispatch({type:"TASKBAR-ICON-CLICKED", app_running_id:app_running_id});}}>
-                {AppList[app_id].icon}
-              </div>
-
-              )
-          })
-           }
-
-        </div>
-      </div>
-    </div>
+      <StartMenuContext.Provider value={{startMenuOpen, setStartMenuOpen}}>
+        <div className="main-container">
+          <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerUp={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerMove={(event) => { runningAppsDispatch({type:"WINDOW-MOVE", event:event})}}>
+            {/* Where each running app is rendered */}
+            {
+                RunningAppsArray.map((item)=>{
+                  const app_running_id = item[0]
+                  const app_id = app_running_id.split("#")[0]
+                  const running_properties = runningAppsTask[app_running_id]
+                  return(<RunningApp key={app_running_id} app_running_id={app_running_id} app_id={app_id} running_properties={running_properties}/>)
+                })
+              }
+          </div>
+          <Taskbar/>
+        </div>  
+      </StartMenuContext.Provider>
     </RunningAppsContext.Provider>
     
   );
