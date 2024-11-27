@@ -6,7 +6,15 @@
   user-select: none;
 
   .start-button {
-    flex: 0 1 50px
+    flex: 0 1 50px;
+    display: flex;
+    justify-content: center;
+
+    img {
+      overflow: hidden;
+      width: 25px;
+      height: 50px;
+    }
   }
 
   .start-menu {
@@ -16,15 +24,27 @@
     width: 300px;
     background-color: green;
     z-index: 999;
+    display: flex;
+    flex-direction: column;
+    row-gap: 4px;
 
     .app-entry {
       width: 100%;
       display: flex;
       flex-direction: row;
       column-gap: 10px;
+      align-items: center;
 
       .app-entry-icon {
         flex: 0 1 20px;
+        display: flex;
+        align-items: center;
+
+
+        img {
+          width: 20px;
+          height: 20px;
+        }
       }
 
       .app-entry-name {
@@ -38,5 +58,13 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: row;
+    column-gap: 2px;
+    align-items: center;
+
+    .active-app {
+      overflow: hidden;
+      width: 25px;
+      height: 25px;
+    }
   }
 }
