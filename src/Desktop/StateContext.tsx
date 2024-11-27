@@ -184,17 +184,27 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       return temp_task
     }
     case "UPDATE-APP-FOCUS":{
-      const temp_task = {...runningAppsTask}
+      let temp_task = {...runningAppsTask}
       const current_app = {...temp_task[action.app_running_id!]}
+
+      //update focus w/ app as main focus
       for (const i of Object.entries(temp_task)){
-        const temp_app = temp_task[i[0]]
+        // if i is the current app, update focus to main
         if (i[0] == action.app_running_id){
           current_app["zIndex"] = 999
-        } else {
-          temp_app["zIndex"] = temp_app["zIndex"]-1
         }
-        temp_task[i[0]] = temp_app
+        // if i is another running app
+        else{ 
+          //check if i is not minimized
+          if (i[1]["isMinimized"] == false){
+            //reduce focus of i
+            const temp_app = {...i[1]}
+            temp_app["zIndex"] = temp_app["zIndex"]-1 
+            temp_task[i[0]] = temp_app
+          }
+        }
       }
+
       temp_task[action.app_running_id!] = current_app
       return temp_task
     }
