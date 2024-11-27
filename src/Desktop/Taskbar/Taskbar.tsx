@@ -35,7 +35,7 @@ export default function Taskbar(){
               // const running_properties = item[1]
               
               return(
-              <div className="active-app" key={Math.random()} onClick={()=>{runningAppsDispatch({type:"TASKBAR-ICON-CLICKED", app_running_id:app_running_id});}}>
+              <div className="active-app" key={Math.random()} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}>
                 {AppList[app_id].icon}
               </div>
 
