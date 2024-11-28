@@ -57,6 +57,64 @@ export type RunningAppsReducerAction = {
   resizeClickedLocation?: RunningAppProperties["resizeClicked"],
 }
 
+function focusChange(task:RunningAppListType, app_running_id:string, app_removed:boolean){
+  const temp_task = {...task}
+  
+
+  //if app is removed/minimized
+  if (app_removed){
+    let second_place:{app_id:string,zIndex:number} = {app_id:"", zIndex:0}
+    const temp_task_array = Object.entries(temp_task)
+    for (const i of temp_task_array){
+      //if focus of i is greater than second place, and i is not the current app
+      if (second_place["zIndex"] < i[1]["zIndex"] && i[0] != app_running_id! ){
+        // make sure i is not minimized
+        if (i[1]["isMinimized"] == false){
+          //update second place with i
+          second_place["app_id"] = i[0]
+          second_place["zIndex"] = i[1]["zIndex"]
+        }
+      }
+    }
+    //if second place exists, update focus to main
+    if (second_place["app_id"] != "" && second_place["zIndex"] !=0){
+      const temp_second_place = {...temp_task[second_place["app_id"]]}
+      temp_second_place["zIndex"] = 999
+      temp_task[second_place["app_id"]] = temp_second_place
+    }
+
+  } 
+  //if app is not removed/minimized
+  else{
+    // Go thru all the currently running apps
+    for (const i of Object.entries(temp_task)){
+      //Copy i
+      const temp_app = {...i[1]}
+
+      // if i is the current app, update focus to main
+      if (i[0] == app_running_id){
+        temp_app["zIndex"] = 999
+        temp_task[app_running_id!] = temp_app
+      }
+      // if i is not the current app
+      else{ 
+        //check if i is not minimized
+        if (i[1]["isMinimized"] == false){
+          //reduce focus of i
+          temp_app["zIndex"] = temp_app["zIndex"]-1 
+        }
+      }
+
+      //Re-apply i 
+      temp_task[i[0]] = temp_app
+    }
+  }
+
+  //Return modified list
+  return(temp_task)
+
+}
+
 function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAppsReducerAction):RunningAppListType{
   switch (action.type){
     case "ADD": {
@@ -66,8 +124,9 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       return(temp_task)
     }
     case "DELETE":{
-      const temp_task = {...runningAppsTask}
+      let temp_task = {...runningAppsTask}
       delete temp_task[action.app_running_id!]
+      temp_task = focusChange(temp_task, action.app_running_id!, true)
       return(temp_task)
 
     }
@@ -104,108 +163,38 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       console.log("taskbar-icon-clicked")
       
       let temp_task = {...runningAppsTask}
-
-      const current_app = {...temp_task[action.app_running_id!]}
+      
+      let current_app = {...temp_task[action.app_running_id!]}
 
       //if app is minimized
       if (current_app["isMinimized"]){
         //unminimize it
         current_app["isMinimized"] = false;
+        temp_task[action.app_running_id!] = current_app
 
         //update focus w/ app as main focus
-        for (const i of Object.entries(temp_task)){
-          // if i is the current app, update focus to main
-          if (i[0] == action.app_running_id){
-            current_app["zIndex"] = 999
-          }
-          // if i is another running app
-          else{ 
-            //check if i is not minimized
-            if (i[1]["isMinimized"] == false){
-              //reduce focus of i
-              const temp_app = {...i[1]}
-              temp_app["zIndex"] = temp_app["zIndex"]-1 
-              temp_task[i[0]] = temp_app
-            }
-          }
-        }
+        temp_task = focusChange(temp_task, action.app_running_id!, false)
       } 
       // if app is not minimized
       else{      
         // if app is in focus   
         if (current_app["zIndex"] == 999){
           //minmize the app
-          current_app["isMinimized"] = true
-          //find app with second highest focus
-          let second_place:{app_id:string,zIndex:number} = {app_id:"", zIndex:0}
-          const temp_task_array = Object.entries(temp_task)
-          for (const i of temp_task_array){
-            //if focus of i is greater than second place, and i is not the current app
-            if (second_place["zIndex"] < i[1]["zIndex"] && i[0] != action.app_running_id! ){
-              // make sure i is not minimized
-              if (i[1]["isMinimized"] == false){
-                //update second place with i
-                second_place["app_id"] = i[0]
-                second_place["zIndex"] = i[1]["zIndex"]
-              }
-            }
-          }
-          //if second place exists, update focus to amin
-          if (second_place["app_id"] != "" && second_place["zIndex"] !=0){
-            const temp_second_place = {...temp_task[second_place["app_id"]]}
-            temp_second_place["zIndex"] = 999
-            temp_task[second_place["app_id"]] = temp_second_place
-          }
-          
+          current_app["isMinimized"] = true;
+          temp_task[action.app_running_id!] = current_app
+          //update focus with next in line (second place)
+          temp_task = focusChange(temp_task, action.app_running_id!, true)
         } 
         // if app is not in focus
         else{
-          //update focus w/ app as main focus
-          for (const i of Object.entries(temp_task)){
-            //if i is app, update focus to main
-            if (i[0] == action.app_running_id){
-              current_app["zIndex"] = 999
-            } 
-            // if i isnt app
-            else{
-              // if i isnt minimized
-              if (i[1]["isMinimized"] == false){
-                //reduce focus of i
-                const temp_app = {...i[1]}
-                temp_app["zIndex"] = temp_app["zIndex"]-1 
-                temp_task[i[0]] = temp_app
-              }
-            }
-          }
-
+          temp_task = focusChange(temp_task, action.app_running_id!, false)
         }
       }
-      temp_task[action.app_running_id!] = current_app
+      // temp_task[action.app_running_id!] = current_app
       return temp_task
     }
     case "UPDATE-APP-FOCUS":{
-      let temp_task = {...runningAppsTask}
-      const current_app = {...temp_task[action.app_running_id!]}
-
-      //update focus w/ app as main focus
-      for (const i of Object.entries(temp_task)){
-        // if i is the current app, update focus to main
-        if (i[0] == action.app_running_id){
-          current_app["zIndex"] = 999
-        }
-        // if i is another running app
-        else{ 
-          //check if i is not minimized
-          if (i[1]["isMinimized"] == false){
-            //reduce focus of i
-            const temp_app = {...i[1]}
-            temp_app["zIndex"] = temp_app["zIndex"]-1 
-            temp_task[i[0]] = temp_app
-          }
-        }
-      }
-
-      temp_task[action.app_running_id!] = current_app
+      const temp_task = focusChange({...runningAppsTask}, action.app_running_id!, false)
       return temp_task
     }
 
