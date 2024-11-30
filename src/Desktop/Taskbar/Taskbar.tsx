@@ -7,9 +7,12 @@ import { StartMenuContext, RunningAppsContext } from "../StateContext"
 
 
 export default function Taskbar(){
-  const AppListArray = Object.entries(AppList)
   const {startMenuOpen, setStartMenuOpen} = useContext(StartMenuContext)
   const {runningAppsTask, runningAppsDispatch} = useContext(RunningAppsContext)
+
+
+  const AppListArray = Object.entries(AppList)
+  const RunningAppArray = Object.entries(runningAppsTask)
 
   return(
     <div className="taskbar"> 
@@ -29,20 +32,30 @@ export default function Taskbar(){
         <div className="active-apps" onClick={()=>{setStartMenuOpen(false)}}> 
           {/* Where the taskbar is genereated */}
            {
-            Object.entries(runningAppsTask).map((item)=>{ 
+            RunningAppArray.map((item)=>{ 
               const app_running_id = item[0]
               const app_id = app_running_id.split("#")[0]
               const running_properties = item[1]
 
-
               const iconStyle : React.CSSProperties = {
-                borderBottom: ((running_properties["zIndex"] == 999 && !running_properties["isMinimized"]) ? "1px solid white" : "1px solid transparent"),
-                filter: ((running_properties["zIndex"] == 999 && !running_properties["isMinimized"]) ? "none" : "brightness(0) saturate(100%) invert(16%) sepia(0%) saturate(1381%) hue-rotate(203deg) brightness(91%) contrast(75%)"),
+                filter: ((!running_properties["isMinimized"]) ? "none" : "brightness(0) saturate(100%) invert(36%) sepia(11%) saturate(0%) hue-rotate(188deg) brightness(91%) contrast(94%)"),
               }
-              
-              return(
-              <img src={AppList[app_id].icon}  style={iconStyle} className="active-app" key={Math.random()} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}/>
 
+              const statusStyle : React.CSSProperties = (running_properties["isMinimized"] ? {} : ( (running_properties["zIndex"] == 999 ) 
+                ? {
+                  width:"4px",
+                  backgroundColor:"white"
+                } : 
+                  {
+                  width:"60%",
+                  backgroundColor:"darkgrey"
+                }))
+                
+              return(
+              <div className="active-app" key={Math.random()} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
+                <img style={iconStyle} src={AppList[app_id].icon}  alt="" />
+                <div style={statusStyle} className="status"/>
+               </div>
               )
             })
            }
