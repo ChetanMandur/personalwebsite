@@ -15,7 +15,7 @@ type AppListType = {
 }
 const defaultAppProperties: AppProperties = {
   name:"undefined-app",
-  icon:"🗿",
+  icon:"https://www.svgrepo.com/show/487018/alien.svg",
   app:<HelloWorld/> ,
   defaultWidth: 400,
   defaultHeight: 300,
@@ -25,7 +25,7 @@ export const AppList : AppListType = {
   "HelloWorld": {
     ...defaultAppProperties,
     name:"Hello World",
-    icon:"🌍",
+    icon:"https://www.svgrepo.com/show/521265/world-1.svg",
     app: <HelloWorld/>,
     defaultHeight:500,
     defaultWidth:500
