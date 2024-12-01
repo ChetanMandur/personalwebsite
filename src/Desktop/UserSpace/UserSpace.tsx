@@ -51,14 +51,14 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
       
     </div> : <></>}
     <div className="app">
-      <div className="titlebar" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}} >
+      <div className="titlebar" style={{backgroundColor: (running_properties.zIndex==999 ? "var(--bar-default-colour)" : "var(--bar-unfocus-colour)")}} >
         <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}><img src={AppList[app_id].icon}/></div>
         <div className="name"  onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>{AppList[app_id].name}</div>
         <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})}}>-</div>
         <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"MAXIMIZE", app_running_id:app_running_id})}}>[]</div>
         <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
       </div>
-      <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "blue" : "darkblue")}}>{AppList[app_id].app}</div>
+      <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "var(--bar-default-colour)" : "var(--bar-unfocus-colour)")}}>{AppList[app_id].app}</div>
     </div>
   </div> 
   )

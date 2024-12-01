@@ -1,5 +1,6 @@
 .user-space {
-  background-color: rgba(255, 0, 0, 0.5);
+  --bar-unfocus-colour: #202020;
+  background-color: rgb(38, 38, 38);
   flex: 1 1 auto;
 
 
@@ -125,6 +126,7 @@
             height: 20px;
             width: 20px;
             align-self: center;
+            filter: brightness(0) saturate(100%);
 
           }
 

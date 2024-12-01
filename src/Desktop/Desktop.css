@@ -1,7 +1,20 @@
 .main-container {
+  --bar-default-colour: #4d4d4d;
+  --bar-button-active-color: rgb(63, 63, 63);
+  --bar-border-outline: 2px solid #838383;
+
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+
+  .bar-button {
+    border: black solid 3px;
+
+    border-top: var(--bar-border-outline);
+    border-left: var(--bar-border-outline);
+
+    border-width: 3px;
+  }
 
 }
