@@ -8,13 +8,13 @@
   height: 100%;
   overflow: hidden;
 
-  .bar-button {
-    border: black solid 3px;
+  .common-border {
 
-    border-top: var(--bar-border-outline);
-    border-left: var(--bar-border-outline);
+    border: var(--bar-border-outline);
+    border-right-color: black;
+    border-bottom-color: black;
 
-    border-width: 3px;
+
   }
 
 }

@@ -16,7 +16,7 @@ export default function Taskbar(){
 
   return(
     <div className="taskbar"> 
-        <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="bar-button" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
+        <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
         <div className="start-menu" style={{display:startMenuOpen ? "flex":"none"}}>
           {/* Where the start menu is genereated */}
            {AppListArray.map( (item) => { 
@@ -52,7 +52,7 @@ export default function Taskbar(){
                 }))
                 
               return(
-              <div className="bar-button active-app " key={Math.random()} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
+              <div className="common-border active-app " key={Math.random()} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
                 <img style={iconStyle} src={AppList[app_id].icon}  alt="" />
                 <div style={statusStyle} className="status"/>
                </div>

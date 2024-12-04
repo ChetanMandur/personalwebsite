@@ -1,5 +1,6 @@
 .user-space {
   --bar-unfocus-colour: #202020;
+  --bar-border-outline-unfocus: 2px solid #373737;
   background-color: rgb(38, 38, 38);
   flex: 1 1 auto;
 
@@ -141,14 +142,14 @@
 
         .titlebar-option {
           flex: 0 1 20px;
+          display: flex;
+          justify-content: center;
         }
 
 
       }
 
       .content {
-        background-color: blue;
-
         padding: var(--app-border-size);
         padding-top: 0;
         flex: 1 1 auto;

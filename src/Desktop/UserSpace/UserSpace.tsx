@@ -34,10 +34,17 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
   if (running_properties["isMinimized"]){
     app_window_style["display"] = "none"
   }
+
+  if (running_properties["zIndex"]!= 999){
+    app_window_style["borderLeft"] = "var(--bar-border-outline-unfocus)"
+    app_window_style["borderTop"] = "var(--bar-border-outline-unfocus)"
+  }
+
+
   
   
   return(
-  <div className="app-window"  onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsTask[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
+  <div className="common-border app-window"  onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsTask[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
     {!running_properties["isMaximized"] ? <div className="hitboxes">
       <div className="box" id="TopL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TL"})}}></div>
       <div className="box" id="TopR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TR"})}}></div>
@@ -54,11 +61,11 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
       <div className="titlebar" style={{backgroundColor: (running_properties.zIndex==999 ? "var(--bar-default-colour)" : "var(--bar-unfocus-colour)")}} >
         <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}><img src={AppList[app_id].icon}/></div>
         <div className="name"  onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>{AppList[app_id].name}</div>
-        <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})}}>-</div>
-        <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"MAXIMIZE", app_running_id:app_running_id})}}>[]</div>
-        <div className="titlebar-option" onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
+        <div className="common-border titlebar-option" style={(running_properties["zIndex"]== 999) ? {} : {borderLeft:"var(--bar-border-outline-unfocus)",borderTop:"var(--bar-border-outline-unfocus)"}} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})}}>-</div>
+        <div className="common-border titlebar-option" style={(running_properties["zIndex"]== 999) ? {} : {borderLeft:"var(--bar-border-outline-unfocus)",borderTop:"var(--bar-border-outline-unfocus)"}} onClick={()=>{runningAppsDispatch({type:"MAXIMIZE", app_running_id:app_running_id})}}>[]</div>
+        <div className="common-border titlebar-option" style={(running_properties["zIndex"]== 999) ? {} : {borderLeft:"var(--bar-border-outline-unfocus)",borderTop:"var(--bar-border-outline-unfocus)"}} onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
       </div>
-      <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "var(--bar-default-colour)" : "var(--bar-unfocus-colour)")}}>{AppList[app_id].app}</div>
+      <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "var(--bar-default-colour)" : "var(--bar-unfocus-colour)"), filter: (running_properties.zIndex==999 ? "" : "brightness(60%)")}}>{AppList[app_id].app}</div>
     </div>
   </div> 
   )
