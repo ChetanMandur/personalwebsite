@@ -30,7 +30,7 @@
     position: absolute;
     bottom: 50px;
     height: 55%;
-    width: 35%;
+    width: 28%;
     background-color: var(--bar-default-colour);
     border: var(--bar-border-outline);
     z-index: 999;
@@ -101,8 +101,8 @@
         .profile-picture {
           margin-top: 4%;
           overflow: hidden;
-          width: 8vw;
-          height: 8vw;
+          width: 6vw;
+          height: 6vw;
           object-fit: fill;
 
         }
@@ -120,7 +120,7 @@
         row-gap: 3%;
 
         .action-button {
-          font-size: 1.4em;
+          font-size: 1.5vw;
           height: 10%;
           display: flex;
           align-items: center;
