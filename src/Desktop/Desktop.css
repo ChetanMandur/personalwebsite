@@ -1,11 +1,12 @@
 .main-container {
+  --taskbar-height: 5vh;
 
   --bar-default-colour: #4d4d4d;
-  --bar-border-outline: 2px solid #838383;
+  --bar-border-outline: 0.3vh solid #838383;
   --bar-button-active-color: rgb(63, 63, 63);
 
   --bar-unfocus-colour: #202020;
-  --bar-border-outline-unfocus: 2px solid #373737;
+  --bar-border-outline-unfocus: 0.3vh solid #373737;
 
   display: flex;
   flex-direction: column;

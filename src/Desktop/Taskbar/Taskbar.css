@@ -1,5 +1,4 @@
 .taskbar {
-  --taskbar-height: 5vh;
   display: flex;
   background-color: var(--bar-default-colour);
   flex: 0 1 var(--taskbar-height);

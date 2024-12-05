@@ -178,8 +178,8 @@
   .app-maximized {
     left: 0;
     top: 0;
-    width: 100%;
-    height: calc(100% - 50px);
+    width: calc(100% - var(--app-border-size)*2);
+    height: calc(100% - var(--taskbar-height));
     z-index: 999;
   }
 
