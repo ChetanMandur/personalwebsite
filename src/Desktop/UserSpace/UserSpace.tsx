@@ -14,37 +14,20 @@ type RunningAppPropsType = {
 
 export function RunningApp({app_running_id, running_properties, app_id}:RunningAppPropsType){
   const {runningAppsTask,runningAppsDispatch}= useContext(RunningAppsContext)
+  const app_window_style : React.CSSProperties = {}
 
-  const app_window_style : React.CSSProperties = {
-    left: running_properties.x+"px",
-    top:running_properties.y+"px", 
-    width:(running_properties.width)+"px", 
-    height:running_properties.height+"px",
-    display:"flex",
-    zIndex: running_properties.zIndex
+
+  //This is the only part of CSS that is determined in code
+  if (!running_properties["isMaximized"]){
+    app_window_style["left"] = running_properties.x+"px";
+    app_window_style["top"]=running_properties.y+"px", 
+    app_window_style["width"]=(running_properties.width)+"px", 
+    app_window_style["height"]=running_properties.height+"px",
+    app_window_style["zIndex"]= running_properties.zIndex
   }
-
-  if (running_properties["isMaximized"]){
-    app_window_style["left"] = 0;
-    app_window_style["top"] = 0;
-    app_window_style["width"] = "100%";
-    app_window_style["height"] = "calc(100% - 50px)";
-  }
-
-  if (running_properties["isMinimized"]){
-    app_window_style["display"] = "none"
-  }
-
-  if (running_properties["zIndex"]!= 999){
-    app_window_style["borderLeft"] = "var(--bar-border-outline-unfocus)"
-    app_window_style["borderTop"] = "var(--bar-border-outline-unfocus)"
-  }
-
-
-  
   
   return(
-  <div className="common-border app-window"  onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsTask[app_running_id]["ref"]} key={app_running_id}  style={app_window_style }>
+  <div className={"common-border app-window " + (running_properties["isMaximized"] ? "app-maximized ": " ") + (running_properties["isMinimized"] ? "app-minimized " : " ") + (running_properties["zIndex"]==999 ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsTask[app_running_id]["ref"]} key={app_running_id}>
     {!running_properties["isMaximized"] ? <div className="hitboxes">
       <div className="box" id="TopL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TL"})}}></div>
       <div className="box" id="TopR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TR"})}}></div>
@@ -58,14 +41,17 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
       
     </div> : <></>}
     <div className="app">
-      <div className="titlebar" style={{backgroundColor: (running_properties.zIndex==999 ? "var(--bar-default-colour)" : "var(--bar-unfocus-colour)")}} >
+      <div className="titlebar" >
         <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}><img src={AppList[app_id].icon}/></div>
         <div className="name"  onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>{AppList[app_id].name}</div>
-        <div className="common-border titlebar-option" style={(running_properties["zIndex"]== 999) ? {} : {borderLeft:"var(--bar-border-outline-unfocus)",borderTop:"var(--bar-border-outline-unfocus)"}} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})}}>-</div>
-        <div className="common-border titlebar-option" style={(running_properties["zIndex"]== 999) ? {} : {borderLeft:"var(--bar-border-outline-unfocus)",borderTop:"var(--bar-border-outline-unfocus)"}} onClick={()=>{runningAppsDispatch({type:"MAXIMIZE", app_running_id:app_running_id})}}>[]</div>
-        <div className="common-border titlebar-option" style={(running_properties["zIndex"]== 999) ? {} : {borderLeft:"var(--bar-border-outline-unfocus)",borderTop:"var(--bar-border-outline-unfocus)"}} onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
+        <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})}}>-</div>
+        <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"MAXIMIZE", app_running_id:app_running_id})}}>[]</div>
+        <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
       </div>
-      <div className="content" style={{backgroundColor: (running_properties.zIndex==999 ? "var(--bar-default-colour)" : "var(--bar-unfocus-colour)"), filter: (running_properties.zIndex==999 ? "" : "brightness(60%)")}}>{AppList[app_id].app}</div>
+      <div className="content">
+        {running_properties["zIndex"] == 999 ? <></> : <div className="content-overlay"/>}
+        {AppList[app_id].app}
+      </div>
     </div>
   </div> 
   )

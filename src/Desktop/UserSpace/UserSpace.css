@@ -1,6 +1,4 @@
 .user-space {
-  --bar-unfocus-colour: #202020;
-  --bar-border-outline-unfocus: 2px solid #373737;
   background-color: rgb(38, 38, 38);
   flex: 1 1 auto;
 
@@ -11,6 +9,8 @@
     min-width: 200px;
     min-height: 200px;
     --app-border-size: 3px;
+    background-color: var(--bar-default-colour);
+
 
     .hitboxes {
       position: absolute;
@@ -107,25 +107,25 @@
     }
 
     .app {
-      background-color: white;
       display: flex;
       flex-direction: column;
+      --titlebar-height: 20px;
 
       .titlebar {
-        background-color: blue;
+
         user-select: none;
         display: flex;
         flex-direction: row;
-        flex: 0 1 20px;
+        flex: 0 1 var(--titlebar-height);
 
         .icon {
-          flex: 0 1 20px;
+          flex: 0 1 var(--titlebar-height);
           display: flex;
           padding-right: 4px;
 
           img {
-            height: 20px;
-            width: 20px;
+            height: var(--titlebar-height);
+            width: var(--titlebar-height);
             align-self: center;
             filter: brightness(0) saturate(100%);
 
@@ -141,9 +141,14 @@
         }
 
         .titlebar-option {
-          flex: 0 1 20px;
+          flex: 0 1 var(--titlebar-height);
           display: flex;
           justify-content: center;
+        }
+
+        .titlebar-option-unfocused {
+          border-left: var(--bar-border-outline-unfocus);
+          border-top: var(--bar-border-outline-unfocus);
         }
 
 
@@ -154,8 +159,36 @@
         padding-top: 0;
         flex: 1 1 auto;
         overflow: hidden;
+
+        .content-overlay {
+          position: absolute;
+
+          width: calc(100% - var(--app-border-size)*2);
+          height: calc(100% - var(--app-border-size) - var(--titlebar-height));
+
+          background-color: rgba(0, 0, 0, 0.60);
+
+        }
       }
     }
+  }
+
+  .app-maximized {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: calc(100% - 50px);
+    z-index: 999;
+  }
+
+  .app-minimized {
+    display: none
+  }
+
+  .app-unfocused {
+    border-left: var(--bar-border-outline-unfocus);
+    border-top: var(--bar-border-outline-unfocus);
+    background-color: var(--border-unfocus-colour);
   }
 
 }
