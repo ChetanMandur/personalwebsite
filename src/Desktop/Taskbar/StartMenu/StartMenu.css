@@ -71,6 +71,7 @@
 
       .profile-picture {
         margin-top: 4%;
+        margin-bottom: 2%;
         overflow: hidden;
         width: 8vh;
         height: 8vh;
@@ -91,7 +92,7 @@
       row-gap: 3%;
 
       .action-button {
-        font-size: 1.8vh;
+        font-weight: bold;
         height: 10%;
         display: flex;
         align-items: center;

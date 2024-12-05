@@ -146,6 +146,7 @@
           flex: 0 1 var(--titlebar-height);
           display: flex;
           justify-content: center;
+          align-items: center;
         }
 
         .titlebar-option-unfocused {

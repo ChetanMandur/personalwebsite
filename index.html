@@ -6,6 +6,16 @@
     <title>My Website</title>
   </head>
   <style>
+    /* goat https://stackoverflow.com/a/54023769 */
+    @font-face {
+    font-family: 'Win95Font';
+    src: url('/MS\ Sans\ Serif\ 8pt.woff') format('woff');
+    }
+    @font-face {
+    font-family: 'Win95Font';
+    src: url('/MS\ Sans\ Serif\ 8pt\ bold.woff') format('woff'),;
+    font-weight: bold;
+    }
     html,
     #root,
     body {
@@ -14,7 +24,9 @@
       height: 100%;
       width: 100%;
       overflow:hidden;
-      font-size: 1.5vh;
+      font-size: 1.4vh;
+      font-family: "Win95Font";
+      
     }
   </style>
   <body>
