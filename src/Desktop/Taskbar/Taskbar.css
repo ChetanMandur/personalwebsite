@@ -1,15 +1,15 @@
 .taskbar {
-
+  --taskbar-height: 50px;
   display: flex;
   background-color: var(--bar-default-colour);
-  flex: 0 1 50px;
+  flex: 0 1 var(--taskbar-height);
   z-index: 1000;
   user-select: none;
   border-top: var(--bar-border-outline);
   column-gap: 5px;
 
   .start-button {
-    flex: 0 1 50px;
+    flex: 0 1 var(--taskbar-height);
     display: flex;
     justify-content: center;
 
@@ -26,120 +26,7 @@
     }
   }
 
-  .start-menu {
-    position: absolute;
-    bottom: 50px;
-    height: 55%;
-    width: 28%;
-    background-color: var(--bar-default-colour);
-    border: var(--bar-border-outline);
-    z-index: 999;
-    display: flex;
-    flex-direction: row;
 
-    .app-list {
-      display: flex;
-      flex-direction: column;
-      row-gap: 4px;
-      flex: 1 1 auto;
-      border-right: var(--bar-border-outline);
-      padding-top: 1%;
-      padding-right: 1%;
-      overflow-y: scroll;
-      overflow-x: hidden;
-      scrollbar-width: thin;
-      scrollbar-color: black var(--bar-default-colour);
-
-      .app-entry {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        column-gap: 10px;
-        align-items: center;
-
-        border-top: var(--bar-border-outline);
-        border-right: var(--bar-border-outline);
-        /* border-right: 2px solid black; */
-        border-bottom: 2px solid black;
-
-        .app-entry-icon {
-          flex: 0 1 20px;
-          display: flex;
-          align-items: center;
-          filter: brightness(0) saturate(100%);
-
-
-          img {
-            width: 20px;
-            height: 20px;
-          }
-        }
-
-        .app-entry-name {
-          flex: 1 1 auto
-        }
-
-      }
-
-      .app-entry:active {
-        background-color: var(--bar-button-active-color);
-      }
-    }
-
-    .side-panel {
-      flex: 0 1 36%;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-
-      .profile-details {
-        border-bottom: var(--bar-border-outline);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .profile-picture {
-          margin-top: 4%;
-          overflow: hidden;
-          width: 6vw;
-          height: 6vw;
-          object-fit: fill;
-
-        }
-
-        .profile-name {}
-      }
-
-      .actions {
-        margin-top: 20%;
-        padding-left: 4%;
-        padding-right: 4%;
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-        row-gap: 3%;
-
-        .action-button {
-          font-size: 1.5vw;
-          height: 10%;
-          display: flex;
-          align-items: center;
-          /* border-left: none; */
-
-          img {
-            width: 1.2em;
-            height: 1.2em;
-            /* padding-right: 4%; */
-          }
-        }
-
-        .action-button:active {
-          background-color: var(--bar-button-active-color);
-        }
-      }
-
-    }
-  }
 
   .active-apps {
     flex: 1 1 auto;
