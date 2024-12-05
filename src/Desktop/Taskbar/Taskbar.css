@@ -1,12 +1,12 @@
 .taskbar {
-  --taskbar-height: 50px;
+  --taskbar-height: 5vh;
   display: flex;
   background-color: var(--bar-default-colour);
   flex: 0 1 var(--taskbar-height);
   z-index: 1000;
   user-select: none;
   border-top: var(--bar-border-outline);
-  column-gap: 5px;
+  column-gap: 0.6vh;
 
   .start-button {
     flex: 0 1 var(--taskbar-height);
@@ -16,9 +16,10 @@
     img {
       align-self: center;
       overflow: hidden;
-      width: 25px;
-      height: 25px;
-      padding: 6px
+      width: calc(var(--taskbar-height)/2);
+      height: calc(var(--taskbar-height)/2);
+      padding: 0.6vh;
+
     }
 
     img:active {
@@ -32,7 +33,7 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: row;
-    column-gap: 5px;
+    column-gap: 0.5vh;
     align-items: center;
 
 
@@ -40,13 +41,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-bottom: 2px;
-      border-width: 1px;
+      padding-bottom: 0.2vh;
+      border-width: 0.1vh;
 
       .status {
         bottom: 0;
 
-        height: 2px;
+        height: 0.2vh;
       }
 
       .status-focused {
@@ -62,10 +63,10 @@
 
       img {
         overflow: hidden;
-        width: 28px;
-        height: 28px;
-        padding-top: 2px;
-        padding-bottom: 2px;
+        width: 2.8vh;
+        height: 2.8vh;
+        padding-top: 0.2vh;
+        padding-bottom: 0.2vh;
       }
 
       .icon-minimized {
