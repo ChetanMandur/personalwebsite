@@ -188,7 +188,7 @@
   .app-unfocused {
     border-left: var(--bar-border-outline-unfocus);
     border-top: var(--bar-border-outline-unfocus);
-    background-color: var(--border-unfocus-colour);
+    background-color: var(--bar-unfocus-colour);
   }
 
 }
