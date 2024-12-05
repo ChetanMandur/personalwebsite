@@ -162,6 +162,16 @@
         height: 2px;
       }
 
+      .status-focused {
+        width: 10%;
+        background-color: white;
+      }
+
+      .status-unfocused {
+        width: 60%;
+        background-color: darkgrey;
+      }
+
 
       img {
         overflow: hidden;
@@ -170,10 +180,20 @@
         padding-top: 2px;
         padding-bottom: 2px;
       }
+
+      .icon-minimized {
+        filter: brightness(0) saturate(100%) invert(36%) sepia(11%) saturate(0%) hue-rotate(188deg) brightness(91%) contrast(94%);
+      }
+
+      .icon-unminimized {
+        filter: brightness(0) saturate(100%);
+      }
     }
 
     .active-app:active {
       background-color: var(--bar-button-active-color);
     }
+
+
   }
 }

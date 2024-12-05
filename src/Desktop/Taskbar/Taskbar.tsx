@@ -17,8 +17,9 @@ export default function Taskbar(){
   return(
     <div className="taskbar"> 
         <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
-        <div className="start-menu" style={{display:startMenuOpen ? "flex":"none"}}>
-           <div className="app-list">
+        {startMenuOpen ?
+        <div className="start-menu">
+          <div className="app-list">
             {AppListArray.map( (item) => { 
               const app_running_id = item[0] + "#" + (Math.floor(Math.random() *100 ))
               return ( 
@@ -28,8 +29,8 @@ export default function Taskbar(){
               </div>
               )  
               })}
-           </div>
-           <div className="side-panel">
+          </div>
+          <div className="side-panel">
             <div className="profile-details">
               {/* <img className="common-border profile-picture" src="https://avatars.githubusercontent.com/u/25832939?v=4" alt="" /> */}
               {/* <img className="common-border profile-picture" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Doolhofzwam_%28Daedalea_quercina%29_30-11-2022._%28d.j.b%29.jpg/2560px-Doolhofzwam_%28Daedalea_quercina%29_30-11-2022._%28d.j.b%29.jpg" alt="" /> */}
@@ -43,8 +44,9 @@ export default function Taskbar(){
               <div className="common-border action-button"> <img src="https://www.svgrepo.com/show/435417/settings.svg" alt="" />Settings</div>
 
             </div>
-           </div>
+          </div>
         </div>
+        :<></>}
         <div className="active-apps" onClick={()=>{setStartMenuOpen(false)}}> 
           {/* Where the taskbar is genereated */}
            {
@@ -53,24 +55,10 @@ export default function Taskbar(){
               const app_id = app_running_id.split("#")[0]
               const running_properties = item[1]
 
-              const iconStyle : React.CSSProperties = {
-                filter: ((!running_properties["isMinimized"]) ? "brightness(0) saturate(100%)" : "brightness(0) saturate(100%) invert(36%) sepia(11%) saturate(0%) hue-rotate(188deg) brightness(91%) contrast(94%)"),
-              }
-
-              const statusStyle : React.CSSProperties = (running_properties["isMinimized"] ? {} : ( (running_properties["zIndex"] == 999 ) 
-                ? {
-                  width:"4px",
-                  backgroundColor:"white"
-                } : 
-                  {
-                  width:"60%",
-                  backgroundColor:"darkgrey"
-                }))
-                
               return(
               <div className="common-border active-app " key={Math.random()} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
-                <img style={iconStyle} src={AppList[app_id].icon}  alt="" />
-                <div style={statusStyle} className="status"/>
+                <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={AppList[app_id].icon}  alt="" />
+                <div className={"status "+ (running_properties["isMinimized"] ? "" : (running_properties["zIndex"] == 999 ? "status-focused": "status-unfocused"))}/>
                </div>
               )
             })
