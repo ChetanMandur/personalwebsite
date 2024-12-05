@@ -1,8 +1,8 @@
 .start-menu {
   position: absolute;
   bottom: var(--taskbar-height);
-  height: 55%;
-  width: 28%;
+  height: 55vh;
+  width: 40vh;
   background-color: var(--bar-default-colour);
   border: var(--bar-border-outline);
   z-index: 999;
@@ -12,7 +12,7 @@
   .app-list {
     display: flex;
     flex-direction: column;
-    row-gap: 4px;
+    row-gap: 0.4vh;
     flex: 1 1 auto;
     border-right: var(--bar-border-outline);
     padding-top: 1%;
@@ -26,24 +26,23 @@
       width: 100%;
       display: flex;
       flex-direction: row;
-      column-gap: 10px;
+      column-gap: 1vh;
       align-items: center;
 
       border-top: var(--bar-border-outline);
       border-right: var(--bar-border-outline);
-      /* border-right: 2px solid black; */
-      border-bottom: 2px solid black;
+      border-bottom: 0.2vh solid black;
 
       .app-entry-icon {
-        flex: 0 1 20px;
+        flex: 0 1 2vh;
         display: flex;
         align-items: center;
         filter: brightness(0) saturate(100%);
 
 
         img {
-          width: 20px;
-          height: 20px;
+          width: 2vh;
+          height: 2vh;
         }
       }
 
@@ -73,8 +72,8 @@
       .profile-picture {
         margin-top: 4%;
         overflow: hidden;
-        width: 6vw;
-        height: 6vw;
+        width: 8vh;
+        height: 8vh;
         object-fit: fill;
 
       }
@@ -92,16 +91,14 @@
       row-gap: 3%;
 
       .action-button {
-        font-size: 1.5vw;
+        font-size: 1.8vh;
         height: 10%;
         display: flex;
         align-items: center;
-        /* border-left: none; */
 
         img {
-          width: 1.2em;
-          height: 1.2em;
-          /* padding-right: 4%; */
+          width: 4vh;
+          height: 4vh;
         }
       }
 
