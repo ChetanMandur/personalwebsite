@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import "./Taskbar.css"
 
 import { AppList } from "../../Apps/Apps"
@@ -8,10 +8,30 @@ import StartMenu from "./StartMenu/StartMenu"
 
 
 export default function Taskbar(){
-  const {startMenuOpen, setStartMenuOpen} = useContext(StartMenuContext)
-  const {runningAppsTask, runningAppsDispatch} = useContext(RunningAppsContext)
+  const {startMenuOpen, setStartMenuOpen} = useContext(StartMenuContext);
+  const {runningAppsTask, runningAppsDispatch} = useContext(RunningAppsContext);
+
+  const [date, setDate] = useState(new Date())
 
   const RunningAppArray = Object.entries(runningAppsTask)
+
+  useEffect(() =>{
+    const dateCheck = setInterval(()=>setDate(new Date()), 1000)
+
+    return () => clearInterval(dateCheck)
+  },[])
+
+  let time_hour = date.getHours()
+  let time_minute = date.getMinutes()
+  // let time_second = date.getSeconds()
+
+  if (time_hour <= 12){
+    if (time_hour == 0){
+      time_hour = 12
+    }
+  } else{
+    time_hour = time_hour - 12
+  }
 
   return(
     <div className="taskbar"> 
@@ -34,6 +54,11 @@ export default function Taskbar(){
            }
 
         </div>
+        <div className="time-and-date">
+          <div className="common time">{time_hour}<div className="blink">:</div>{time_minute < 10 ? "0":""}{time_minute} {time_hour > 12? "PM" : "AM"}</div>
+          <div className="common date">{date.getDate()}/{date.getMonth()+1}/{date.getFullYear()}</div>
+        </div>
       </div>
   )
 }
+

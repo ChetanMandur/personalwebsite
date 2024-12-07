@@ -1,3 +1,10 @@
+
+@keyframes blink {
+  100%{
+    visibility: hidden;
+  }
+}
+
 .taskbar {
   display: flex;
   background-color: var(--bar-default-colour);
@@ -6,6 +13,7 @@
   user-select: none;
   border-top: var(--bar-border-outline);
   column-gap: 0.6vh;
+  max-height: var(--taskbar-height);
 
   .start-button {
     flex: 0 1 var(--taskbar-height);
@@ -82,5 +90,36 @@
     }
 
 
+  }
+
+  .time-and-date{
+    flex: 0 1 calc(var(--taskbar-height)*1.8);
+    display:flex;
+    flex-direction: column;  
+    text-align: center;
+    row-gap: 0.5vh;
+    border-left: var(--bar-border-outline);
+    border-left-width: 0.1vh;
+
+    .common{
+      flex: 0 1 50%;
+    }
+    .time{
+
+      align-content: end;
+
+
+      
+      .blink{
+        display: inline;
+        animation: blink 1s steps(2,start) 0s infinite alternate;
+      }
+
+      
+
+    }
+    .date{
+      align-content: start;
+    }
   }
 }
