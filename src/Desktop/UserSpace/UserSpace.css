@@ -185,7 +185,7 @@
   }
 
   .app-minimized {
-    display: none
+    visibility: hidden;
   }
 
   .app-unfocused {
