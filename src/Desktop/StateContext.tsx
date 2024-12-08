@@ -238,31 +238,34 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
         const temp_app = {...temp_task[i[0]]}
         if (temp_app["titlebarClicked"]){
           temp_app["titlebarClicked"] = false
-          const deadzone = 50;
-          const taskbar_height = window.innerHeight * 0.05 
+          const zoneX = 20;
+          const zoneY = 10;
+
+
+          const taskbar_height = window.innerHeight * 0.1 
           const mouseX = temp_app.x + temp_app.titlebarClickedDistanceX
           const mouseY = temp_app.y + temp_app.titlebarClickedDistanceY
           console.log(mouseX,mouseY)
 
           let mouseLocationX = ""
-          if ((0 <= mouseX) && (mouseX < deadzone)){
+          if ((0 <= mouseX) && (mouseX < zoneX)){
             mouseLocationX = "LEFT"
           }
-          else if ((deadzone <= mouseX) && (mouseX < window.innerWidth - deadzone)){
+          else if ((zoneX <= mouseX) && (mouseX < window.innerWidth - zoneX)){
             mouseLocationX = "MIDDLE"
           }
-          else if ((window.innerWidth - deadzone <= mouseX) && (mouseX < window.innerWidth)){
+          else if ((window.innerWidth - zoneX <= mouseX) && (mouseX <= window.innerWidth)){
             mouseLocationX = "RIGHT"
           }
           
           let mouseLocationY = ""
-          if ((0 <= mouseY) && (mouseY < deadzone)){
+          if ((0 <= mouseY) && (mouseY < zoneY)){
             mouseLocationY = "TOP"
           }
-          else if ((deadzone <= mouseY) && (mouseY < window.innerHeight- deadzone - taskbar_height)){
+          else if ((zoneY <= mouseY) && (mouseY < window.innerHeight- zoneY - taskbar_height)){
             mouseLocationY = "MIDDLE"
           }
-          else if ((window.innerHeight - deadzone - taskbar_height <= mouseY) && (mouseY < window.innerHeight)){
+          else if ((window.innerHeight - zoneY - taskbar_height <= mouseY) && (mouseY <= window.innerHeight)){
             mouseLocationY = "BOTTOM"
           }
 
