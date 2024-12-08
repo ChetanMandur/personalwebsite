@@ -18,17 +18,44 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
 
 
   //This is the only part of CSS that is determined in code
-  if (!running_properties["isMaximized"]){
+  if (running_properties["maximizeType"] == null){
     app_window_style["left"] = running_properties.x+"px";
     app_window_style["top"]=running_properties.y+"px"; 
     app_window_style["width"]=(running_properties.width)+"px"; 
     app_window_style["height"]=running_properties.height+"px";
     app_window_style["zIndex"]= running_properties.zIndex
   }
+
+  let maximize_class = " "
+  switch (running_properties["maximizeType"]) {
+    case "FULL":
+      maximize_class = "app-maximized"
+      break;
+    case "TL":
+      maximize_class = "app-maximized-tl"
+      break;
+    case "LEFT":
+      maximize_class = "app-maximized-left"
+      break;
+    case "BL":
+        maximize_class = "app-maximized-bl"
+        break;
+    case "TR":
+      maximize_class = "app-maximized-tr"
+        break;
+    case "RIGHT":
+      maximize_class = "app-maximized-right"
+        break;
+    case "BR":
+      maximize_class = "app-maximized-br"
+        break;
+    default:
+      maximize_class = " "
+  }
   
   return(
-  <div className={"common-border app-window " + (running_properties["isMaximized"] ? "app-maximized ": " ") + (running_properties["isMinimized"] ? "app-minimized " : " ") + (running_properties["zIndex"]==999 ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsTask[app_running_id]["ref"]} key={app_running_id}>
-    {!running_properties["isMaximized"] ? <div className="hitboxes">
+  <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (running_properties["zIndex"]==999 ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsTask[app_running_id]["ref"]} key={app_running_id}>
+    {running_properties["maximizeType"] == null ? <div className="hitboxes">
       <div className="box" id="TopL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TL"})}}></div>
       <div className="box" id="TopR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TR"})}}></div>
       <div className="box" id="BotL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"BL"})}}></div>
@@ -41,11 +68,11 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
       
     </div> : <></>}
     <div className="app">
-      <div className="titlebar" onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", app_running_id:app_running_id})}} >
+      <div className="titlebar" onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", maximizeType:"FULL",app_running_id:app_running_id})}} >
         <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}><img src={AppList[app_id].icon}/></div>
         <div className="name"  onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>{AppList[app_id].name}</div>
         <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})}}>-</div>
-        <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"MAXIMIZE", app_running_id:app_running_id})}}>[]</div>
+        <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}}>[]</div>
         <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
       </div>
       <div className="content">
@@ -65,7 +92,7 @@ export default function UserSpace(){
 
   return(
 
-    <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerUp={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerMove={(event) => { runningAppsDispatch({type:"WINDOW-MOVE", event:event})}}>
+    <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerLeave={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerUp={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerMove={(event) => { runningAppsDispatch({type:"WINDOW-MOVE", event:event})}}>
         {/* Where each running app is rendered */}
         {
             Object.entries(runningAppsTask).map((item)=>{

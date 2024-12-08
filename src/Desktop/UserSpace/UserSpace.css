@@ -183,7 +183,53 @@
     height: calc(100% - var(--taskbar-height));
     z-index: 999;
   }
+  .app-maximized-tl {
+    left: 0;
+    top: 0;
+    width: calc(50% - var(--app-border-size)*2);
+    height: calc((100% - var(--taskbar-height))/2);
+    z-index: 999;
+  }
 
+  .app-maximized-left {
+    left: 0;
+    top: 0;
+    width: calc(50% - var(--app-border-size)*2);
+    height: calc(100% - var(--taskbar-height));
+    z-index: 999;
+  }
+
+  .app-maximized-bl {
+    left: 0;
+    bottom: var(--taskbar-height);
+    width: calc(50% - var(--app-border-size)*2);
+    height: calc((100% - var(--taskbar-height))/2);
+    z-index: 999;
+  }
+
+  .app-maximized-tr {
+    right:0;
+    top: 0;
+    width: calc(50% - var(--app-border-size)*2);
+    height: calc((100% - var(--taskbar-height))/2);
+    z-index: 999;
+  }
+
+  .app-maximized-right {
+    left:50%;
+    top: 0;
+    width: calc(50% - var(--app-border-size)*2);
+    height: calc(100% - var(--taskbar-height));
+    z-index: 999;
+  }
+
+  .app-maximized-br {
+    right: 0;
+    bottom: var(--taskbar-height);
+    width: calc(50% - var(--app-border-size)*2);
+    height: calc((100% - var(--taskbar-height))/2);
+    z-index: 999;
+  }
   .app-minimized {
     visibility: hidden;
   }
