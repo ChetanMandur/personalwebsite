@@ -22,9 +22,9 @@ export default function Taskbar(){
   },[])
 
   let time_hour = date.getHours()
-  let time_minute = date.getMinutes()
+  const time_minute = date.getMinutes()
   // let time_second = date.getSeconds()
-  let time_half = time_hour > 12
+  const time_half = time_hour > 12
 
   if (time_hour <= 12){
     if (time_hour == 0){

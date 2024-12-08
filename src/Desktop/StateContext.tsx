@@ -63,7 +63,7 @@ function focusChange(task:RunningAppListType, app_running_id:string, app_removed
 
   //if app is removed/minimized
   if (app_removed){
-    let second_place:{app_id:string,zIndex:number} = {app_id:"", zIndex:0}
+    const second_place:{app_id:string,zIndex:number} = {app_id:"", zIndex:0}
     const temp_task_array = Object.entries(temp_task)
     for (const i of temp_task_array){
       //if focus of i is greater than second place, and i is not the current app
@@ -164,7 +164,7 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       
       let temp_task = {...runningAppsTask}
       
-      let current_app = {...temp_task[action.app_running_id!]}
+      const current_app = {...temp_task[action.app_running_id!]}
 
       //if app is minimized
       if (current_app["isMinimized"]){
