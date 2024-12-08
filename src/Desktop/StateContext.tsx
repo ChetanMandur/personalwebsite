@@ -207,8 +207,8 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       
       if (current_app["maximizeType"] != null){
         current_app["maximizeType"] = null
-        const xRatio = action.event!.clientX / current_app["ref"].current!.getBoundingClientRect().width
-        const yRatio = action.event!.clientY / current_app["ref"].current!.getBoundingClientRect().height
+        const xRatio = (action.event!.clientX - current_app["ref"].current!.getBoundingClientRect().x ) / current_app["ref"].current!.getBoundingClientRect().width
+        const yRatio = (action.event!.clientY - current_app["ref"].current!.getBoundingClientRect().y) / current_app["ref"].current!.getBoundingClientRect().height
 
 
         const width_chunk = current_app["width"]*xRatio

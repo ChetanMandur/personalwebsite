@@ -181,14 +181,13 @@
     top: 0;
     width: calc(100% - var(--app-border-size)*2);
     height: calc(100% - var(--taskbar-height));
-    z-index: 999;
+    /* z-index: 999; */
   }
   .app-maximized-tl {
     left: 0;
     top: 0;
     width: calc(50% - var(--app-border-size)*2);
     height: calc((100% - var(--taskbar-height))/2);
-    z-index: 999;
   }
 
   .app-maximized-left {
@@ -196,7 +195,6 @@
     top: 0;
     width: calc(50% - var(--app-border-size)*2);
     height: calc(100% - var(--taskbar-height));
-    z-index: 999;
   }
 
   .app-maximized-bl {
@@ -204,7 +202,6 @@
     bottom: var(--taskbar-height);
     width: calc(50% - var(--app-border-size)*2);
     height: calc((100% - var(--taskbar-height))/2);
-    z-index: 999;
   }
 
   .app-maximized-tr {
@@ -212,7 +209,6 @@
     top: 0;
     width: calc(50% - var(--app-border-size)*2);
     height: calc((100% - var(--taskbar-height))/2);
-    z-index: 999;
   }
 
   .app-maximized-right {
@@ -220,7 +216,6 @@
     top: 0;
     width: calc(50% - var(--app-border-size)*2);
     height: calc(100% - var(--taskbar-height));
-    z-index: 999;
   }
 
   .app-maximized-br {
@@ -228,7 +223,6 @@
     bottom: var(--taskbar-height);
     width: calc(50% - var(--app-border-size)*2);
     height: calc((100% - var(--taskbar-height))/2);
-    z-index: 999;
   }
   .app-minimized {
     visibility: hidden;
