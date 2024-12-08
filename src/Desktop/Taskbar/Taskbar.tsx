@@ -24,6 +24,7 @@ export default function Taskbar(){
   let time_hour = date.getHours()
   let time_minute = date.getMinutes()
   // let time_second = date.getSeconds()
+  let time_half = time_hour > 12
 
   if (time_hour <= 12){
     if (time_hour == 0){
@@ -55,7 +56,7 @@ export default function Taskbar(){
 
         </div>
         <div className="time-and-date">
-          <div className="common time">{time_hour}<div className="blink">:</div>{time_minute < 10 ? "0":""}{time_minute} {time_hour > 12? "PM" : "AM"}</div>
+          <div className="common time">{time_hour}<div className="blink">:</div>{time_minute < 10 ? "0":""}{time_minute} {time_half ? "PM" : "AM"}</div>
           <div className="common date">{date.getDate()}/{date.getMonth()+1}/{date.getFullYear()}</div>
         </div>
       </div>
