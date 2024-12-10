@@ -214,8 +214,6 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
         const width_chunk = current_app["width"]*xRatio
         const height_chunk = current_app["height"]*yRatio 
 
-        console.log(width_chunk, height_chunk)
-
 
         current_app["x"] = action.event!.clientX -  width_chunk
         current_app["y"] = action.event!.clientY -  height_chunk
@@ -238,14 +236,33 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
         const temp_app = {...temp_task[i[0]]}
         if (temp_app["titlebarClicked"]){
           temp_app["titlebarClicked"] = false
+
+
+        } 
+        temp_task[i[0]] = temp_app
+      }
+      return temp_task
+
+    }
+
+    case "WINDOW-MOVE":{
+      const temp_task = {...runningAppsTask}
+      for (const i of Object.entries(runningAppsTask)){
+        const temp_app_running_id = i[0]
+        const temp_app = {...temp_task[temp_app_running_id]}
+
+        
+
+        if (temp_app["titlebarClicked"]){
+          temp_app["x"]= action.event!.clientX - temp_app["titlebarClickedDistanceX"] 
+          temp_app["y"] =  action.event!.clientY - temp_app["titlebarClickedDistanceY"]
+
+          
           const zoneX = 20;
           const zoneY = 10;
-
-
           const taskbar_height = window.innerHeight * 0.1 
           const mouseX = temp_app.x + temp_app.titlebarClickedDistanceX
           const mouseY = temp_app.y + temp_app.titlebarClickedDistanceY
-          console.log(mouseX,mouseY)
 
           let mouseLocationX = ""
           if ((0 <= mouseX) && (mouseX < zoneX)){
@@ -283,6 +300,8 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
           if (mouseLocationX == "MIDDLE"){
             if (mouseLocationY == "TOP"){
               temp_app["maximizeType"] = "FULL"
+            } else {
+              temp_app["maximizeType"] = null
             }
           }
           if (mouseLocationX == "RIGHT"){
@@ -297,26 +316,6 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
             }
           }
 
-          console.log(temp_app["maximizeType"], mouseLocationX,mouseLocationY)
-
-        } 
-        temp_task[i[0]] = temp_app
-      }
-      return temp_task
-
-    }
-
-    case "WINDOW-MOVE":{
-      const temp_task = {...runningAppsTask}
-      for (const i of Object.entries(runningAppsTask)){
-        const temp_app_running_id = i[0]
-        const temp_app = {...temp_task[temp_app_running_id]}
-
-        
-
-        if (temp_app["titlebarClicked"]){
-          temp_app["x"]= action.event!.clientX - temp_app["titlebarClickedDistanceX"] 
-          temp_app["y"] =  action.event!.clientY - temp_app["titlebarClickedDistanceY"]
         }
 
         if (temp_app["resizeClicked"] != null){

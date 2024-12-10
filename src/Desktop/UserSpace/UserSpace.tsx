@@ -20,12 +20,12 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
   //This is the only part of CSS that is determined in code
   app_window_style["zIndex"]= running_properties.zIndex
 
-  if (running_properties["maximizeType"] == null){
+  if ((running_properties["maximizeType"] == null) || ( (running_properties["maximizeType"] != null) && (running_properties["titlebarClicked"]))){
     app_window_style["left"] = running_properties.x+"px";
     app_window_style["top"]=running_properties.y+"px"; 
     app_window_style["width"]=(running_properties.width)+"px"; 
     app_window_style["height"]=running_properties.height+"px";
-  }
+  } 
 
   let maximize_class = " "
   switch (running_properties["maximizeType"]) {
