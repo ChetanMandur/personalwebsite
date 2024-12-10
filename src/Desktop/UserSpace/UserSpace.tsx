@@ -1,7 +1,7 @@
 
 import "./UserSpace.css"
 import {AppList} from "../../Apps/Apps"
-import { useContext } from "react"
+import { useContext, useRef } from "react"
 import { RunningAppProperties, RunningAppsContext, StartMenuContext } from "../StateContext"
 
 
@@ -89,6 +89,7 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
 export default function UserSpace(){
   const {runningAppsTask,runningAppsDispatch}= useContext(RunningAppsContext)
   const {setStartMenuOpen} = useContext(StartMenuContext)
+  const outline_ref = useRef<(HTMLDivElement|null)[]>([]);
 
 
   return(
@@ -96,11 +97,123 @@ export default function UserSpace(){
     <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerLeave={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerUp={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerMove={(event) => { runningAppsDispatch({type:"WINDOW-MOVE", event:event})}}>
         {/* Where each running app is rendered */}
         {
-            Object.entries(runningAppsTask).map((item)=>{
+            Object.entries(runningAppsTask).map((item, index)=>{
               const app_running_id = item[0]
               const app_id = app_running_id.split("#")[0]
               const running_properties = runningAppsTask[app_running_id]
-              return(<RunningApp key={app_running_id} app_running_id={app_running_id} app_id={app_id} running_properties={running_properties}/>)
+
+              if (running_properties["maximizeType"] != null && running_properties["titlebarClicked"]){
+                switch (running_properties["maximizeType"]) {
+                  case "FULL":
+                    outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
+                      width: "calc(100% - var(--app-border-size)*2)", 
+                      height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
+                      top: "0", 
+                      left:"0",
+                      bottom: "unset", 
+                      right:"unset", 
+                      borderColor:"var(--snap-colour)",
+                      backgroundColor:"var(--snap-opacity)"
+                    }],{fill:"forwards", duration:100, iterations:1})
+                    break;
+                  case "TL":
+                    outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
+                      width: "calc(50% - var(--app-border-size)*1.5)", 
+                      height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)* 1.5", 
+                      top: "0", 
+                      left:"0", 
+                      bottom: "unset", 
+                      right:"unset", 
+                      borderColor:"var(--snap-colour)",
+                      backgroundColor:"var(--snap-opacity)"
+                    }],{fill:"forwards", duration:100, iterations:1})
+                    break;
+                  case "LEFT":
+                    outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
+                      width: "calc(50% - var(--app-border-size))", 
+                      height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
+                      top: "0", 
+                      left:"0", 
+                      bottom: "unset", 
+                      right:"unset", 
+                      borderColor:"var(--snap-colour)",
+                      backgroundColor:"var(--snap-opacity)"
+                    }],{fill:"forwards", duration:100, iterations:1})
+                    break;
+                  case "BL":
+                    outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
+                      width: "calc(50% - var(--app-border-size)*1.5)", 
+                      height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size) * 1.5)", 
+                      bottom: "calc(var(--taskbar-height) + var(--bar-border-outline-width))", 
+                      left:"0", 
+                      top: "unset", 
+                      right:"unset", 
+                      borderColor:"var(--snap-colour)",
+                      backgroundColor:"var(--snap-opacity)"
+                    }],{fill:"forwards", duration:100, iterations:1})
+                      break;
+                  case "TR":
+                    outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
+                      width: "calc(50% - var(--app-border-size)*1.5)", 
+                      height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5)", 
+                      top: "0", 
+                      right:"0", 
+                      left:"unset", 
+                      bottom: "unset", 
+                      borderColor:"var(--snap-colour)",
+                      backgroundColor:"var(--snap-opacity)"
+                    }],{fill:"forwards", duration:100, iterations:1})
+                      break;
+                  case "RIGHT":
+                    outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
+                      width: "calc(50% - var(--app-border-size))", 
+                      height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
+                      top: "0", 
+                      left:"50%", 
+                      bottom: "unset", 
+                      right:"unset", 
+                      borderColor:"var(--snap-colour)",
+                      backgroundColor:"var(--snap-opacity)"
+                    }],{fill:"forwards", duration:100, iterations:1})
+                      break;
+                  case "BR":
+                    outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
+                      width: "calc(50% - var(--app-border-size)*1.5)", 
+                      height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5)", 
+                      right:"0", 
+                      bottom: "calc(var(--taskbar-height) + var(--bar-border-outline-width))",
+                      top: "unset", 
+                      left:"unset", 
+                      borderColor:"var(--snap-colour)",
+                      backgroundColor:"var(--snap-opacity)"
+                    }],{fill:"forwards", duration:100, iterations:1})
+                      break;
+                }
+              } else{
+                if (running_properties["maximizeType"] == null){
+                  outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
+                    width: running_properties.width+"px",
+                     height: running_properties.height+"px", 
+                     top: running_properties.y + "px",
+                     left: running_properties.x +"px",
+                     borderColor:"transparent",
+                     backgroundColor:"transparent",
+                    }],{fill:"forwards", duration:500, iterations:1})
+                } else{
+                  outline_ref.current[index]?.animate([{
+                     borderColor:"transparent",
+                     backgroundColor:"transparent",
+                    }],{fill:"forwards", duration:500, iterations:1})
+                }
+              }
+              
+
+              return(
+                <div className={app_running_id} key={app_running_id}>
+                  <RunningApp app_running_id={app_running_id} app_id={app_id} running_properties={running_properties}/>
+                  <div className={"outline " + running_properties["maximizeType"]} ref={ref => outline_ref.current[index] = ref}></div>
+                </div>
+              )
             })
           }
     </div>
