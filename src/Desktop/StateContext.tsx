@@ -258,31 +258,37 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
           temp_app["y"] =  action.event!.clientY - temp_app["titlebarClickedDistanceY"]
 
           
-          const zoneX = 20;
-          const zoneY = 10;
-          const taskbar_height = window.innerHeight * 0.1 
+          const taskbar_height = window.innerHeight * 0.07 
           const mouseX = temp_app.x + temp_app.titlebarClickedDistanceX
           const mouseY = temp_app.y + temp_app.titlebarClickedDistanceY
 
+
+          const xBorderWidth = 20;
+          const xBorder1 = xBorderWidth
+          const xBorder2 = window.innerWidth - xBorderWidth 
           let mouseLocationX = ""
-          if ((0 <= mouseX) && (mouseX < zoneX)){
+          if ((0 <= mouseX) && (mouseX < xBorder1)){
             mouseLocationX = "LEFT"
           }
-          else if ((zoneX <= mouseX) && (mouseX < window.innerWidth - zoneX)){
+          else if ((xBorder1 <= mouseX) && (mouseX < xBorder2)){
             mouseLocationX = "MIDDLE"
           }
-          else if ((window.innerWidth - zoneX <= mouseX) && (mouseX <= window.innerWidth)){
+          else if ((xBorder2 <= mouseX) && (mouseX <= window.innerWidth)){
             mouseLocationX = "RIGHT"
           }
           
+
+          const yBorderWidth = 10;
+          const yBorder1 = yBorderWidth
+          const yBorder2 = window.innerHeight - yBorderWidth - taskbar_height
           let mouseLocationY = ""
-          if ((0 <= mouseY) && (mouseY < zoneY)){
+          if ((0 <= mouseY) && (mouseY < yBorder1)){
             mouseLocationY = "TOP"
           }
-          else if ((zoneY <= mouseY) && (mouseY < window.innerHeight- zoneY - taskbar_height)){
+          else if ((yBorder1 <= mouseY) && (mouseY < yBorder2)){
             mouseLocationY = "MIDDLE"
           }
-          else if ((window.innerHeight - zoneY - taskbar_height <= mouseY) && (mouseY <= window.innerHeight)){
+          else if ((yBorder2 <= mouseY) && (mouseY <= window.innerHeight)){
             mouseLocationY = "BOTTOM"
           }
 
