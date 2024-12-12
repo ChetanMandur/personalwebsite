@@ -203,7 +203,7 @@
   .app-maximized-left {
     left: 0;
     top: 0;
-    width: calc(50% - var(--app-border-size));
+    width: calc(50% - var(--app-border-size)*1.5);
     height: calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3);
   }
 
@@ -227,7 +227,7 @@
   .app-maximized-right {
     left:50%;
     top: 0;
-    width: calc(50% - var(--app-border-size));
+    width: calc(50% - var(--app-border-size)*1.5);
     height: calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3);
   }
 

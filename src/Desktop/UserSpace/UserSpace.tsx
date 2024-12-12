@@ -110,8 +110,6 @@ export default function UserSpace(){
                       height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
                       top: "0", 
                       left:"0",
-                      bottom: "unset", 
-                      right:"unset", 
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
                     }],{fill:"forwards", duration:100, iterations:1})
@@ -122,20 +120,17 @@ export default function UserSpace(){
                       height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)* 1.5", 
                       top: "0", 
                       left:"0", 
-                      bottom: "unset", 
-                      right:"unset", 
+
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
                     }],{fill:"forwards", duration:100, iterations:1})
                     break;
                   case "LEFT":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "calc(50% - var(--app-border-size))", 
+                      width: "calc(50% - var(--app-border-size)*1.5)", 
                       height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
                       top: "0", 
                       left:"0", 
-                      bottom: "unset", 
-                      right:"unset", 
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
                     }],{fill:"forwards", duration:100, iterations:1})
@@ -144,10 +139,8 @@ export default function UserSpace(){
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "calc(50% - var(--app-border-size)*1.5)", 
                       height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size) * 1.5)", 
-                      bottom: "calc(var(--taskbar-height) + var(--bar-border-outline-width))", 
+                      top: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size) * 1.5", 
                       left:"0", 
-                      top: "unset", 
-                      right:"unset", 
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
                     }],{fill:"forwards", duration:100, iterations:1})
@@ -157,21 +150,17 @@ export default function UserSpace(){
                       width: "calc(50% - var(--app-border-size)*1.5)", 
                       height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5)", 
                       top: "0", 
-                      right:"0", 
-                      left:"unset", 
-                      bottom: "unset", 
+                      left:"50%", 
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
                     }],{fill:"forwards", duration:100, iterations:1})
                       break;
                   case "RIGHT":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "calc(50% - var(--app-border-size))", 
+                      width: "calc(50% - var(--app-border-size)*1.5)", 
                       height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
                       top: "0", 
                       left:"50%", 
-                      bottom: "unset", 
-                      right:"unset", 
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
                     }],{fill:"forwards", duration:100, iterations:1})
@@ -181,9 +170,7 @@ export default function UserSpace(){
                       width: "calc(50% - var(--app-border-size)*1.5)", 
                       height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5)", 
                       right:"0", 
-                      bottom: "calc(var(--taskbar-height) + var(--bar-border-outline-width))",
-                      top: "unset", 
-                      left:"unset", 
+                      top: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5)",
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
                     }],{fill:"forwards", duration:100, iterations:1})
