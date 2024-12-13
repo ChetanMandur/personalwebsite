@@ -33,22 +33,22 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
       maximize_class = "app-maximized "
       break;
     case "TL":
-      maximize_class = "app-maximized-tl "
+      maximize_class = "app-maximized-quarter-height app-maximized-half-width app-maximized-tl "
       break;
     case "LEFT":
-      maximize_class = "app-maximized-left "
+      maximize_class = "app-maximized-half-width app-maximized-left "
       break;
     case "BL":
-        maximize_class = "app-maximized-bl "
+        maximize_class = "app-maximized-quarter-height app-maximized-half-width app-maximized-bl "
         break;
     case "TR":
-      maximize_class = "app-maximized-tr "
+      maximize_class = "app-maximized-quarter-height app-maximized-half-width app-maximized-tr "
         break;
     case "RIGHT":
-      maximize_class = "app-maximized-right "
+      maximize_class = "app-maximized-half-width app-maximized-right "
         break;
     case "BR":
-      maximize_class = "app-maximized-br "
+      maximize_class = "app-maximized-quarter-height app-maximized-half-width app-maximized-br "
         break;
     default:
       maximize_class = " "

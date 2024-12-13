@@ -186,40 +186,44 @@
     }
   }
 
+  --app-maximized-half-width:calc(50% - var(--app-border-size)*1.5);
+  --app-maximized-quarter-height:calc((100% - var(--taskbar-height))/2 - var(--app-border-size)* 1.5);
+
+
+  .app-maximized-half-width{
+    width: var(--app-maximized-half-width);
+  }
+
+  .app-maximized-quarter-height{
+    height: var(--app-maximized-quarter-height);
+  }
+
   .app-maximized {
     left: 0;
     top: 0;
     width: calc(100% - var(--app-border-size)*2);
     height: calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3);
-    /* z-index: 999; */
   }
   .app-maximized-tl {
     left: 0;
     top: 0;
-    width: calc(50% - var(--app-border-size)*1.5);
-    height: calc((100% - var(--taskbar-height))/2 - var(--app-border-size)* 1.5);
+
   }
 
   .app-maximized-left {
     left: 0;
     top: 0;
-    width: calc(50% - var(--app-border-size)*1.5);
     height: calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3);
   }
 
   .app-maximized-bl {
     left: 0;
-    bottom: calc(var(--taskbar-height) + var(--bar-border-outline-width));
-    width: calc(50% - var(--app-border-size)*1.5);
-    height: calc((100% - var(--taskbar-height))/2 - var(--app-border-size) * 1.5);
+    top: var(--app-maximized-quarter-height)
 
   }
 
   .app-maximized-tr {
-    
-    width: calc(50% - var(--app-border-size)*1.5);
-    height: calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5);
-    right:0;
+    left:50%;
     top: 0;
 
   }
@@ -227,15 +231,12 @@
   .app-maximized-right {
     left:50%;
     top: 0;
-    width: calc(50% - var(--app-border-size)*1.5);
     height: calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3);
   }
 
   .app-maximized-br {
-    right: 0;
-    bottom: calc(var(--taskbar-height) + var(--bar-border-outline-width));
-    width: calc(50% - var(--app-border-size)*1.5);
-    height: calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5);
+    left: 50%;
+    top: var(--app-maximized-quarter-height);
 
   }
   .app-minimized {
