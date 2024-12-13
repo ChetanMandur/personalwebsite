@@ -186,10 +186,9 @@
     }
   }
 
-  --app-maximized-half-width:calc(50% - var(--app-border-size)*1.5);
-  --app-maximized-quarter-height:calc((100% - var(--taskbar-height))/2 - var(--app-border-size)* 1.5);
-
-
+  --app-maximized-half-width:calc(50% - var(--app-border-size)*1.7);
+  --app-maximized-quarter-height:calc((100% - var(--taskbar-height) - var(--bar-border-outline-width))/2 - var(--app-border-size)*1.75);
+  
   .app-maximized-half-width{
     width: var(--app-maximized-half-width);
   }
@@ -218,7 +217,7 @@
 
   .app-maximized-bl {
     left: 0;
-    top: var(--app-maximized-quarter-height)
+    bottom: calc(var(--taskbar-height) + var(--bar-border-outline-width));
 
   }
 
@@ -236,7 +235,8 @@
 
   .app-maximized-br {
     left: 50%;
-    top: var(--app-maximized-quarter-height);
+    bottom: calc(var(--taskbar-height) + var(--bar-border-outline-width));
+
 
   }
   .app-minimized {
