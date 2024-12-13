@@ -169,7 +169,7 @@ export default function UserSpace(){
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "calc(50% - var(--app-border-size)*1.5)", 
                       height: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5)", 
-                      right:"0", 
+                      left:"50%",
                       top: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5)",
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
