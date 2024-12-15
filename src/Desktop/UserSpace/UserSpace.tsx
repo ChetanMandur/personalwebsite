@@ -33,22 +33,22 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
       maximize_class = "app-maximized "
       break;
     case "TL":
-      maximize_class = "app-maximized-quarter-height app-maximized-half-width app-maximized-tl "
+      maximize_class = "app-maximized-height-quarter app-maximized-width-half app-maximized-tl "
       break;
     case "LEFT":
-      maximize_class = "app-maximized-half-width app-maximized-left "
+      maximize_class = "app-maximized-width-half app-maximized-left "
       break;
     case "BL":
-        maximize_class = "app-maximized-quarter-height app-maximized-half-width app-maximized-bl "
+        maximize_class = "app-maximized-height-quarter app-maximized-width-half app-maximized-bl "
         break;
     case "TR":
-      maximize_class = "app-maximized-quarter-height app-maximized-half-width app-maximized-tr "
+      maximize_class = "app-maximized-height-quarter app-maximized-width-half app-maximized-tr "
         break;
     case "RIGHT":
-      maximize_class = "app-maximized-half-width app-maximized-right "
+      maximize_class = "app-maximized-width-half app-maximized-right "
         break;
     case "BR":
-      maximize_class = "app-maximized-quarter-height app-maximized-half-width app-maximized-br "
+      maximize_class = "app-maximized-height-quarter app-maximized-width-half app-maximized-br "
         break;
     default:
       maximize_class = " "
@@ -107,7 +107,7 @@ export default function UserSpace(){
                   case "FULL":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "calc(100% - var(--app-border-size)*2)", 
-                      height: "var(--app-maximized-full-height)", 
+                      height: "var(--app-maximized-height-full)", 
                       top: "0", 
                       left:"0",
                       borderColor:"var(--snap-colour)",
@@ -116,8 +116,8 @@ export default function UserSpace(){
                     break;
                   case "TL":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "var(--app-maximized-half-width)", 
-                      height: "var(--app-maximized-quarter-height)", 
+                      width: "var(--app-maximized-width-half)", 
+                      height: "var(--app-maximized-height-quarter)", 
                       top: "0", 
                       left:"0", 
 
@@ -127,8 +127,8 @@ export default function UserSpace(){
                     break;
                   case "LEFT":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "var(--app-maximized-half-width)", 
-                      height: "var(--app-maximized-full-height)", 
+                      width: "var(--app-maximized-width-half)", 
+                      height: "var(--app-maximized-height-full)", 
                       top: "0", 
                       left:"0", 
                       borderColor:"var(--snap-colour)",
@@ -137,8 +137,8 @@ export default function UserSpace(){
                     break;
                   case "BL":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "var(--app-maximized-half-width)", 
-                      height: "var(--app-maximized-quarter-height)", 
+                      width: "var(--app-maximized-width-half)", 
+                      height: "var(--app-maximized-height-quarter)", 
                       top: "calc(var(--user-space-height)/2)", 
                       left:"0", 
                       borderColor:"var(--snap-colour)",
@@ -147,8 +147,8 @@ export default function UserSpace(){
                       break;
                   case "TR":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "var(--app-maximized-half-width)", 
-                      height: "var(--app-maximized-quarter-height)", 
+                      width: "var(--app-maximized-width-half)", 
+                      height: "var(--app-maximized-height-quarter)", 
                       top: "0", 
                       left:"50%", 
                       borderColor:"var(--snap-colour)",
@@ -157,8 +157,8 @@ export default function UserSpace(){
                       break;
                   case "RIGHT":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "var(--app-maximized-half-width)", 
-                      height: "var(--app-maximized-full-height)", 
+                      width: "var(--app-maximized-width-half)", 
+                      height: "var(--app-maximized-height-full)", 
                       top: "0", 
                       left:"50%", 
                       borderColor:"var(--snap-colour)",
@@ -167,8 +167,8 @@ export default function UserSpace(){
                       break;
                   case "BR":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "var(--app-maximized-half-width)", 
-                      height: "var(--app-maximized-quarter-height)", 
+                      width: "var(--app-maximized-width-half)", 
+                      height: "var(--app-maximized-height-quarter)", 
                       left:"50%",
                       top: "calc((var(--user-space-height)/2)",
                       borderColor:"var(--snap-colour)",
