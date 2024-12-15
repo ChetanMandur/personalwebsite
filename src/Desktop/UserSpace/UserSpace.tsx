@@ -107,7 +107,7 @@ export default function UserSpace(){
                   case "FULL":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "calc(100% - var(--app-border-size)*2)", 
-                      height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
+                      height: "var(--app-maximized-full-height)", 
                       top: "0", 
                       left:"0",
                       borderColor:"var(--snap-colour)",
@@ -128,7 +128,7 @@ export default function UserSpace(){
                   case "LEFT":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "var(--app-maximized-half-width)", 
-                      height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
+                      height: "var(--app-maximized-full-height)", 
                       top: "0", 
                       left:"0", 
                       borderColor:"var(--snap-colour)",
@@ -139,7 +139,7 @@ export default function UserSpace(){
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "var(--app-maximized-half-width)", 
                       height: "var(--app-maximized-quarter-height)", 
-                      top: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size) * 1.5", 
+                      top: "calc(var(--user-space-height)/2)", 
                       left:"0", 
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
@@ -158,7 +158,7 @@ export default function UserSpace(){
                   case "RIGHT":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "var(--app-maximized-half-width)", 
-                      height: "calc(100% - var(--taskbar-height) - var(--bar-border-outline-width)*3)", 
+                      height: "var(--app-maximized-full-height)", 
                       top: "0", 
                       left:"50%", 
                       borderColor:"var(--snap-colour)",
@@ -170,7 +170,7 @@ export default function UserSpace(){
                       width: "var(--app-maximized-half-width)", 
                       height: "var(--app-maximized-quarter-height)", 
                       left:"50%",
-                      top: "calc((100% - var(--taskbar-height))/2 - var(--app-border-size)*1.5)",
+                      top: "calc((var(--user-space-height)/2)",
                       borderColor:"var(--snap-colour)",
                       backgroundColor:"var(--snap-opacity)"
                     }],{fill:"forwards", duration:100, iterations:1})
