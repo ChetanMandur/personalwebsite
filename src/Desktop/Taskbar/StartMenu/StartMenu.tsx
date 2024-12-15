@@ -1,11 +1,8 @@
 import { useContext } from "react"
 import "./StartMenu.css"
 import { AppList } from "../../../Apps/Apps"
-import { StartMenuContext, RunningAppsContext } from "../../StateContext"
-
-
-
-
+import { StartMenuContext } from "../../Contexts/StartMenu"
+import { RunningAppsContext } from "../../Contexts/RunningApps"
 
 export default function StartMenu(){
   const {setStartMenuOpen} = useContext(StartMenuContext)

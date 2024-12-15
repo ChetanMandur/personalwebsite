@@ -2,7 +2,7 @@ import "./Desktop.css";
 
 import UserSpace from "./UserSpace/UserSpace";
 import Taskbar from "./Taskbar/Taskbar";
-import { StateContext } from "./StateContext";
+import { StateContext } from "./Contexts/StateContext";
 
 
 

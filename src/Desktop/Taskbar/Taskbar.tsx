@@ -2,8 +2,9 @@ import { useContext, useEffect, useState } from "react"
 import "./Taskbar.css"
 
 import { AppList } from "../../Apps/Apps"
-import { StartMenuContext, RunningAppsContext } from "../StateContext"
 import StartMenu from "./StartMenu/StartMenu"
+import { StartMenuContext } from "../Contexts/StartMenu";
+import { RunningAppsContext } from "../Contexts/RunningApps";
 
 
 
