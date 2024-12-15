@@ -18,6 +18,7 @@ export default function HelloWorld (){
       Nunc ut varius ante. Quisque vel sapien eros. Vivamus tempor elementum ex sed bibendum. Quisque vitae nibh et erat aliquet euismod nec at diam. Aenean vitae elit lorem. Sed eget auctor sem. Vestibulum non velit varius, accumsan massa vel, scelerisque ante. Etiam dignissim justo magna, sed consequat nibh dictum sit amet.
     </div>
     {test ? <div className="image2" style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> : <></>}
-    <div className="image" style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div>
+    {/* <div className="image" style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> */}
+    <div className="image" style={{backgroundImage:"url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png"}} > hi</div>
   </div>) 
 } 

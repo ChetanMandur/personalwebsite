@@ -15,7 +15,7 @@ export type RunningAppProperties = {
   resizeLocationX: number,
   resizeLocationY: number,
 
-  isMaximized: boolean,
+  maximizeType: "FULL" | "LEFT" | "RIGHT" | "TL" | "TR" | "BL" | "BR" | null,
   isMinimized: boolean,
 
   zIndex:number,
@@ -32,12 +32,12 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
     titlebarClicked: false,
     titlebarClickedDistanceX: 0,
     titlebarClickedDistanceY: 0,
-    height: app_properties.defaultHeight,
-    width: app_properties.defaultWidth,
+    height: (window.innerHeight * app_properties.defaultHeightRatio > 200 ? window.innerHeight * app_properties.defaultHeightRatio : 200),
+    width: (window.innerWidth * app_properties.defaultWidthRatio > 200 ? window.innerWidth * app_properties.defaultWidthRatio : 200),
     resizeClicked: null,
     resizeLocationX: 0,
     resizeLocationY: 0,
-    isMaximized: false,
+    maximizeType: null,
     isMinimized: false,
     zIndex: 999,
   })
@@ -55,6 +55,7 @@ export type RunningAppsReducerAction = {
   app_properties?: AppProperties ,
   event?: React.PointerEvent<HTMLDivElement>,
   resizeClickedLocation?: RunningAppProperties["resizeClicked"],
+  maximizeType?: RunningAppProperties["maximizeType"]
 }
 
 function focusChange(task:RunningAppListType, app_running_id:string, app_removed:boolean){
@@ -63,7 +64,7 @@ function focusChange(task:RunningAppListType, app_running_id:string, app_removed
 
   //if app is removed/minimized
   if (app_removed){
-    let second_place:{app_id:string,zIndex:number} = {app_id:"", zIndex:0}
+    const second_place:{app_id:string,zIndex:number} = {app_id:"", zIndex:0}
     const temp_task_array = Object.entries(temp_task)
     for (const i of temp_task_array){
       //if focus of i is greater than second place, and i is not the current app
@@ -164,7 +165,7 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       
       let temp_task = {...runningAppsTask}
       
-      let current_app = {...temp_task[action.app_running_id!]}
+      const current_app = {...temp_task[action.app_running_id!]}
 
       //if app is minimized
       if (current_app["isMinimized"]){
@@ -204,16 +205,14 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       current_app["titlebarClicked"] = true
 
       
-      if (current_app["isMaximized"]){
-        current_app["isMaximized"] = false
-        const xRatio = action.event!.clientX / current_app["ref"].current!.getBoundingClientRect().width
-        const yRatio = action.event!.clientY / current_app["ref"].current!.getBoundingClientRect().height
+      if (current_app["maximizeType"] != null){
+        current_app["maximizeType"] = null
+        const xRatio = (action.event!.clientX - current_app["ref"].current!.getBoundingClientRect().x ) / current_app["ref"].current!.getBoundingClientRect().width
+        const yRatio = (action.event!.clientY - current_app["ref"].current!.getBoundingClientRect().y) / current_app["ref"].current!.getBoundingClientRect().height
 
 
         const width_chunk = current_app["width"]*xRatio
         const height_chunk = current_app["height"]*yRatio 
-
-        console.log(width_chunk, height_chunk)
 
 
         current_app["x"] = action.event!.clientX -  width_chunk
@@ -237,6 +236,8 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
         const temp_app = {...temp_task[i[0]]}
         if (temp_app["titlebarClicked"]){
           temp_app["titlebarClicked"] = false
+
+
         } 
         temp_task[i[0]] = temp_app
       }
@@ -255,6 +256,72 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
         if (temp_app["titlebarClicked"]){
           temp_app["x"]= action.event!.clientX - temp_app["titlebarClickedDistanceX"] 
           temp_app["y"] =  action.event!.clientY - temp_app["titlebarClickedDistanceY"]
+
+          
+          const taskbar_height = window.innerHeight * 0.07 
+          const mouseX = temp_app.x + temp_app.titlebarClickedDistanceX
+          const mouseY = temp_app.y + temp_app.titlebarClickedDistanceY
+
+
+          const xBorderWidth = 20;
+          const xBorder1 = xBorderWidth
+          const xBorder2 = window.innerWidth - xBorderWidth 
+          let mouseLocationX = ""
+          if ((0 <= mouseX) && (mouseX < xBorder1)){
+            mouseLocationX = "LEFT"
+          }
+          else if ((xBorder1 <= mouseX) && (mouseX < xBorder2)){
+            mouseLocationX = "MIDDLE"
+          }
+          else if ((xBorder2 <= mouseX) && (mouseX <= window.innerWidth)){
+            mouseLocationX = "RIGHT"
+          }
+          
+
+          const yBorderWidth = 10;
+          const yBorder1 = yBorderWidth
+          const yBorder2 = window.innerHeight - yBorderWidth - taskbar_height
+          let mouseLocationY = ""
+          if ((0 <= mouseY) && (mouseY < yBorder1)){
+            mouseLocationY = "TOP"
+          }
+          else if ((yBorder1 <= mouseY) && (mouseY < yBorder2)){
+            mouseLocationY = "MIDDLE"
+          }
+          else if ((yBorder2 <= mouseY) && (mouseY <= window.innerHeight)){
+            mouseLocationY = "BOTTOM"
+          }
+
+          if (mouseLocationX == "LEFT"){
+            if (mouseLocationY == "TOP"){
+              temp_app["maximizeType"] = "TL"
+            }
+            else if (mouseLocationY == "MIDDLE"){
+              temp_app["maximizeType"] = "LEFT"
+            }
+            else if (mouseLocationY == "BOTTOM"){
+              temp_app["maximizeType"] = "BL"
+            }
+          }
+          if (mouseLocationX == "MIDDLE"){
+            if (mouseLocationY == "TOP"){
+              temp_app["maximizeType"] = "FULL"
+            } else {
+              temp_app["maximizeType"] = null
+            }
+          }
+          if (mouseLocationX == "RIGHT"){
+            if (mouseLocationY == "TOP"){
+              temp_app["maximizeType"] = "TR"
+            }
+            else if (mouseLocationY == "MIDDLE"){
+              temp_app["maximizeType"] = "RIGHT"
+            }
+            else if (mouseLocationY == "BOTTOM"){
+              temp_app["maximizeType"] = "BR"
+            }
+          }
+
         }
 
         if (temp_app["resizeClicked"] != null){
@@ -328,7 +395,12 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
     case "MAXIMIZE":{
       const temp_task = {...runningAppsTask}
       const currentApp = {...temp_task[action.app_running_id!]}
-      currentApp["isMaximized"] = !currentApp["isMaximized"]
+      if (currentApp["maximizeType"] == action.maximizeType ){
+        currentApp["maximizeType"] = null
+      } else{
+        currentApp["maximizeType"] = action.maximizeType!
+      }
+
       temp_task[action.app_running_id!] = currentApp
       return ({...temp_task})
     }

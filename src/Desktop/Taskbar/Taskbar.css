@@ -1,64 +1,46 @@
+
+@keyframes blink {
+  100%{
+    visibility: hidden;
+  }
+}
+
 .taskbar {
   display: flex;
-  background-color: rgba(0, 0, 255, 0.5);
-  flex: 0 1 50px;
+  background-color: var(--bar-default-colour);
+  flex: 0 1 var(--taskbar-height);
   z-index: 1000;
   user-select: none;
+  border-top: var(--bar-border-outline);
+  column-gap: 0.6vh;
+  max-height: var(--taskbar-height);
 
   .start-button {
-    flex: 0 1 50px;
+    flex: 0 1 var(--taskbar-height);
     display: flex;
     justify-content: center;
 
     img {
+      align-self: center;
       overflow: hidden;
-      width: 25px;
-      height: 50px;
+      width: calc(var(--taskbar-height)/2);
+      height: calc(var(--taskbar-height)/2);
+      padding: 0.6vh;
+
+    }
+
+    img:active {
+      background-color: var(--bar-button-active-color);
     }
   }
 
-  .start-menu {
-    position: absolute;
-    bottom: 50px;
-    height: 500px;
-    width: 300px;
-    background-color: green;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    row-gap: 4px;
 
-    .app-entry {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      column-gap: 10px;
-      align-items: center;
-
-      .app-entry-icon {
-        flex: 0 1 20px;
-        display: flex;
-        align-items: center;
-
-
-        img {
-          width: 20px;
-          height: 20px;
-        }
-      }
-
-      .app-entry-name {
-        flex: 1 1 auto
-      }
-
-    }
-  }
 
   .active-apps {
     flex: 1 1 auto;
     display: flex;
     flex-direction: row;
-    column-gap: 3px;
+    column-gap: 0.5vh;
     align-items: center;
 
 
@@ -66,21 +48,78 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding-bottom: 0.2vh;
+      border-width: 0.1vh;
 
       .status {
         bottom: 0;
 
-        height: 2px;
+        height: 0.2vh;
+      }
+
+      .status-focused {
+        width: 10%;
+        background-color: white;
+      }
+
+      .status-unfocused {
+        width: 60%;
+        background-color: darkgrey;
       }
 
 
       img {
         overflow: hidden;
-        width: 28px;
-        height: 28px;
-        padding-top: 2px;
-        padding-bottom: 2px;
+        width: 2.8vh;
+        height: 2.8vh;
+        padding-top: 0.2vh;
+        padding-bottom: 0.2vh;
       }
+
+      .icon-minimized {
+        filter: brightness(0) saturate(100%) invert(36%) sepia(11%) saturate(0%) hue-rotate(188deg) brightness(91%) contrast(94%);
+      }
+
+      .icon-unminimized {
+        filter: brightness(0) saturate(100%);
+      }
+    }
+
+    .active-app:active {
+      background-color: var(--bar-button-active-color);
+    }
+
+
+  }
+
+  .time-and-date{
+    flex: 0 1 calc(var(--taskbar-height)*1.8);
+    display:flex;
+    flex-direction: column;  
+    text-align: center;
+    row-gap: 0.5vh;
+    border-left: var(--bar-border-outline);
+    border-left-width: 0.1vh;
+
+    .common{
+      flex: 0 1 50%;
+    }
+    .time{
+
+      align-content: end;
+
+
+      
+      .blink{
+        display: inline;
+        animation: blink 1s steps(2,start) 0s infinite alternate;
+      }
+
+      
+
+    }
+    .date{
+      align-content: start;
     }
   }
 }

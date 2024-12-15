@@ -6,8 +6,8 @@ export type AppProperties = {
   app: JSX.Element;
 
 
-  defaultWidth: number;
-  defaultHeight:number,
+  defaultWidthRatio: number;
+  defaultHeightRatio:number,
 }
 
 type AppListType = {
@@ -17,8 +17,8 @@ const defaultAppProperties: AppProperties = {
   name:"undefined-app",
   icon:"https://www.svgrepo.com/show/487018/alien.svg",
   app:<HelloWorld/> ,
-  defaultWidth: 400,
-  defaultHeight: 300,
+  defaultWidthRatio: 1/4,
+  defaultHeightRatio: 1/2,
 }
 
 export const AppList : AppListType = {
@@ -27,8 +27,8 @@ export const AppList : AppListType = {
     name:"Hello World",
     icon:"https://www.svgrepo.com/show/521265/world-1.svg",
     app: <HelloWorld/>,
-    defaultHeight:500,
-    defaultWidth:500
+    defaultHeightRatio:1/2,
+    defaultWidthRatio:1/2.5
   },
   "Default App Properties Test": {
     ...defaultAppProperties,
