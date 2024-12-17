@@ -2,21 +2,19 @@ import "./Desktop.css";
 
 import UserSpace from "./UserSpace/UserSpace";
 import Taskbar from "./Taskbar/Taskbar";
-import { StateContext } from "./Contexts/StateContext";
 import ContextMenu from "./ContextMenu/ContextMenu";
+import { useContext } from "react";
+import { ContextMenuContext } from "./Contexts/ContextMenuData";
 
 
 
 export default function Desktop() {
-
+  const {contextMenuData}=useContext(ContextMenuContext)
   return (
-    <StateContext>
-        <div className="main-container">
-          <UserSpace/>
-          <Taskbar/>
-          <ContextMenu/>
-        </div>  
-    </StateContext>
-    
+      <div className="main-container">
+        <UserSpace/>
+        <Taskbar/>
+        {contextMenuData.visible ? <ContextMenu/> : <></>}
+      </div>  
   );
 }

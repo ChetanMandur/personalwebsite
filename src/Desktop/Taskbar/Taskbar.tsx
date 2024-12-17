@@ -5,12 +5,14 @@ import { AppList } from "../../Apps/Apps"
 import StartMenu from "./StartMenu/StartMenu"
 import { StartMenuContext } from "../Contexts/StartMenu";
 import { RunningAppsContext } from "../Contexts/RunningApps";
+import { ContextMenuContext } from "../Contexts/ContextMenuData";
 
 
 
 export default function Taskbar(){
   const {startMenuOpen, setStartMenuOpen} = useContext(StartMenuContext);
   const {runningAppsTask, runningAppsDispatch} = useContext(RunningAppsContext);
+  const {contextMenuDispatch} = useContext(ContextMenuContext)
 
   const [date, setDate] = useState(new Date())
 
@@ -36,7 +38,7 @@ export default function Taskbar(){
   }
 
   return(
-    <div className="taskbar"> 
+    <div className="taskbar" onClick={(event)=>{contextMenuDispatch({"type":"SET", "newOptions": {"taskbar":()=>{alert("hi")}}, "event":event});contextMenuDispatch({type:"SHOW"})}}> 
         <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
         {startMenuOpen ? <StartMenu/>:<></>}
         <div className="active-apps" onClick={()=>{setStartMenuOpen(false)}}> 

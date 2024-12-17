@@ -1,22 +1,19 @@
 import { useContext } from "react"
-import { RunningAppsContext } from "../Contexts/RunningApps"
 import "./ContextMenu.css"
+import { ContextMenuContext } from "../Contexts/ContextMenuData"
 
-type ContextMenuOptions = {
-    [key:string]: ()=>(void)
-}
+
 
 export default function ContextMenu(){
-    const {runningAppsDispatch}=useContext(RunningAppsContext)
-    const temp:ContextMenuOptions = {"test":()=>{alert("hi")}, "test2":()=>{console.log("hi")}}
-    const temp2 = Object.entries(temp)
+    const {contextMenuData}=useContext(ContextMenuContext)
+
     return(
-        <div className="context-menu">
+        <div className="context-menu" style={{left:contextMenuData.x, top:contextMenuData.y}}>
             { 
-            temp2.map((option, index)=>{
+            Object.entries(contextMenuData.options).map((option, index)=>{
 
             return(
-                <div className="context-menu-option" onClick={option[1]}>
+                <div key={index} className="context-menu-option" onClick={option[1]}>
                     {index} {option[0]}
                 </div>
             )
