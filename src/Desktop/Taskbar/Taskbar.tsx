@@ -38,7 +38,7 @@ export default function Taskbar(){
   }
 
   return(
-    <div className="taskbar" onContextMenu={(event)=>{contextMenuDispatch({"type":"SET", "newOptions": {"taskbar":()=>{alert("hi")}}, "event":event});contextMenuDispatch({type:"SHOW"})}}> 
+      <div className="taskbar" > 
         <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
         {startMenuOpen ? <StartMenu/>:<></>}
         <div className="active-apps" onClick={()=>{setStartMenuOpen(false)}}> 
@@ -49,7 +49,14 @@ export default function Taskbar(){
               const running_properties = item[1]
 
               return(
-              <div className="common-border active-app " key={Math.random()} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
+              <div className="common-border active-app " 
+              onContextMenu={(event)=>{contextMenuDispatch({type:"SET", event:event, newOptions:{
+                Close: ()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})},
+                Minimize: ()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})},
+                Maximize: ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}
+              }}); contextMenuDispatch({type:"SHOW"})}} 
+              key={Math.random()} 
+              onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
                 <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={AppList[app_id].icon}  alt="" />
                 <div className={"status "+ (running_properties["isMinimized"] ? "" : (running_properties["zIndex"] == 999 ? "status-focused": "status-unfocused"))}/>
                </div>

@@ -10,7 +10,7 @@
     border-width: calc(var(--bar-border-outline-width)*0.8);
     border-style: outset;
 
-    padding:0.8vh;
+    padding:0.6vh;
     display: flex;
     flex-direction: column;
     row-gap: 0.6vh;
@@ -18,9 +18,15 @@
     height: fit-content;
     max-height: 20vh;
 
+    user-select: none;
+
     .context-menu-option{
         border-width: calc(var(--bar-border-outline-width)*0.8);
         border-bottom:var(--bar-border-outline);
         padding:0.4vh
+    }
+
+    .context-menu-option:hover{
+        background-color: #383838;
     }
 }

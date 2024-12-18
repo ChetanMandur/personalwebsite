@@ -9,7 +9,7 @@
 
   --bar-unfocus-colour: #202020;
   --bar-border-outline-unfocus-colour: #373737;
-  --bar-border-outline-unfocus: var(--bar-border-outline-width) solid var(--bar-border-outline-unfocus-color);
+  --bar-border-outline-unfocus: var(--bar-border-outline-width) solid var(--bar-border-outline-unfocus-colour);
 
   display: flex;
   flex-direction: column;
