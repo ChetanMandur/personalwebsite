@@ -4,12 +4,19 @@
     top:50%;
     left:50%;
     background-color: var(--bar-default-colour);
-    padding:1vh;
+
+
+    border:var(--bar-border-outline);
+    border-width: calc(var(--bar-border-outline-width)*0.8);
+    border-style: outset;
+
+    padding:0.8vh;
     display: flex;
     flex-direction: column;
     row-gap: 0.6vh;
-    width: 8vh;
+    max-width: 8vh;
     height: fit-content;
+    max-height: 20vh;
 
     .context-menu-option{
         border-width: calc(var(--bar-border-outline-width)*0.8);

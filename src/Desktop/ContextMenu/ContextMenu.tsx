@@ -30,7 +30,7 @@ export default function ContextMenu(){
 
             return(
                 <div key={index} className="context-menu-option" onClick={option[1]}>
-                    {index} {option[0]}
+                    {option[0]}
                 </div>
             )
             })
