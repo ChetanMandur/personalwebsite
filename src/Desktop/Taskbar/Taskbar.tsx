@@ -38,7 +38,7 @@ export default function Taskbar(){
   }
 
   return(
-    <div className="taskbar" onClick={(event)=>{contextMenuDispatch({"type":"SET", "newOptions": {"taskbar":()=>{alert("hi")}}, "event":event});contextMenuDispatch({type:"SHOW"})}}> 
+    <div className="taskbar" onContextMenu={(event)=>{contextMenuDispatch({"type":"SET", "newOptions": {"taskbar":()=>{alert("hi")}}, "event":event});contextMenuDispatch({type:"SHOW"})}}> 
         <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
         {startMenuOpen ? <StartMenu/>:<></>}
         <div className="active-apps" onClick={()=>{setStartMenuOpen(false)}}> 

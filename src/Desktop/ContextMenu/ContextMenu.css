@@ -9,6 +9,7 @@
     flex-direction: column;
     row-gap: 0.6vh;
     width: 8vh;
+    height: fit-content;
 
     .context-menu-option{
         border-width: calc(var(--bar-border-outline-width)*0.8);

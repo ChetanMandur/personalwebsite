@@ -9,9 +9,9 @@ import { ContextMenuContext } from "./Contexts/ContextMenuData";
 
 
 export default function Desktop() {
-  const {contextMenuData}=useContext(ContextMenuContext)
+  const {contextMenuData, contextMenuDispatch}=useContext(ContextMenuContext)
   return (
-      <div className="main-container">
+      <div className="main-container" onContextMenu={(event)=>{event.preventDefault()}} onClick={()=>{ if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}}>
         <UserSpace/>
         <Taskbar/>
         {contextMenuData.visible ? <ContextMenu/> : <></>}
