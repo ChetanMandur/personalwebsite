@@ -5,7 +5,7 @@ import { AppList } from "../../Apps/Apps"
 import StartMenu from "./StartMenu/StartMenu"
 import { StartMenuContext } from "../Contexts/StartMenu";
 import { RunningAppsContext } from "../Contexts/RunningApps";
-import { ContextMenuContext } from "../Contexts/ContextMenuData";
+import { ContextMenuContext, ContextMenuOptions } from "../Contexts/ContextMenuData";
 
 
 
@@ -48,13 +48,23 @@ export default function Taskbar(){
               const app_id = app_running_id.split("#")[0]
               const running_properties = item[1]
 
+              let context_options: ContextMenuOptions = {Close: ()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})},}
+
+              if (running_properties.isMinimized){
+                context_options["Restore"] = ()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER",forceMinimize:true, app_running_id:app_running_id})}
+              } else{
+                context_options["Minimize"] = ()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER",forceMinimize:true, app_running_id:app_running_id})}
+                if (running_properties.maximizeType == "FULL"){
+                  context_options["Unmaximize"] = ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}
+  
+                }else {
+                  context_options["Maximize"] = ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}
+                }
+              }
+
               return(
               <div className="common-border active-app " 
-              onContextMenu={(event)=>{contextMenuDispatch({type:"SET", event:event, newOptions:{
-                Close: ()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})},
-                Minimize: ()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})},
-                Maximize: ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}
-              }}); contextMenuDispatch({type:"SHOW"})}} 
+              onContextMenu={(event)=>{contextMenuDispatch({type:"SET", event:event, newOptions:context_options}); contextMenuDispatch({type:"SHOW"})}} 
               key={Math.random()} 
               onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
                 <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={AppList[app_id].icon}  alt="" />

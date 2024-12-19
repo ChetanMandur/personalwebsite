@@ -28,13 +28,14 @@ export type RunningAppListType = {
 
 
 export type RunningAppsReducerAction = {
-  type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "MINIMIZE-HANDLER" | "MAXIMIZE"
+  type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "MINIMIZE-HANDLER"|  "MAXIMIZE"
   app_running_id?: string,
   running_properties?: RunningAppProperties,
   app_properties?: AppProperties ,
   event?: React.PointerEvent<HTMLDivElement>,
   resizeClickedLocation?: RunningAppProperties["resizeClicked"],
-  maximizeType?: RunningAppProperties["maximizeType"]
+  maximizeType?: RunningAppProperties["maximizeType"],
+  forceMinimize?: boolean
 }
 
 function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
@@ -160,6 +161,8 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
       return ({...temp_task})
 
     }
+
+    
     case "MINIMIZE-HANDLER":{
       console.log("taskbar-icon-clicked")
       
@@ -179,7 +182,7 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
       // if app is not minimized
       else{      
         // if app is in focus   
-        if (current_app["zIndex"] == 999){
+        if (current_app["zIndex"] == 999 || (action.forceMinimize == true && action.forceMinimize != undefined)){
           //minmize the app
           current_app["isMinimized"] = true;
           temp_task[action.app_running_id!] = current_app

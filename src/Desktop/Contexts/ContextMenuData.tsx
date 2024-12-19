@@ -1,7 +1,7 @@
 import { createContext } from "react"
 
 
-type ContextMenuOptions = {
+export type ContextMenuOptions = {
     [key:string]: (event?:React.MouseEvent<HTMLDivElement, MouseEvent>)=>(void)
 }
 
