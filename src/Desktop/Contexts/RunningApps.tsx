@@ -27,9 +27,21 @@ export type RunningAppListType = {
   [key:string] : RunningAppProperties
 }
 
+export type RunningAppsReducerActionType =  
+ "ADD" |
+ "DELETE" |
+ "UPDATE-APP-FOCUS" |
+ "TITLEBAR-CLICKED" |
+ "TITLEBAR-UNCLICKED" |
+ "RESIZE-CLICKED" |
+ "RESIZE-UNCLICKED"|
+ "WINDOW-MOVE"|
+ "MINIMIZE-HANDLER"|
+ "MAXIMIZE"
+
 
 export type RunningAppsReducerAction = {
-  type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "MINIMIZE-HANDLER"|  "MAXIMIZE"
+  type: RunningAppsReducerActionType
   app_running_id?: string,
   running_properties?: RunningAppProperties,
   app_name?: string,
