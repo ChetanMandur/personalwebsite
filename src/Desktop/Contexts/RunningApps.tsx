@@ -75,15 +75,15 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
 }
 
 
-function focusChange(task:RunningAppListType, app_running_id:string, app_removed:boolean){
-  const temp_task = {...task}
+function focusChange(data:RunningAppListType, app_running_id:string, app_removed:boolean){
+  const newData = {...data}
   
 
   //if app is removed/minimized
   if (app_removed){
     const second_place:{app_id:string,zIndex:number} = {app_id:"", zIndex:0}
-    const temp_task_array = Object.entries(temp_task)
-    for (const i of temp_task_array){
+    const newData_array = Object.entries(newData)
+    for (const i of newData_array){
       //if focus of i is greater than second place, and i is not the current app
       if (second_place["zIndex"] < i[1]["zIndex"] && i[0] != app_running_id! ){
         // make sure i is not minimized
@@ -96,23 +96,23 @@ function focusChange(task:RunningAppListType, app_running_id:string, app_removed
     }
     //if second place exists, update focus to main
     if (second_place["app_id"] != "" && second_place["zIndex"] !=0){
-      const temp_second_place = {...temp_task[second_place["app_id"]]}
-      temp_second_place["zIndex"] = 999
-      temp_task[second_place["app_id"]] = temp_second_place
+      const second_place_app = {...newData[second_place["app_id"]]}
+      second_place_app["zIndex"] = 999
+      newData[second_place["app_id"]] = second_place_app
     }
 
   } 
   //if app is not removed/minimized
   else{
     // Go thru all the currently running apps
-    for (const i of Object.entries(temp_task)){
+    for (const i of Object.entries(newData)){
       //Copy i
       const temp_app = {...i[1]}
 
       // if i is the current app, update focus to main
       if (i[0] == app_running_id){
         temp_app["zIndex"] = 999
-        temp_task[app_running_id!] = temp_app
+        newData[app_running_id!] = temp_app
       }
       // if i is not the current app
       else{ 
@@ -124,12 +124,12 @@ function focusChange(task:RunningAppListType, app_running_id:string, app_removed
       }
 
       //Re-apply i 
-      temp_task[i[0]] = temp_app
+      newData[i[0]] = temp_app
     }
   }
 
   //Return modified list
-  return(temp_task)
+  return(newData)
 
 }
 
