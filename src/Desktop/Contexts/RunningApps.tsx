@@ -81,27 +81,24 @@ function focusChange(data:RunningAppListType, app_running_id:string, app_removed
 
   //if app is removed/minimized
   if (app_removed){
-    const second_place:{app_id:string,zIndex:number} = {app_id:"", zIndex:0}
-    const newData_array = Object.entries(newData)
-    for (const i of newData_array){
-      //if focus of i is greater than second place, and i is not the current app
-      if (second_place["zIndex"] < i[1]["zIndex"] && i[0] != app_running_id! ){
-        // make sure i is not minimized
-        if (i[1]["isMinimized"] == false){
+    const second_place:{app_running_id:string,zIndex:number} = {app_running_id:"", zIndex:0}
+    for (const i of Object.entries(newData)){
+      //if focus of i is greater than second place, i is not the current app, and  i is not minimized
+      if (second_place["zIndex"] < i[1]["zIndex"] && i[0] != app_running_id! && i[1]["isMinimized"] == false){
           //update second place with i
-          second_place["app_id"] = i[0]
+          second_place["app_running_id"] = i[0]
           second_place["zIndex"] = i[1]["zIndex"]
-        }
+        
       }
     }
     //if second place exists, update focus to main
-    if (second_place["app_id"] != "" && second_place["zIndex"] !=0){
-      const second_place_app = {...newData[second_place["app_id"]]}
+    if (second_place["app_running_id"] != "" && second_place["zIndex"] !=0){
+      const second_place_app = {...newData[second_place["app_running_id"]]}
       second_place_app["zIndex"] = 999
-      newData[second_place["app_id"]] = second_place_app
+      newData[second_place["app_running_id"]] = second_place_app
     }
-
-  } 
+  }
+   
   //if app is not removed/minimized
   else{
     // Go thru all the currently running apps
