@@ -3,11 +3,13 @@
 
   --bar-default-colour: #4d4d4d;
   --bar-border-outline-width: 0.3vh;
-  --bar-border-outline: var(--bar-border-outline-width) solid #838383;
+  --bar-border-colour: #838383;
+  --bar-border-outline: var(--bar-border-outline-width) solid var(--bar-border-colour);
   --bar-button-active-color: rgb(63, 63, 63);
 
   --bar-unfocus-colour: #202020;
-  --bar-border-outline-unfocus: var(--bar-border-outline-width) solid #373737;
+  --bar-border-outline-unfocus-colour: #373737;
+  --bar-border-outline-unfocus: var(--bar-border-outline-width) solid var(--bar-border-outline-unfocus-colour);
 
   display: flex;
   flex-direction: column;

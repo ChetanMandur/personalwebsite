@@ -1,5 +1,5 @@
-import React, { createContext, createRef,  PropsWithChildren,useReducer, useState } from "react";
-import { AppProperties } from "../Apps/Apps";
+import { createContext, createRef } from "react";
+import { AppProperties } from "../../Apps/Apps";
 
 export type RunningAppProperties = {
   ref: React.MutableRefObject<null | HTMLDivElement>,
@@ -22,6 +22,21 @@ export type RunningAppProperties = {
 }
 
 
+export type RunningAppListType = {
+  [key:string] : RunningAppProperties
+}
+
+
+export type RunningAppsReducerAction = {
+  type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "MINIMIZE-HANDLER"|  "MAXIMIZE"
+  app_running_id?: string,
+  running_properties?: RunningAppProperties,
+  app_properties?: AppProperties ,
+  event?: React.PointerEvent<HTMLDivElement>,
+  resizeClickedLocation?: RunningAppProperties["resizeClicked"],
+  maximizeType?: RunningAppProperties["maximizeType"],
+  forceMinimize?: boolean
+}
 
 function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
 
@@ -43,20 +58,6 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
   })
 }
 
-export type RunningAppListType = {
-  [key:string] : RunningAppProperties
-}
-
-
-export type RunningAppsReducerAction = {
-  type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "MINIMIZE-HANDLER" | "MAXIMIZE"
-  app_running_id?: string,
-  running_properties?: RunningAppProperties,
-  app_properties?: AppProperties ,
-  event?: React.PointerEvent<HTMLDivElement>,
-  resizeClickedLocation?: RunningAppProperties["resizeClicked"],
-  maximizeType?: RunningAppProperties["maximizeType"]
-}
 
 function focusChange(task:RunningAppListType, app_running_id:string, app_removed:boolean){
   const temp_task = {...task}
@@ -116,7 +117,7 @@ function focusChange(task:RunningAppListType, app_running_id:string, app_removed
 
 }
 
-function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAppsReducerAction):RunningAppListType{
+export function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAppsReducerAction):RunningAppListType{
   switch (action.type){
     case "ADD": {
       console.log("ADD")
@@ -160,6 +161,8 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       return ({...temp_task})
 
     }
+
+    
     case "MINIMIZE-HANDLER":{
       console.log("taskbar-icon-clicked")
       
@@ -179,7 +182,7 @@ function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAp
       // if app is not minimized
       else{      
         // if app is in focus   
-        if (current_app["zIndex"] == 999){
+        if (current_app["zIndex"] == 999 || (action.forceMinimize == true && action.forceMinimize != undefined)){
           //minmize the app
           current_app["isMinimized"] = true;
           temp_task[action.app_running_id!] = current_app
@@ -413,27 +416,4 @@ export type RunningAppsContextType = {
   runningAppsDispatch:  React.Dispatch<RunningAppsReducerAction>
 }
 
-export const RunningAppsContext = createContext<RunningAppsContextType>({runningAppsTask:{}, runningAppsDispatch:()=>{}})
-
-export type StartMenuContextType = {
-  startMenuOpen: boolean,
-  setStartMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
-}
-
-export const StartMenuContext = createContext<StartMenuContextType>({startMenuOpen: false, setStartMenuOpen: ()=>{}})
-
-export function StateContext(props:PropsWithChildren){
-  const [startMenuOpen, setStartMenuOpen] = useState(false);
-  const [runningAppsTask, runningAppsDispatch] = useReducer(runningAppsReducer, {})
-
-  return(
-    
-      <StartMenuContext.Provider value={{startMenuOpen, setStartMenuOpen}}>
-        <RunningAppsContext.Provider value = {{runningAppsTask, runningAppsDispatch}}>
-         {props.children}
-        </RunningAppsContext.Provider>
-      </StartMenuContext.Provider>
-
-  )
-    
-}
+ export const RunningAppsContext = createContext<RunningAppsContextType>({runningAppsTask:{}, runningAppsDispatch:()=>{}})
