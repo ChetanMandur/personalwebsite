@@ -1,9 +1,18 @@
+import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuData";
 import "./HelloWorld.css"
-import { useState} from "react";
+import { useContext, useState} from "react";
 
 
 export default function HelloWorld (){
   const [test, setTest] = useState(false)
+  const [imageURL, setImageURL] = useState("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")
+
+  const {contextMenuDispatch} = useContext(ContextMenuContext)
+
+  const imageContextMenuOptions: ContextMenuOptions = {
+    "Show me the cat": ()=>{setImageURL("url(https://placecats.com/neo_2/300/200)")},
+    "I am blue": ()=>{setImageURL("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")}
+  }
   return(
   <div className="hello-world">
     Hello world
@@ -19,6 +28,10 @@ export default function HelloWorld (){
     </div>
     {test ? <div className="image2" style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> : <></>}
     {/* <div className="image" style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> */}
-    <div className="image" style={{backgroundImage:"url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png"}} > hi</div>
+    <div className="image" style={{backgroundImage:imageURL}} onContextMenu={(event)=>{
+    contextMenuPropagation(event); 
+    contextMenuDispatch({type:"SET", newOptions:imageContextMenuOptions, event:event});
+    contextMenuDispatch({type:"SHOW"})
+    }} > hi</div>
   </div>) 
 } 
