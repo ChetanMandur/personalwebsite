@@ -5,13 +5,13 @@ import { ContextMenuContext, contextMenuReducer } from "./ContextMenuData";
 
 export function StateContext(props:PropsWithChildren){
   const [startMenuOpen, setStartMenuOpen] = useState(false);
-  const [runningAppsTask, runningAppsDispatch] = useReducer(runningAppsReducer, {})
+  const [runningAppsData, runningAppsDispatch] = useReducer(runningAppsReducer, {})
   const [contextMenuData, contextMenuDispatch] = useReducer(contextMenuReducer, {x:0,y:0,visible:false, options:{}})
 
   return(
     
       <StartMenuContext.Provider value={{startMenuOpen, setStartMenuOpen}}>
-        <RunningAppsContext.Provider value = {{runningAppsTask, runningAppsDispatch}}>
+        <RunningAppsContext.Provider value = {{runningAppsData, runningAppsDispatch}}>
           <ContextMenuContext.Provider value={{contextMenuData,contextMenuDispatch}}>
             {props.children}
           </ContextMenuContext.Provider>

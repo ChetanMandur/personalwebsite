@@ -121,11 +121,11 @@ function focusChange(task:RunningAppListType, app_running_id:string, app_removed
 
 }
 
-export function runningAppsReducer(runningAppsTask:RunningAppListType, action:RunningAppsReducerAction):RunningAppListType{
+export function runningAppsReducer(runningAppsData:RunningAppListType, action:RunningAppsReducerAction):RunningAppListType{
   switch (action.type){
     case "ADD": {
       console.log("ADD")
-      let temp_task = {...runningAppsTask}
+      let temp_task = {...runningAppsData}
       const app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
       
       temp_task[app_running_id] = {...DefaultRunningAppPropertiesGenerator(action.app_properties!)}
@@ -136,14 +136,14 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
       return(temp_task)
     }
     case "DELETE":{
-      let temp_task = {...runningAppsTask}
+      let temp_task = {...runningAppsData}
       delete temp_task[action.app_running_id!]
       temp_task = focusChange(temp_task, action.app_running_id!, true)
       return(temp_task)
 
     }
     case "RESIZE-CLICKED":{
-      const temp_task = {...runningAppsTask}
+      const temp_task = {...runningAppsData}
       temp_task[action.app_running_id!]["resizeClicked"] = action.resizeClickedLocation!
       temp_task[action.app_running_id!]["resizeLocationX"] = action.event!.clientX
       temp_task[action.app_running_id!]["resizeLocationY"] = action.event!.clientY
@@ -151,7 +151,7 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
       return temp_task
     }
     case "RESIZE-UNCLICKED":{
-      const temp_task = {...runningAppsTask}
+      const temp_task = {...runningAppsData}
       for (const i of Object.entries(temp_task)){
         const current_app = {...temp_task[i[0]]}
         if (current_app["resizeClicked"]){
@@ -176,7 +176,7 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
     case "MINIMIZE-HANDLER":{
       console.log("taskbar-icon-clicked")
       
-      let temp_task = {...runningAppsTask}
+      let temp_task = {...runningAppsData}
       
       const current_app = {...temp_task[action.app_running_id!]}
 
@@ -208,12 +208,12 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
       return temp_task
     }
     case "UPDATE-APP-FOCUS":{
-      const temp_task = focusChange({...runningAppsTask}, action.app_running_id!, false)
+      const temp_task = focusChange({...runningAppsData}, action.app_running_id!, false)
       return temp_task
     }
 
     case "TITLEBAR-CLICKED":{
-      const temp_task = {...runningAppsTask}
+      const temp_task = {...runningAppsData}
       const current_app = {...temp_task[action.app_running_id!]}
       current_app["titlebarClicked"] = true
 
@@ -244,7 +244,7 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
 
     }
     case "TITLEBAR-UNCLICKED":{
-      const temp_task = {...runningAppsTask}
+      const temp_task = {...runningAppsData}
       for (const i of Object.entries(temp_task)){
         const temp_app = {...temp_task[i[0]]}
         if (temp_app["titlebarClicked"]){
@@ -259,8 +259,8 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
     }
 
     case "WINDOW-MOVE":{
-      const temp_task = {...runningAppsTask}
-      for (const i of Object.entries(runningAppsTask)){
+      const temp_task = {...runningAppsData}
+      for (const i of Object.entries(runningAppsData)){
         const temp_app_running_id = i[0]
         const temp_app = {...temp_task[temp_app_running_id]}
 
@@ -406,7 +406,7 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
       return temp_task
     }
     case "MAXIMIZE":{
-      const temp_task = {...runningAppsTask}
+      const temp_task = {...runningAppsData}
       const currentApp = {...temp_task[action.app_running_id!]}
       if (currentApp["maximizeType"] == action.maximizeType ){
         currentApp["maximizeType"] = null
@@ -422,8 +422,8 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
 }
 
 export type RunningAppsContextType = {
-  runningAppsTask: RunningAppListType, 
+  runningAppsData: RunningAppListType, 
   runningAppsDispatch:  React.Dispatch<RunningAppsReducerAction>
 }
 
- export const RunningAppsContext = createContext<RunningAppsContextType>({runningAppsTask:{}, runningAppsDispatch:()=>{}})
+ export const RunningAppsContext = createContext<RunningAppsContextType>({runningAppsData:{}, runningAppsDispatch:()=>{}})

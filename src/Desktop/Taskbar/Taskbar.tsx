@@ -11,12 +11,12 @@ import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "
 
 export default function Taskbar(){
   const {startMenuOpen, setStartMenuOpen} = useContext(StartMenuContext);
-  const {runningAppsTask, runningAppsDispatch} = useContext(RunningAppsContext);
+  const {runningAppsData, runningAppsDispatch} = useContext(RunningAppsContext);
   const {contextMenuData,contextMenuDispatch} = useContext(ContextMenuContext)
 
   const [date, setDate] = useState(new Date())
 
-  const RunningAppArray = Object.entries(runningAppsTask)
+  const RunningAppArray = Object.entries(runningAppsData)
 
   useEffect(() =>{
     const dateCheck = setInterval(()=>setDate(new Date()), 1000)
