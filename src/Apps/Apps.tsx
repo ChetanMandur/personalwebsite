@@ -1,11 +1,10 @@
-import HelloWorld from "./HelloWorld/HelloWorld";
+import HelloWorld, { HelloWorldProps } from "./HelloWorld/HelloWorld";
 
 export type AppProperties = {
   name: string;
   icon: string;
-  app: JSX.Element;
-
-
+  app: ({}:any)=>JSX.Element;
+  props: {}
   defaultWidthRatio: number;
   defaultHeightRatio:number,
 }
@@ -16,7 +15,8 @@ type AppListType = {
 const defaultAppProperties: AppProperties = {
   name:"undefined-app",
   icon:"https://www.svgrepo.com/show/487018/alien.svg",
-  app:<HelloWorld/> ,
+  app: HelloWorld ,
+  props:{name:"default", ohmylord:"default"} as HelloWorldProps,
   defaultWidthRatio: 1/4,
   defaultHeightRatio: 1/2,
 }
@@ -26,7 +26,8 @@ export const AppList : AppListType = {
     ...defaultAppProperties,
     name:"Hello World",
     icon:"https://www.svgrepo.com/show/521265/world-1.svg",
-    app: <HelloWorld/>,
+    app: HelloWorld,
+    props:{name:"Hello World", ohmylord:"Yes my child"} as HelloWorldProps,
     defaultHeightRatio:1/2,
     defaultWidthRatio:1/2.5
   },

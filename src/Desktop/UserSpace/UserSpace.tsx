@@ -55,7 +55,7 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
     default:
       maximize_class = " "
   }
-  
+
   return(
   <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (running_properties["zIndex"]==999 ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsTask[app_running_id]["ref"]} key={app_running_id}>
     {running_properties["maximizeType"] == null ? <div className="hitboxes">
@@ -80,7 +80,7 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
       </div>
       <div className="content">
         {running_properties["zIndex"] == 999 ? <></> : <div className="content-overlay"/>}
-        {AppList[app_id].app}
+        {AppList[app_id].app(running_properties.props)}
       </div>
     </div>
   </div> 

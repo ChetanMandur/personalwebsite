@@ -3,7 +3,12 @@ import "./HelloWorld.css"
 import { useContext, useState} from "react";
 
 
-export default function HelloWorld (){
+export type HelloWorldProps = {
+  ohmylord:string,
+  name: string,
+}
+
+export default function HelloWorld ({ohmylord, name}:HelloWorldProps){
   const [test, setTest] = useState(false)
   const [imageURL, setImageURL] = useState("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")
 
@@ -32,6 +37,6 @@ export default function HelloWorld (){
     contextMenuPropagation(event); 
     contextMenuDispatch({type:"SET", newOptions:imageContextMenuOptions, event:event});
     contextMenuDispatch({type:"SHOW"})
-    }} > hi</div>
+    }} > hi {name} {ohmylord}</div>
   </div>) 
 } 

@@ -19,6 +19,7 @@ export type RunningAppProperties = {
   isMinimized: boolean,
 
   zIndex:number,
+  props:{},
 }
 
 
@@ -31,11 +32,13 @@ export type RunningAppsReducerAction = {
   type: "ADD" | "DELETE" | "UPDATE-APP-FOCUS" | "TITLEBAR-CLICKED" | "TITLEBAR-UNCLICKED" | "RESIZE-CLICKED" | "RESIZE-UNCLICKED" | "WINDOW-MOVE" | "MINIMIZE-HANDLER"|  "MAXIMIZE"
   app_running_id?: string,
   running_properties?: RunningAppProperties,
+  app_name?: string,
   app_properties?: AppProperties ,
   event?: React.PointerEvent<HTMLDivElement>,
   resizeClickedLocation?: RunningAppProperties["resizeClicked"],
   maximizeType?: RunningAppProperties["maximizeType"],
-  forceMinimize?: boolean
+  forceMinimize?: boolean,
+  props?: {}
 }
 
 function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
@@ -55,6 +58,7 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
     maximizeType: null,
     isMinimized: false,
     zIndex: 999,
+    props:{...app_properties.props}
   })
 }
 
@@ -121,8 +125,14 @@ export function runningAppsReducer(runningAppsTask:RunningAppListType, action:Ru
   switch (action.type){
     case "ADD": {
       console.log("ADD")
-      const temp_task = {...runningAppsTask}
-      temp_task[action.app_running_id!] = {...DefaultRunningAppPropertiesGenerator(action.app_properties!)}
+      let temp_task = {...runningAppsTask}
+      const app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
+      
+      temp_task[app_running_id] = {...DefaultRunningAppPropertiesGenerator(action.app_properties!)}
+      temp_task[app_running_id]["props"] = {...temp_task[app_running_id!]["props"], ...action.props } 
+
+      temp_task = focusChange({...temp_task}, app_running_id!, false)
+
       return(temp_task)
     }
     case "DELETE":{
