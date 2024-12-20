@@ -5,14 +5,14 @@ import { AppList } from "../../Apps/Apps"
 import StartMenu from "./StartMenu/StartMenu"
 import { StartMenuContext } from "../Contexts/StartMenu";
 import { RunningAppsContext } from "../Contexts/RunningApps";
-import { ContextMenuContext, ContextMenuOptions } from "../Contexts/ContextMenuData";
+import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../Contexts/ContextMenuData";
 
 
 
 export default function Taskbar(){
   const {startMenuOpen, setStartMenuOpen} = useContext(StartMenuContext);
   const {runningAppsTask, runningAppsDispatch} = useContext(RunningAppsContext);
-  const {contextMenuDispatch} = useContext(ContextMenuContext)
+  const {contextMenuData,contextMenuDispatch} = useContext(ContextMenuContext)
 
   const [date, setDate] = useState(new Date())
 
@@ -38,7 +38,7 @@ export default function Taskbar(){
   }
 
   return(
-      <div className="taskbar" > 
+      <div className="taskbar" onContextMenu={(event)=>{contextMenuPropagation(event);if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}}> 
         <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
         {startMenuOpen ? <StartMenu/>:<></>}
         <div className="active-apps" onClick={()=>{setStartMenuOpen(false)}}> 
@@ -58,13 +58,13 @@ export default function Taskbar(){
                   context_options["Unmaximize"] = ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}
   
                 }else {
-                  context_options["Maximize"] = ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}
+                  context_options["Maximize"] = ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id}); runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}
                 }
               }
 
               return(
               <div className="common-border active-app " 
-              onContextMenu={(event)=>{contextMenuDispatch({type:"SET", event:event, newOptions:context_options}); contextMenuDispatch({type:"SHOW"})}} 
+              onContextMenu={(event)=>{contextMenuPropagation(event);contextMenuDispatch({type:"SET", event:event, newOptions:context_options}); contextMenuDispatch({type:"SHOW"})}} 
               key={Math.random()} 
               onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
                 <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={AppList[app_id].icon}  alt="" />

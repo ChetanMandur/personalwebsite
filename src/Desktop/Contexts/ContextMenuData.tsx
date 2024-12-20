@@ -1,4 +1,4 @@
-import { createContext } from "react"
+import React, { createContext } from "react"
 
 
 export type ContextMenuOptions = {
@@ -17,6 +17,12 @@ export type ContextMenuReducerAction = {
   event?: React.MouseEvent<HTMLDivElement, MouseEvent>,
   newOptions?: ContextMenuOptions,
 
+}
+
+
+export function contextMenuPropagation(event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+  event.stopPropagation();
+  event.preventDefault()
 }
 
 
