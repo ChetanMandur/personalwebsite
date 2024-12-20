@@ -20,6 +20,8 @@
 
     user-select: none;
 
+    box-shadow: 0.3vh 0.3vh rgba(0, 0, 0, 0.644); 
+
     .context-menu-option{
         border-width: calc(var(--bar-border-outline-width)*0.8);
         border-bottom:var(--bar-border-outline);
