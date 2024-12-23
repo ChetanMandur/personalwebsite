@@ -1,0 +1,7 @@
+.file-explorer{
+    background-color: red;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
