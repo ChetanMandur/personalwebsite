@@ -176,7 +176,7 @@
         .content-overlay {
           position: absolute;
 
-          width: calc(100% - var(--app-border-size)*2);
+          width: calc(100% - var(--app-border-size)*1.7);
           height: calc(100% - var(--app-border-size) - var(--titlebar-height));
 
           background-color: rgba(0, 0, 0, 0.60);

@@ -109,7 +109,7 @@ export default function UserSpace(){
                 switch (running_properties["maximizeType"]) {
                   case "FULL":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
-                      width: "calc(100% - var(--app-border-size)*2)", 
+                      width: "calc(100% - var(--app-border-size)*1.7)", 
                       height: "var(--app-maximized-height-full)", 
                       top: "0", 
                       left:"0",
