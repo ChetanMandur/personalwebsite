@@ -46,7 +46,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             }
         }
 
-        console.log("pathToArray", array)
+        // console.log("pathToArray", array)
         return array
 
     }
@@ -62,7 +62,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             path = "/"
         }
 
-        console.log("arrayToPath", path)
+        // console.log("arrayToPath", path)
         
         return path
     }
