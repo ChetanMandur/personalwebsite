@@ -80,7 +80,6 @@ export default function FileExplorer({path}:FileExplorerProps){
          const folderList: string[]= pathToArray(path)
         //  console.log("FOLDERLIST ", folderList.length, folderList)
 
-         let exists:boolean = true
          let currentFolder: MyFileSystemFolder = MyFileSystem
 
          for (const i of folderList){
@@ -88,7 +87,6 @@ export default function FileExplorer({path}:FileExplorerProps){
                 currentFolder = currentFolder[i] as MyFileSystemFolder
 
             } catch (error) {
-                exists = false;
                 return null
             }
          }
