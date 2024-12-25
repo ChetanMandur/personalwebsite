@@ -36,7 +36,7 @@ export const AppList : AppListType = {
     name:"File Explorer",
     icon:"https://www.svgrepo.com/show/486676/folder-outline.svg",
     app: FileExplorer,
-    props:{} as FileExplorerProps,
+    props:{path:"/"} as FileExplorerProps,
     defaultHeightRatio:1/2,
     defaultWidthRatio:1/2.5
   },
