@@ -205,7 +205,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             return(
                 <div className={"item " + itemStyle} key={item[0]} onClick={(event)=>(itemClickedHandler(item, event))} onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}>
                     <div className="icon">{item[1].type != undefined ? <img src={fileThumbnailGetter(item[1].type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
-                    <div className="name">{item[1].type != undefined ? (item[1].name as string) : (item[0])}</div>
+                    <div className="name">{(item[0])}</div>
                 </div>
             )
            })
