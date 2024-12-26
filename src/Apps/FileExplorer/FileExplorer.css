@@ -35,15 +35,16 @@
       column-gap: 1vh;
 
       .item{
-        padding-top: 1vh;
+        margin-top: 1vh;
         width: 6vh;
         height: 6vh;
         display:flex;
         flex-direction: column;
+        background-color: aqua;
 
 
         .icon{
-          background-color: aqua;
+          user-select: none;
           flex: 1 1 5vh;
           justify-content: center;
 
@@ -60,13 +61,16 @@
         .name{
           flex: 0 1 1.2vh;
           font-size: 0.8rem;
-          background-color: red;
           overflow:hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          /* min-height: 1vh; */
+          text-align: center;
 
         }
+      }
+
+      .selected {
+        background-color: darkslateblue;
       }
     }
 

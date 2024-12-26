@@ -7,9 +7,10 @@ export type FileExplorerProps = {
 }
 
 export default function FileExplorer({path}:FileExplorerProps){
-    const [currentPath, setCurrentPath] = useState("")
-    const [addressBoxPath, setAddressBoxPath] = useState("")
+    const [currentPath, setCurrentPath] = useState<string>("")
+    const [addressBoxPath, setAddressBoxPath] = useState<string>("")
     const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile][]>([])
+    const [selected, setSelected] = useState<string>("")
 
     useEffect(()=>{
         if (path !=undefined){
@@ -106,6 +107,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                 setCurrentPath(pathCleaned)
                 setAddressBoxPath(pathCleaned)
                 setCurrentFolder(Object.entries(pathExists))
+                setSelected("")
             }
 
             event.currentTarget.blur()
@@ -121,6 +123,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             setAddressBoxPath(newPath)
             setCurrentPath(newPath)
             setCurrentFolder(Object.entries(doesPathExist(newPath)!))
+            setSelected("")
         }
 
     }
@@ -133,13 +136,38 @@ export default function FileExplorer({path}:FileExplorerProps){
         setAddressBoxPath(newPath)
         setCurrentPath(newPath)
         setCurrentFolder(Object.entries(doesPathExist(newPath)!))
+        setSelected("")
 
     }
 
 
-    function itemClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile]){
+    function itemClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+        event.stopPropagation();
+        if (selected != item[0]){
+            setSelected(item[0])
+        }
+    }
+
+    function itemDoubleClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+        event.stopPropagation();
         if (item[1].type == undefined){
             folderPressed(item[0])
+        } else{
+            //launch respective viewer for media file
+            // switch (item[1].type) {
+            //     case "IMAGE":
+                    
+            //         break;
+            //     case "PDF":
+            //         break;
+
+            //     case "VIDEO":
+            //         break;
+                    
+            //     default:
+            //         break;
+            // }
+            setSelected("")
         }
     }
     
@@ -153,12 +181,14 @@ export default function FileExplorer({path}:FileExplorerProps){
             </div>
             <input type="text" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value)}} name="address-box" id="" />
         </div>
-        <div className="content">
+        <div className="content" onClick={()=>{setSelected("")}}>
         {
            currentFolder.map ( (item) =>{
+
+            let itemStyle = (selected == item[0]) ? ("selected") : ("")
             
             return(
-                <div className="item" key={item[0]} onClick={()=>(itemClickedHandler(item))}>
+                <div className={"item " + itemStyle} key={item[0]} onClick={(event)=>(itemClickedHandler(item, event))} onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}>
                     <div className="icon">{item[1].type != undefined ? <img src="https://www.svgrepo.com/show/535388/file.svg"/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
                     <div className="name">{item[1].type != undefined ? (item[1].name as string) : (item[0])}</div>
                 </div>
