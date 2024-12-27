@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import "./FileExplorer.css"
 import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSystem"
+import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuData"
 
 export type FileExplorerProps = {
     path: string
@@ -11,6 +12,9 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [addressBoxPath, setAddressBoxPath] = useState<string>("")
     const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
     const [selected, setSelected] = useState<string>("")
+    const [showHidden, setShowHidden] = useState<boolean>(false)
+
+    const {contextMenuDispatch} = useContext(ContextMenuContext)
 
     useEffect(()=>{
         if (path !=undefined){
@@ -221,7 +225,14 @@ export default function FileExplorer({path}:FileExplorerProps){
     }
 
 
-    
+    let toggleHiddenFilesContextMenu = {} as ContextMenuOptions
+
+    if (!showHidden){
+        toggleHiddenFilesContextMenu["Show hidden files"] = ()=>{setShowHidden(true)}
+    } else{
+        toggleHiddenFilesContextMenu["Hide hidden files"] = ()=>{setShowHidden(false)}
+
+    }
 
 
     return(
@@ -232,13 +243,20 @@ export default function FileExplorer({path}:FileExplorerProps){
             </div>
             <input type="text" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value)}} name="address-box" id="" />
         </div>
-        <div className="content" onClick={()=>{setSelected("")}}>
+        <div className="content" onClick={()=>{setSelected("")}} onContextMenu={(event)=>{contextMenuPropagation(event); 
+            contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
+            contextMenuDispatch({type:"SHOW"})
+        }}>
         {
            currentFolder.map ( (item) =>{
             if (folderItemType(item[1]) == "BOOLEAN"){
                 return(null)
             }
             let itemStyle = (selected == item[0]) ? ("selected") : ("")
+
+            if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
+                return null
+            }
             
             return(
                 <div className={"item " + itemStyle} key={item[0]} onClick={(event)=>(itemClickedHandler(item, event))} onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}>
