@@ -9,18 +9,19 @@ export type FileExplorerProps = {
 export default function FileExplorer({path}:FileExplorerProps){
     const [currentPath, setCurrentPath] = useState<string>("")
     const [addressBoxPath, setAddressBoxPath] = useState<string>("")
-    const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile][]>([])
+    const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
     const [selected, setSelected] = useState<string>("")
 
     useEffect(()=>{
         if (path !=undefined){
             let pathCleaned:string = pathClean(path)
 
-            const pathExists:(MyFileSystemFolder|null) =  doesPathExist(pathCleaned)
-            if (pathExists != null){
+            const pathExists:(MyFileSystemFolder|null|"FILE") = doesPathExist(pathCleaned)
+
+            if (pathExists != null && pathExists != "FILE"){
                 setCurrentPath(pathCleaned)
                 setAddressBoxPath(pathCleaned)
-                setCurrentFolder(Object.entries(pathExists))
+                setCurrentFolder(Object.entries(pathExists as MyFileSystemFolder))
             }
             else{
                 setCurrentPath("/")
@@ -75,9 +76,19 @@ export default function FileExplorer({path}:FileExplorerProps){
 
     }
 
+    function folderItemType(item: MyFileSystemFolder | MyFileSystemFile | boolean, ):"FOLDER"|"FILE"|"BOOLEAN"{
+        if (typeof(item) == "boolean"){
+            return "BOOLEAN"
+        }
+        if (item.type == undefined){
+            return "FOLDER"
+        } else{
+            return "FILE"
+        }
+    }
 
 
-    function doesPathExist(path: string):(MyFileSystemFolder|null){
+    function doesPathExist(path: string):(MyFileSystemFolder|null|"FILE"){
          const folderList: string[]= pathToArray(path)
         //  console.log("FOLDERLIST ", folderList.length, folderList)
 
@@ -85,7 +96,16 @@ export default function FileExplorer({path}:FileExplorerProps){
 
          for (const i of folderList){
             try {
-                currentFolder = currentFolder[i] as MyFileSystemFolder
+                switch (folderItemType(currentFolder[i])) {
+                    case "BOOLEAN":
+                        return null
+                    
+                    case "FILE":
+                        return "FILE"
+
+                    case "FOLDER":
+                        currentFolder = currentFolder[i] as MyFileSystemFolder;
+                }
 
             } catch (error) {
                 return null
@@ -98,10 +118,13 @@ export default function FileExplorer({path}:FileExplorerProps){
         if(event.key == "Enter"){
             let pathCleaned:string = pathClean(addressBoxPath)
 
-            const pathExists:(MyFileSystemFolder|null) =  doesPathExist(pathCleaned)
+            const pathExists:(MyFileSystemFolder|null|"FILE") =  doesPathExist(pathCleaned)
 
             if (pathExists == null){
                 alert(`The path ${pathCleaned} does not exist.` )
+                setAddressBoxPath(currentPath)
+            } else if (pathExists == "FILE"){
+                alert(`The path ${pathCleaned} leads to a file` )
                 setAddressBoxPath(currentPath)
             } else{
                 setCurrentPath(pathCleaned)
@@ -141,40 +164,51 @@ export default function FileExplorer({path}:FileExplorerProps){
     }
 
 
-    function itemClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+    function itemClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile |boolean], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
         event.stopPropagation();
         if (selected != item[0]){
             setSelected(item[0])
         }
     }
 
-    function itemDoubleClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+    function itemDoubleClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile | boolean], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
         event.stopPropagation();
-        if (item[1].type == undefined){
-            folderPressed(item[0])
-        } else{
-            //launch respective viewer for media file
-            // switch (item[1].type) {
-            //     case "IMAGE":
-                    
-            //         break;
-            //     case "PDF":
-            //         break;
+        switch(folderItemType(item[1])){
+            case "FOLDER":{
+                folderPressed(item[0])
+                break;
 
-            //     case "VIDEO":
-            //         break;
-                    
-            //     default:
-            //         break;
-            // }
-            setSelected("")
+            }
+            case "FILE":{
+                //launch respective viewer for media file
+                // switch (item[1].type) {
+                //     case "IMAGE":
+                        
+                //         break;
+                //     case "PDF":
+                //         break;
+
+                //     case "VIDEO":
+                //         break;
+                        
+                //     default:
+                //         break;
+                // }
+                setSelected("")
+                break;
+            }
+            default:{
+                break;
+            }
+
         }
+        
     }
 
 
-    function fileThumbnailGetter(string: MyFileSystemFile["type"]):string{
+    function fileThumbnailGetter(fileType: MyFileSystemFile["type"]):string{
 
-        switch (string){
+        switch (fileType){
             case "IMAGE":
                 return "https://www.svgrepo.com/show/141793/image-file.svg"
             case "VIDEO":
@@ -185,6 +219,8 @@ export default function FileExplorer({path}:FileExplorerProps){
                 return "https://www.svgrepo.com/show/535388/file.svg"
         }
     }
+
+
     
 
 
@@ -199,12 +235,15 @@ export default function FileExplorer({path}:FileExplorerProps){
         <div className="content" onClick={()=>{setSelected("")}}>
         {
            currentFolder.map ( (item) =>{
-
+            if (folderItemType(item[1]) == "BOOLEAN"){
+                return(null)
+            }
             let itemStyle = (selected == item[0]) ? ("selected") : ("")
             
             return(
                 <div className={"item " + itemStyle} key={item[0]} onClick={(event)=>(itemClickedHandler(item, event))} onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}>
-                    <div className="icon">{item[1].type != undefined ? <img src={fileThumbnailGetter(item[1].type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
+                    {/* goated  */}
+                    <div className="icon">{(folderItemType(item[1]) == "FILE") ? <img src={fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
                     <div className="name">{(item[0])}</div>
                 </div>
             )

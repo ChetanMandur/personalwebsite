@@ -6,11 +6,14 @@ export type MyFileSystemFile ={
 
 
 export type MyFileSystemFolder = {
-    [key:string]: MyFileSystemFolder | MyFileSystemFile
+    hidden: boolean ,
+    [key:string]: MyFileSystemFolder | MyFileSystemFile | boolean,
 }
 
 export const MyFileSystem : MyFileSystemFolder = {
+    hidden:false,
     Photos:{
+        hidden:false,
         "wikipedia photo of the day dec 23 2024": {
             type: "IMAGE",
             
@@ -18,10 +21,11 @@ export const MyFileSystem : MyFileSystemFolder = {
             hidden: false
         },
         imageSubFolder:{
-
+            hidden:false
         }
     },
     Videos:{
+        hidden:false,
         "wikipedia media of the day dec 23 2024": {
             type: "VIDEO",
             data: "https://upload.wikimedia.org/wikipedia/commons/7/78/Hindenburg_Explodes_%28audio_extracted%29.webm",
@@ -29,6 +33,7 @@ export const MyFileSystem : MyFileSystemFolder = {
         }
     },
     Documents:{
+        hidden:false,
         "OOT manual, ty nintendo for the pdf":{
             type: "PDF",
             data: "https://www.nintendo.com/eu/media/downloads/games_8/emanuals/nintendo_8/Manual_Nintendo64_TheLegendOfZeldaOcarinaOfTime_EN.pdf",
@@ -36,5 +41,13 @@ export const MyFileSystem : MyFileSystemFolder = {
         }
 
     },
+    "test":{
+        hidden:false,
+        type:"IMAGE",
+        data:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Khone_Phapheng_Falls%2C_Si_Phan_Don%2C_Laos%2C_widest_waterfall_in_the_world.jpg/750px-Khone_Phapheng_Falls%2C_Si_Phan_Don%2C_Laos%2C_widest_waterfall_in_the_world.jpg"
+    },
+    TestHidden:{
+        hidden:true,
+    }
 }
 
