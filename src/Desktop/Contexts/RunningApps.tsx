@@ -1,6 +1,11 @@
 import { createContext, createRef } from "react";
 import { AppProperties } from "../../Apps/Apps";
 
+export type RunningAppID = {
+  app_running_id: string
+}
+
+
 export type RunningAppProperties = {
   ref: React.MutableRefObject<null | HTMLDivElement>,
   x: number ,
@@ -137,7 +142,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       const app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
       
       newData[app_running_id] = {...DefaultRunningAppPropertiesGenerator(action.app_properties!)}
-      newData[app_running_id]["props"] = {...newData[app_running_id!]["props"], ...action.props } 
+      newData[app_running_id]["props"] = {...newData[app_running_id!]["props"], ...action.props, app_running_id:app_running_id } 
 
       newData = focusChange({...newData}, app_running_id!, false)
       break;
