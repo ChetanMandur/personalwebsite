@@ -1,10 +1,10 @@
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuData";
-import { RunningAppID, RunningAppsContext } from "../../Desktop/Contexts/RunningApps";
+import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningApps";
 import "./HelloWorld.css"
 import { useContext, useState} from "react";
 
 
-export type HelloWorldProps = RunningAppID & {
+export type HelloWorldProps = AppRunningID & {
   ohmylord:string,
   name: string,
 }

@@ -1,7 +1,7 @@
 import { createContext, createRef } from "react";
 import { AppProperties } from "../../Apps/Apps";
 
-export type RunningAppID = {
+export type AppRunningID = {
   app_running_id: string
 }
 
