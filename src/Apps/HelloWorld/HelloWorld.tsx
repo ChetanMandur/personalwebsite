@@ -1,7 +1,7 @@
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuData";
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningApps";
 import "./HelloWorld.css"
-import { useContext, useState} from "react";
+import { useContext, useLayoutEffect, useRef, useState} from "react";
 
 
 export type HelloWorldProps = AppRunningID & {
@@ -13,10 +13,21 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
   const [test, setTest] = useState(false)
   const [imageURL, setImageURL] = useState("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")
 
+  const appRef =useRef<HTMLDivElement|null>(null)
+
   const {runningAppsData} = useContext(RunningAppsContext)
   const {contextMenuDispatch} = useContext(ContextMenuContext)
 
   const hasFocus = runningAppsData[app_running_id].zIndex == 999
+
+
+  useLayoutEffect(()=>{
+    if (hasFocus){
+      appRef.current!.focus()
+    }
+  },[runningAppsData[app_running_id]])
+
+
   
 
   const imageContextMenuOptions: ContextMenuOptions = {
@@ -26,7 +37,7 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
 
 
   return(
-  <div className="hello-world">
+  <div className="hello-world" ref={appRef} tabIndex={0} onKeyDown={(event)=>{event.stopPropagation();console.log(app_running_id, event.key)}}>
     Hello world
     <form action="">
       <input type="checkbox" checked={test} onChange={()=>{setTest(!test); console.log(test)}} name="" id="" />

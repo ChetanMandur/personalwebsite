@@ -12,6 +12,10 @@
   resize: vertical;
 }
 
+.hello-world:focus{
+  outline:none;
+}
+
 .image {
   height: 100%;
   object-fit: fill;
