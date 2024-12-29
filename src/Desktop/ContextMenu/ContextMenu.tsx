@@ -11,7 +11,7 @@ export default function ContextMenu(){
 
     useLayoutEffect(()=>{
         setHeight(contextMenuRef.current?.offsetHeight!)  
-    },[])
+    },[contextMenuData])
 
     const contextStyle :React.CSSProperties = (contextMenuData.y > window.innerHeight/2)? {
         left: contextMenuData.x,
