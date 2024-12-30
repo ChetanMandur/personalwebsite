@@ -10,8 +10,8 @@ export type MediaViewerProps = AppRunningID & {
 
 
 export function MediaViewer({data, type}:MediaViewerProps){
-    const [currentData, setCurrentData] = useState<string>(data ?? "")
-    const [currentType, setCurrentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
+    const [currentData] = useState<string>(data ?? "")
+    const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
 
 
     function MediaGenerator():JSX.Element{
