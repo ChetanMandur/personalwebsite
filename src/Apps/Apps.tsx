@@ -1,5 +1,6 @@
 import FileExplorer,{ FileExplorerProps }  from "./FileExplorer/FileExplorer";
 import HelloWorld, { HelloWorldProps } from "./HelloWorld/HelloWorld";
+import { MediaViewer, MediaViewerProps } from "./MediaViewer/MediaViewer";
 
 export type AppProperties = {
   name: string;
@@ -39,6 +40,14 @@ export const AppList : AppListType = {
     props:{path:"/"} as FileExplorerProps,
     defaultHeightRatio:1/2,
     defaultWidthRatio:1/2.5
+  },
+  "MediaViewer":{
+    name:"Media Viewer",
+    icon:"https://www.svgrepo.com/show/486284/data-center-table-management.svg",
+    app: MediaViewer,
+    props:{} as MediaViewerProps,
+    defaultHeightRatio:1/3,
+    defaultWidthRatio:1/3
   },
   "Default App Properties Test": {
     ...defaultAppProperties,

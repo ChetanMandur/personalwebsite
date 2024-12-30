@@ -173,6 +173,7 @@
         padding-top: 0;
         flex: 1 1 auto;
         overflow: hidden;
+        overflow-wrap: anywhere;
 
         .content-overlay {
           position: absolute;

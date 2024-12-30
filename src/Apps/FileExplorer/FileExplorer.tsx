@@ -2,6 +2,9 @@ import { useContext, useEffect, useState } from "react"
 import "./FileExplorer.css"
 import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSystem"
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuData"
+import { RunningAppsContext } from "../../Desktop/Contexts/RunningApps"
+import { AppList } from "../Apps"
+import { MediaViewerProps } from "../MediaViewer/MediaViewer"
 
 export type FileExplorerProps = {
     path: string
@@ -15,6 +18,7 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [showHidden, setShowHidden] = useState<boolean>(false)
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
+    const {runningAppsDispatch} = useContext(RunningAppsContext)
 
     useEffect(()=>{
         if (path !=undefined){
@@ -198,6 +202,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                 //     default:
                 //         break;
                 // }
+                runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(item[1] as MyFileSystemFile).data, type:(item[1] as MyFileSystemFile).type} as MediaViewerProps})
                 setSelected("")
                 break;
             }
