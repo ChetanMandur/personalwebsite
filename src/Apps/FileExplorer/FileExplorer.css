@@ -14,6 +14,15 @@
       max-height: var(--menu-bar-height);
       background-color: var(--bar-default-colour);
 
+      .path-suggestion{
+        position:absolute;
+        --top-offset: calc(var(--menu-bar-height) + var(--titlebar-height) + var(--bar-border-outline-width));
+        top: var(--top-offset);
+        height: calc(50% - var(--top-offset));
+        width:calc(100% - var(--bar-border-outline-width)*2);
+        background-color: rgba(40, 40, 40, 0.932);
+      }
+
       .back-button{
         img{
           max-width: 100%;

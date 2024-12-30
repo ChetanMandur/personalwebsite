@@ -16,6 +16,7 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
     const [selected, setSelected] = useState<string>("")
     const [showHidden, setShowHidden] = useState<boolean>(false)
+    const [showPathSuggestions, setShowPathSuggestions] = useState<boolean>(false)
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
@@ -188,20 +189,6 @@ export default function FileExplorer({path}:FileExplorerProps){
 
             }
             case "FILE":{
-                //launch respective viewer for media file
-                // switch (item[1].type) {
-                //     case "IMAGE":
-                        
-                //         break;
-                //     case "PDF":
-                //         break;
-
-                //     case "VIDEO":
-                //         break;
-                        
-                //     default:
-                //         break;
-                // }
                 runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(item[1] as MyFileSystemFile).data, type:(item[1] as MyFileSystemFile).type} as MediaViewerProps})
                 setSelected("")
                 break;
@@ -246,7 +233,10 @@ export default function FileExplorer({path}:FileExplorerProps){
             <div className="back-button" onClick={()=>{backButtonPressed()}}>
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
-            <input type="text" autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value)}} name="address-box" id="" />
+            <input type="text" onFocus={()=>{setShowPathSuggestions(true)}} onBlur={()=>{setShowPathSuggestions(false)}}  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value)}} name="address-box" id="" />
+            {showPathSuggestions ? <div className="path-suggestion">
+                im here
+            </div> : <></>}
         </div>
         <div className="content" onClick={()=>{setSelected("")}} onContextMenu={(event)=>{contextMenuPropagation(event); 
             contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
