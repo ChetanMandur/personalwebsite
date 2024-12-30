@@ -1,5 +1,4 @@
 .file-explorer{
-    background-color: red;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -13,7 +12,7 @@
       flex-direction: row;
       flex: 0 1 var(--menu-bar-height);
       max-height: var(--menu-bar-height);
-      background-color: darkgoldenrod;
+      background-color: var(--bar-default-colour);
 
       .back-button{
         img{
@@ -22,29 +21,47 @@
         }
       }
       input[type=text]{
+        background-color: rgba(255, 255, 255, 0.18);
         width:100%;
         flex: 1 1 auto;
+        border-top: none;
+        padding-left: 0.6vh;
+        font-family: "Win95Font";
       }
+      input[type=text]:focus{
+        background-color: rgba(255, 255, 255, 0.301);
+        outline: 0;
+      }
+
+
+      /* I never want to touch autofill ever, why wont they make it easier for me to inject styles */
+      /* input:-webkit-autofill,
+      input:-webkit-autofill:focus {
+        transition: background-color 0s 600000s, color 0s 600000s !important;
+        font-family: "Win95Font";
+      } */
+
     }
 
     .content{
-      background-color: green;
+      background-color: var(--bar-default-colour);
       display:flex;
       flex-direction: row;
+      align-content: flex-start;
       flex-wrap: wrap;
       column-gap: 1vh;
 
       .item{
+        user-select: none;
         margin-top: 1vh;
         width: 6vh;
         height: 6vh;
         display:flex;
         flex-direction: column;
-        background-color: aqua;
-
+        box-shadow: 0.3vh 0.3vh rgba(0, 0, 0, 0.644); 
+        background-color: rgba(255, 255, 255, 0.274);
 
         .icon{
-          user-select: none;
           flex: 1 1 5vh;
           justify-content: center;
 
@@ -65,12 +82,16 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           text-align: center;
+          --name-padding-size: 0.3vh;
+          padding-left: var(--name-padding-size);
+          padding-right: var(--name-padding-size);
+
 
         }
       }
 
       .selected {
-        background-color: darkslateblue;
+        background-color: rgba(255, 255, 255, 0.571);
       }
     }
 

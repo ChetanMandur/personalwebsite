@@ -246,7 +246,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             <div className="back-button" onClick={()=>{backButtonPressed()}}>
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
-            <input type="text" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value)}} name="address-box" id="" />
+            <input type="text" autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value)}} name="address-box" id="" />
         </div>
         <div className="content" onClick={()=>{setSelected("")}} onContextMenu={(event)=>{contextMenuPropagation(event); 
             contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
