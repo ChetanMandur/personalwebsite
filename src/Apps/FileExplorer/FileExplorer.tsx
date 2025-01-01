@@ -15,7 +15,7 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [currentPath, setCurrentPath] = useState<string>("")
     const [addressBoxPath, setAddressBoxPath] = useState<string>("")
     const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
-    
+
     const [selected, setSelected] = useState<string>("")
     const [showHidden, setShowHidden] = useState<boolean>(false)
 
@@ -140,8 +140,14 @@ export default function FileExplorer({path}:FileExplorerProps){
 
         //If it does exist (a complete path) then find all folders within path and display
         if (currentCheck != null && currentCheck != "FILE"){
-
-            setCurrentPathSuggestions(Object.entries(currentCheck).filter((item)=>{return folderItemType(item[1]) == "FOLDER"}))
+            setCurrentPathSuggestions(Object.entries(currentCheck).filter(
+                (item)=>{
+                    if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
+                        return false
+                    }
+                    return ((folderItemType(item[1]) == "FOLDER"))
+                }
+            ))
         }
 
         //If it doesnt exist (either incomplete name/doesnt exist)
@@ -158,6 +164,9 @@ export default function FileExplorer({path}:FileExplorerProps){
                 setCurrentPathSuggestions(
                     Object.entries(parentCheck).filter(
                         (item)=>{
+                            if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
+                                return false
+                            }
                             return ((folderItemType(item[1]) == "FOLDER") && (item[0].substring(0, incompleteChild?.length) == incompleteChild) )
                         }
                     )
