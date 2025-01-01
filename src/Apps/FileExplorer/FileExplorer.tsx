@@ -20,7 +20,7 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [showHidden, setShowHidden] = useState<boolean>(false)
 
     const [showPathSuggestions, setShowPathSuggestions] = useState<boolean>(false)
-    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
+    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<string[]>([])
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
@@ -135,49 +135,84 @@ export default function FileExplorer({path}:FileExplorerProps){
             path = addressBoxPath
         }
 
+        //Clean path and find pathArray
+        path = pathClean(path)
+        let pathArray = pathToArray(path)
+
+
         //Check current path, see if it exists
-        const currentCheck = doesPathExist(path)
+        const pathCheck = doesPathExist(path)
 
         //If it does exist (a complete path) then find all folders within path and display
-        if (currentCheck != null && currentCheck != "FILE"){
-            setCurrentPathSuggestions(Object.entries(currentCheck).filter(
+        if (pathCheck != null && pathCheck != "FILE"){
+
+            //Filter content to find folders
+            let foldersInPath = Object.entries(pathCheck).filter(
                 (item)=>{
                     if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
                         return false
                     }
                     return ((folderItemType(item[1]) == "FOLDER"))
                 }
-            ))
+            )
+
+            //Construct new path suggestions based on filtered content
+            let newPathSuggestions:string[] = []
+            for (const i of foldersInPath){
+                if (pathArray.length == 0){
+                    //If pathArray is 0, that means path = "/"
+                    newPathSuggestions.push(path + i[0])
+                } else{
+                    newPathSuggestions.push(path + "/" + i[0])
+
+                }
+            }
+            setCurrentPathSuggestions(newPathSuggestions)
+
         }
 
         //If it doesnt exist (either incomplete name/doesnt exist)
         else{
-            // Find parent
-            let pathArray = pathToArray(path)
-            let incompleteChild = pathArray.pop() //parent path = current path - closest child
+            // Find child
+            let incompleteChild = pathArray.pop() //incompleteChild = last item in pathArray
+
+            // Find parent path
+            let parentPath = arrayToPath(pathArray) //parentPath = pathArray - last item
 
             //Check to see if parent exists
-            const parentCheck = doesPathExist(arrayToPath(pathArray))
+            const parentCheck = doesPathExist(parentPath)
 
             //If parent exists, show folders that are close to the incomplete child
             if (parentCheck != null && parentCheck != "FILE"){
-                setCurrentPathSuggestions(
-                    Object.entries(parentCheck).filter(
-                        (item)=>{
-                            if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
-                                return false
-                            }
-                            return ((folderItemType(item[1]) == "FOLDER") && (item[0].substring(0, incompleteChild?.length) == incompleteChild) )
+                let foldersInPath = Object.entries(parentCheck).filter(
+                    (item)=>{
+                        if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
+                            return false
                         }
-                    )
+                        return ((folderItemType(item[1]) == "FOLDER") && (item[0].substring(0, incompleteChild?.length) == incompleteChild) )
+                    }
                 )
+
+                //Construct new path suggestions based on filtered content
+                let newPathSuggestions:string[] = []
+                for (const i of foldersInPath){
+                    if (pathArray.length == 0){
+                        //If pathArray is 0, that means path = "/"
+                        newPathSuggestions.push(parentPath + i[0])
+                    } else{
+                        newPathSuggestions.push(parentPath + "/" + i[0])
+                    }
+                }
+                setCurrentPathSuggestions(newPathSuggestions)
+
+
             }
             //If parent doesnt exist, show no suggestions 
             else {
                 setCurrentPathSuggestions([])
             }
         }
-            
+
     }
 
 
