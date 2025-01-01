@@ -18,15 +18,32 @@
         position:absolute;
         --top-offset: calc(var(--menu-bar-height) + var(--titlebar-height) + var(--bar-border-outline-width));
         top: var(--top-offset);
-        height: calc(50% - var(--top-offset));
+        max-height: calc(100% - var(--top-offset));
         width:calc(100% - var(--bar-border-outline-width)*2);
-        background-color: rgba(40, 40, 40, 0.932);
+        background-color: rgb(40, 40, 40);
+        color: rgb(180, 180, 180);
+        overflow-y: auto;
+        overflow-x: hidden;
 
         display:flex;
         flex-direction: column;
 
         .path-suggestion-item{
           width: 100%;
+
+
+          padding:1vh;
+          /* padding-top:0.4vh;
+          padding-left:0.4vh;
+          padding-bottom:0.4vh; */
+        }
+        .path-suggestion-message{
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          text-decoration: underline;
+
+          padding:1vh;
         }
       }
 

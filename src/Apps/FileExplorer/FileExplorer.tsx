@@ -20,7 +20,7 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [showHidden, setShowHidden] = useState<boolean>(false)
 
     const [showPathSuggestions, setShowPathSuggestions] = useState<boolean>(false)
-    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<string[]>([])
+    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<string[]|undefined>([])
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
@@ -203,13 +203,17 @@ export default function FileExplorer({path}:FileExplorerProps){
                         newPathSuggestions.push(parentPath + "/" + i[0])
                     }
                 }
-                setCurrentPathSuggestions(newPathSuggestions)
+                if (newPathSuggestions.length == 0){
+                    setCurrentPathSuggestions(undefined)
+                }else{
+                    setCurrentPathSuggestions(newPathSuggestions)
 
+                }
 
             }
-            //If parent doesnt exist, show no suggestions 
+            //If parent doesnt exist, show no suggestions (not sure if this is really needed tbh, and i dont wanna test rn)
             else {
-                setCurrentPathSuggestions([])
+                setCurrentPathSuggestions(undefined)
             }
         }
 
@@ -223,15 +227,31 @@ export default function FileExplorer({path}:FileExplorerProps){
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
             <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions()}} onBlur={()=>{setShowPathSuggestions(false);RenderPathSuggestions()}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
-            {showPathSuggestions ? <div className="path-suggestion">
-                {
-                    currentPathSuggestions.map( (item)=>{
-                        return (
-                            <div key={item} className="path-suggestion-item">{item}</div>
-                        )
-                    })
-                }
-            </div> : <></>}
+            {showPathSuggestions ? 
+                <div className="path-suggestion">
+                    {
+                        currentPathSuggestions != undefined ? 
+                            (
+                                currentPathSuggestions.length != 0 ? 
+                                (
+                                    currentPathSuggestions.map( (item)=>{
+                                        return (
+                                            <div key={item} className="path-suggestion-item">{item}</div>
+                                        )
+                                    })
+                                ) 
+                                : 
+                                (
+                                    <div key={"noFoldersInPath"} className="path-suggestion-message">No folders within path</div>
+                                )
+                            ) 
+                            : 
+                            (<div key={"folderDoesNotExist"} className="path-suggestion-message">Invalid path</div>)
+                    }
+                </div> 
+                : 
+                <></>
+            }
         </div>
         <div className="content" onClick={()=>{setSelected("")}} onContextMenu={(event)=>{contextMenuPropagation(event); 
             contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
