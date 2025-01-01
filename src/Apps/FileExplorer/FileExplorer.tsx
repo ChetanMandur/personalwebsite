@@ -5,6 +5,7 @@ import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "
 import { RunningAppsContext } from "../../Desktop/Contexts/RunningApps"
 import { AppList } from "../Apps"
 import { MediaViewerProps } from "../MediaViewer/MediaViewer"
+import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter } from "./FileExplorerHelpers"
 
 export type FileExplorerProps = {
     path: string
@@ -14,9 +15,12 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [currentPath, setCurrentPath] = useState<string>("")
     const [addressBoxPath, setAddressBoxPath] = useState<string>("")
     const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
+    
     const [selected, setSelected] = useState<string>("")
     const [showHidden, setShowHidden] = useState<boolean>(false)
+
     const [showPathSuggestions, setShowPathSuggestions] = useState<boolean>(false)
+    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
@@ -44,85 +48,6 @@ export default function FileExplorer({path}:FileExplorerProps){
         }
     },[])
 
-
-    //When output is [], that means we are on root
-    //Each element is a path starting from root, ie.  = /[0]/[1]/[2]
-    function pathToArray(path:string):string[]{
-        let array:string[] = []
-        let splitPath = path.split("/")
-
-        for (const i of splitPath){
-            if (i != ""){
-                array.push(i)
-            }
-        }
-
-        // console.log("pathToArray", array)
-        return array
-
-    }
-
-    function arrayToPath(array:string[]):string{
-        let path = ""
-
-        for (const i of array){
-            path += "/" + i
-        }
-
-        if (path == ""){
-            path = "/"
-        }
-
-        // console.log("arrayToPath", path)
-        
-        return path
-    }
-
-
-    function pathClean(path:string):string{
-
-        return arrayToPath(pathToArray(path))
-
-    }
-
-    function folderItemType(item: MyFileSystemFolder | MyFileSystemFile | boolean, ):"FOLDER"|"FILE"|"BOOLEAN"{
-        if (typeof(item) == "boolean"){
-            return "BOOLEAN"
-        }
-        if (item.type == undefined){
-            return "FOLDER"
-        } else{
-            return "FILE"
-        }
-    }
-
-
-    function doesPathExist(path: string):(MyFileSystemFolder|null|"FILE"){
-         const folderList: string[]= pathToArray(path)
-        //  console.log("FOLDERLIST ", folderList.length, folderList)
-
-         let currentFolder: MyFileSystemFolder = MyFileSystem
-
-         for (const i of folderList){
-            try {
-                switch (folderItemType(currentFolder[i])) {
-                    case "BOOLEAN":
-                        return null
-                    
-                    case "FILE":
-                        return "FILE"
-
-                    case "FOLDER":
-                        currentFolder = currentFolder[i] as MyFileSystemFolder;
-                }
-
-            } catch (error) {
-                return null
-            }
-         }
-         return currentFolder
-    }
-
     function onAddressSubmit(event: React.KeyboardEvent<HTMLInputElement>){
         if(event.key == "Enter"){
             let pathCleaned:string = pathClean(addressBoxPath)
@@ -141,7 +66,6 @@ export default function FileExplorer({path}:FileExplorerProps){
                 setCurrentFolder(Object.entries(pathExists))
                 setSelected("")
             }
-
             event.currentTarget.blur()
         }
     }
@@ -157,10 +81,9 @@ export default function FileExplorer({path}:FileExplorerProps){
             setCurrentFolder(Object.entries(doesPathExist(newPath)!))
             setSelected("")
         }
-
     }
 
-    function folderPressed(folderName:string){
+    function folderEnter(folderName:string){
         let pathArray = pathToArray(currentPath)
         pathArray.push(folderName)
         let newPath = arrayToPath(pathArray)
@@ -169,7 +92,6 @@ export default function FileExplorer({path}:FileExplorerProps){
         setCurrentPath(newPath)
         setCurrentFolder(Object.entries(doesPathExist(newPath)!))
         setSelected("")
-
     }
 
 
@@ -184,7 +106,7 @@ export default function FileExplorer({path}:FileExplorerProps){
         event.stopPropagation();
         switch(folderItemType(item[1])){
             case "FOLDER":{
-                folderPressed(item[0])
+                folderEnter(item[0])
                 break;
 
             }
@@ -196,34 +118,57 @@ export default function FileExplorer({path}:FileExplorerProps){
             default:{
                 break;
             }
-
-        }
-        
-    }
-
-
-    function fileThumbnailGetter(fileType: MyFileSystemFile["type"]):string{
-
-        switch (fileType){
-            case "IMAGE":
-                return "https://www.svgrepo.com/show/141793/image-file.svg"
-            case "VIDEO":
-                return "https://www.svgrepo.com/show/357253/video-file.svg"
-            case "PDF":
-                return "https://www.svgrepo.com/show/64173/pdf-file.svg"
-            default:
-                return "https://www.svgrepo.com/show/535388/file.svg"
         }
     }
-
 
     let toggleHiddenFilesContextMenu = {} as ContextMenuOptions
-
     if (!showHidden){
         toggleHiddenFilesContextMenu["Show hidden files"] = ()=>{setShowHidden(true)}
     } else{
         toggleHiddenFilesContextMenu["Hide hidden files"] = ()=>{setShowHidden(false)}
 
+    }
+
+    function RenderPathSuggestions(path?:string){
+        //If a path is not given, use the path in addressBox
+        if (path == undefined){
+            path = addressBoxPath
+        }
+
+        //Check current path, see if it exists
+        const currentCheck = doesPathExist(path)
+
+        //If it does exist (a complete path) then find all folders within path and display
+        if (currentCheck != null && currentCheck != "FILE"){
+
+            setCurrentPathSuggestions(Object.entries(currentCheck).filter((item)=>{return folderItemType(item[1]) == "FOLDER"}))
+        }
+
+        //If it doesnt exist (either incomplete name/doesnt exist)
+        else{
+            // Find parent
+            let pathArray = pathToArray(path)
+            let incompleteChild = pathArray.pop() //parent path = current path - closest child
+
+            //Check to see if parent exists
+            const parentCheck = doesPathExist(arrayToPath(pathArray))
+
+            //If parent exists, show folders that are close to the incomplete child
+            if (parentCheck != null && parentCheck != "FILE"){
+                setCurrentPathSuggestions(
+                    Object.entries(parentCheck).filter(
+                        (item)=>{
+                            return ((folderItemType(item[1]) == "FOLDER") && (item[0].substring(0, incompleteChild?.length) == incompleteChild) )
+                        }
+                    )
+                )
+            }
+            //If parent doesnt exist, show no suggestions 
+            else {
+                setCurrentPathSuggestions([])
+            }
+        }
+            
     }
 
 
@@ -233,35 +178,35 @@ export default function FileExplorer({path}:FileExplorerProps){
             <div className="back-button" onClick={()=>{backButtonPressed()}}>
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
-            <input type="text" onFocus={()=>{setShowPathSuggestions(true)}} onBlur={()=>{setShowPathSuggestions(false)}}  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value)}} name="address-box" id="" />
+            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions()}} onBlur={()=>{setShowPathSuggestions(false);RenderPathSuggestions()}}  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
             {showPathSuggestions ? <div className="path-suggestion">
-                im here
+                {"" + currentPathSuggestions}
             </div> : <></>}
         </div>
         <div className="content" onClick={()=>{setSelected("")}} onContextMenu={(event)=>{contextMenuPropagation(event); 
             contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
             contextMenuDispatch({type:"SHOW"})
         }}>
-        {
-           currentFolder.map ( (item) =>{
-            if (folderItemType(item[1]) == "BOOLEAN"){
-                return(null)
-            }
-            let itemStyle = (selected == item[0]) ? ("selected") : ("")
+            {
+                currentFolder.map ( (item) =>{
+                    if (folderItemType(item[1]) == "BOOLEAN"){
+                        return(null)
+                    }
+                    let itemStyle = (selected == item[0]) ? ("selected") : ("")
 
-            if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
-                return null
+                    if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
+                        return null
+                    }
+                    
+                    return(
+                        <div className={"item " + itemStyle} key={item[0]} onClick={(event)=>(itemClickedHandler(item, event))} onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}>
+                            {/* goated  */}
+                            <div className="icon">{(folderItemType(item[1]) == "FILE") ? <img src={fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
+                            <div className="name">{(item[0])}</div>
+                        </div>
+                    )
+                })
             }
-            
-            return(
-                <div className={"item " + itemStyle} key={item[0]} onClick={(event)=>(itemClickedHandler(item, event))} onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}>
-                    {/* goated  */}
-                    <div className="icon">{(folderItemType(item[1]) == "FILE") ? <img src={fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
-                    <div className="name">{(item[0])}</div>
-                </div>
-            )
-           })
-        }
         </div>
     </div>
     )
