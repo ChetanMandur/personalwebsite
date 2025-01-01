@@ -222,9 +222,15 @@ export default function FileExplorer({path}:FileExplorerProps){
             <div className="back-button" onClick={()=>{backButtonPressed()}}>
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
-            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions()}} onBlur={()=>{setShowPathSuggestions(false);RenderPathSuggestions()}}  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
+            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions()}} onBlur={()=>{setShowPathSuggestions(false);RenderPathSuggestions()}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
             {showPathSuggestions ? <div className="path-suggestion">
-                {"" + currentPathSuggestions}
+                {
+                    currentPathSuggestions.map( (item)=>{
+                        return (
+                            <div key={item} className="path-suggestion-item">{item}</div>
+                        )
+                    })
+                }
             </div> : <></>}
         </div>
         <div className="content" onClick={()=>{setSelected("")}} onContextMenu={(event)=>{contextMenuPropagation(event); 
