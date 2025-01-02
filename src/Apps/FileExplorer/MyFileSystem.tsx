@@ -16,7 +16,6 @@ export const MyFileSystem : MyFileSystemFolder = {
         hidden:false,
         "wikipedia photo of the day dec 23 2024": {
             type: "IMAGE",
-            
             data: "https://upload.wikimedia.org/wikipedia/commons/0/02/Carved_wooden_bench_furniture_and_crafts_at_Heuan_Chan_heritage_house_in_Luang_Prabang_Laos.jpg",
             hidden: false
         },

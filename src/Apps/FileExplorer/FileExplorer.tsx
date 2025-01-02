@@ -21,6 +21,7 @@ export default function FileExplorer({path}:FileExplorerProps){
 
     const [showPathSuggestions, setShowPathSuggestions] = useState<boolean>(false)
     const [currentPathSuggestions, setCurrentPathSuggestions] = useState<string[]|undefined>([])
+    const [highlightPathSuggestion, setHighlightPathSuggestion] = useState<number>(-1)
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
@@ -47,6 +48,10 @@ export default function FileExplorer({path}:FileExplorerProps){
             setCurrentFolder(Object.entries(MyFileSystem))
         }
     },[])
+
+    useEffect(()=>{
+        setHighlightPathSuggestion(-1)
+    },[showPathSuggestions])
 
     //Given a path, try and enter
     function pathEnter(path:string){
@@ -81,9 +86,49 @@ export default function FileExplorer({path}:FileExplorerProps){
 
     //Key handler for address bar
     function onAddressSubmit(event: React.KeyboardEvent<HTMLInputElement>){
-        if(event.key == "Enter"){
-            pathEnter(addressBoxPath)
-            event.currentTarget.blur()
+        switch (event.key) {
+            case "Enter":
+                pathEnter(addressBoxPath)
+                event.currentTarget.blur()
+                break;
+
+            case "ArrowUp":
+                console.log("hi")
+                event.preventDefault()
+
+                if (-1 < highlightPathSuggestion && highlightPathSuggestion <= currentPathSuggestions!.length){
+                    setHighlightPathSuggestion(highlightPathSuggestion-1)
+                    if (highlightPathSuggestion -1 == -1){
+                        setAddressBoxPath(currentPath)
+                    } else{
+                        setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion-1])
+                    }
+                }
+                break;
+
+            case "ArrowDown":
+                event.preventDefault()
+
+                if (-1 <= highlightPathSuggestion && highlightPathSuggestion < currentPathSuggestions!.length-1){
+                    setHighlightPathSuggestion(highlightPathSuggestion+1)
+                    setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion+1])
+
+                }
+                break;
+            
+            case "ArrowRight":
+                if (event.currentTarget.selectionStart == addressBoxPath.length){
+                    event.preventDefault()
+                    if (highlightPathSuggestion != -1){
+                        pathEnter(currentPathSuggestions![highlightPathSuggestion])
+                        RenderPathSuggestions(currentPathSuggestions![highlightPathSuggestion])
+                        setHighlightPathSuggestion(-1)
+                    }
+                }
+                break;
+        
+            default:
+                break;
         }
     }
 
@@ -246,9 +291,9 @@ export default function FileExplorer({path}:FileExplorerProps){
                             (
                                 currentPathSuggestions.length != 0 ? 
                                 (
-                                    currentPathSuggestions.map( (item)=>{
+                                    currentPathSuggestions.map( (item, index)=>{
                                         return (
-                                            <div key={item} className="path-suggestion-item" onMouseDown={()=>{pathEnter(item)}}>{item}</div>
+                                            <div key={item} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item)}}>{item}</div>
                                         )
                                     })
                                 ) 

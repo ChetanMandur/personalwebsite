@@ -35,6 +35,7 @@
           padding:1vh;
         }
 
+        .path-suggestion-item-active,
         .path-suggestion-item:hover{
           background-color: rgb(60, 60, 60);
         }
