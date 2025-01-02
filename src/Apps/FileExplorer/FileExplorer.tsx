@@ -48,28 +48,47 @@ export default function FileExplorer({path}:FileExplorerProps){
         }
     },[])
 
+    //Given a path, try and enter
+    function pathEnter(path:string){
+        let pathCleaned:string = pathClean(path)
+        const pathExists:(MyFileSystemFolder|null|"FILE") =  doesPathExist(pathCleaned)
+
+        if (pathExists == null){
+            alert(`The path ${pathCleaned} does not exist.` )
+            setAddressBoxPath(currentPath)
+        } else if (pathExists == "FILE"){
+            alert(`The path ${pathCleaned} leads to a file` )
+            setAddressBoxPath(currentPath)
+        } else{
+            setCurrentPath(pathCleaned)
+            setAddressBoxPath(pathCleaned)
+            setCurrentFolder(Object.entries(pathExists))
+            setSelected("")
+        }
+    }
+
+    //Given a folder name, try to enter from currentPath
+    function folderEnter(folderName:string){
+        let pathArray = pathToArray(currentPath)
+        pathArray.push(folderName)
+        let newPath = arrayToPath(pathArray)
+
+        setAddressBoxPath(newPath)
+        setCurrentPath(newPath)
+        setCurrentFolder(Object.entries(doesPathExist(newPath)!))
+        setSelected("")
+    }
+
+    //Key handler for address bar
     function onAddressSubmit(event: React.KeyboardEvent<HTMLInputElement>){
         if(event.key == "Enter"){
-            let pathCleaned:string = pathClean(addressBoxPath)
-
-            const pathExists:(MyFileSystemFolder|null|"FILE") =  doesPathExist(pathCleaned)
-
-            if (pathExists == null){
-                alert(`The path ${pathCleaned} does not exist.` )
-                setAddressBoxPath(currentPath)
-            } else if (pathExists == "FILE"){
-                alert(`The path ${pathCleaned} leads to a file` )
-                setAddressBoxPath(currentPath)
-            } else{
-                setCurrentPath(pathCleaned)
-                setAddressBoxPath(pathCleaned)
-                setCurrentFolder(Object.entries(pathExists))
-                setSelected("")
-            }
+            pathEnter(addressBoxPath)
             event.currentTarget.blur()
         }
     }
 
+
+    //Handler for when back button is pressed
     function backButtonPressed(){
         let pathArray = pathToArray(currentPath)
         if (pathArray.length != 0){
@@ -83,18 +102,8 @@ export default function FileExplorer({path}:FileExplorerProps){
         }
     }
 
-    function folderEnter(folderName:string){
-        let pathArray = pathToArray(currentPath)
-        pathArray.push(folderName)
-        let newPath = arrayToPath(pathArray)
 
-        setAddressBoxPath(newPath)
-        setCurrentPath(newPath)
-        setCurrentFolder(Object.entries(doesPathExist(newPath)!))
-        setSelected("")
-    }
-
-
+    //Handler when item is pressed
     function itemClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile |boolean], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
         event.stopPropagation();
         if (selected != item[0]){
@@ -102,6 +111,7 @@ export default function FileExplorer({path}:FileExplorerProps){
         }
     }
 
+    //Handler when item is double clicked (ie. user opens item)
     function itemDoubleClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile | boolean], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
         event.stopPropagation();
         switch(folderItemType(item[1])){
@@ -129,6 +139,8 @@ export default function FileExplorer({path}:FileExplorerProps){
 
     }
 
+
+    //Function for rendering path suggestions given a path (if no path given, use addressBoxPath)
     function RenderPathSuggestions(path?:string){
         //If a path is not given, use the path in addressBox
         if (path == undefined){
@@ -236,7 +248,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                                 (
                                     currentPathSuggestions.map( (item)=>{
                                         return (
-                                            <div key={item} className="path-suggestion-item">{item}</div>
+                                            <div key={item} className="path-suggestion-item" onMouseDown={()=>{pathEnter(item)}}>{item}</div>
                                         )
                                     })
                                 ) 
