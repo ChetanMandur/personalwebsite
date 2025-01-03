@@ -20,7 +20,7 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [showHidden, setShowHidden] = useState<boolean>(false)
 
     const [showPathSuggestions, setShowPathSuggestions] = useState<boolean>(false)
-    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<[string, "FILE"|"FOLDER"][]|undefined>([])
+    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<[string, "FILE"|"FOLDER"][]|"EMPTY"|"FILE"|"ERROR">([])
     const [highlightPathSuggestion, setHighlightPathSuggestion] = useState<number>(-1)
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
@@ -233,28 +233,32 @@ export default function FileExplorer({path}:FileExplorerProps){
                     }
                 )
 
-                //Construct new path suggestions based on filtered content
-                let newPathSuggestions:typeof currentPathSuggestions = []
-                for (const i of foldersInPath){
-                    if (pathArray.length == 0){
-                        //If pathArray is 0, that means path = "/"
-                        if (folderItemType(i[1]) == "FOLDER"){
-                            newPathSuggestions.push([path + i[0], "FOLDER"])
-                        } else {
-                            newPathSuggestions.push([path + i[0], "FILE"])
-                        }
-                    } else{
-                        if (folderItemType(i[1]) == "FOLDER"){
-                            newPathSuggestions.push([path + "/" + i[0], "FOLDER"])
-                        } else {
-                            newPathSuggestions.push([path + "/" + i[0], "FILE"])
+                if (foldersInPath.length != 0){
+                    //Construct new path suggestions based on filtered content
+                    let newPathSuggestions:typeof currentPathSuggestions = []
+                    for (const i of foldersInPath){
+                        if (pathArray.length == 0){
+                            //If pathArray is 0, that means path = "/"
+                            if (folderItemType(i[1]) == "FOLDER"){
+                                newPathSuggestions.push([path + i[0], "FOLDER"])
+                            } else {
+                                newPathSuggestions.push([path + i[0], "FILE"])
+                            }
+                        } else{
+                            if (folderItemType(i[1]) == "FOLDER"){
+                                newPathSuggestions.push([path + "/" + i[0], "FOLDER"])
+                            } else {
+                                newPathSuggestions.push([path + "/" + i[0], "FILE"])
+                            }
                         }
                     }
+                    setCurrentPathSuggestions(newPathSuggestions)
+                } else{
+                    setCurrentPathSuggestions("EMPTY")
                 }
-                setCurrentPathSuggestions(newPathSuggestions)
             }
             else{
-                setCurrentPathSuggestions(undefined)
+                setCurrentPathSuggestions("FILE")
             }
 
         }
@@ -303,7 +307,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                     }
                 }
                 if (newPathSuggestions.length == 0){
-                    setCurrentPathSuggestions(undefined)
+                    setCurrentPathSuggestions("ERROR")
                 }else{
                     setCurrentPathSuggestions(newPathSuggestions)
 
@@ -312,7 +316,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             }
             //If parent doesnt exist, show no suggestions (not sure if this is really needed tbh, and i dont wanna test rn)
             else {
-                setCurrentPathSuggestions(undefined)
+                setCurrentPathSuggestions("ERROR")
             }
         }
 
@@ -329,23 +333,32 @@ export default function FileExplorer({path}:FileExplorerProps){
             {showPathSuggestions ? 
                 <div className="path-suggestion">
                     {
-                        currentPathSuggestions != undefined ? 
+                        typeof currentPathSuggestions == "string" ?
+                        (
+                            currentPathSuggestions == "FILE" ?
                             (
-                                currentPathSuggestions.length != 0 ? 
+                                <div className="path-suggestion-message">Path leads to a file</div>
+                            )
+                            :
+                            (
+                                currentPathSuggestions == "EMPTY" ?
                                 (
-                                    currentPathSuggestions.map( (item, index)=>{
-                                        return (
-                                            <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item[0])}}>{item[0]} <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div></div>
-                                        )
-                                    })
-                                ) 
-                                : 
-                                (
-                                    <div key={"noFoldersInPath"} className="path-suggestion-message">No folders within path</div>
+                                    <div className="path-suggestion-message">This path is empty</div>
                                 )
-                            ) 
-                            : 
-                            (<div key={"folderDoesNotExist"} className="path-suggestion-message">Invalid path</div>)
+                                :
+                                (
+                                    <div className="path-suggestion-message">Path error</div>
+                                )
+                            )
+                        )
+                        :
+                        (
+                            currentPathSuggestions.map( (item, index)=>{
+                                return (
+                                    <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item[0])}}>{item[0]} <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div></div>
+                                )
+                            })
+                        )
                     }
                 </div> 
                 : 
