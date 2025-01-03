@@ -73,6 +73,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             if (pathResponse == "FILE"){
                 runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(pathObject as MyFileSystemFile).data, type:(pathObject as MyFileSystemFile).type} as MediaViewerProps})
                 pathEnter(getParentPath(path))
+                setShowPathSuggestions(false)
             } 
             else if (pathResponse == "FOLDER"){
                 setCurrentPath(path)
