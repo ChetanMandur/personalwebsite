@@ -5,7 +5,7 @@ import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "
 import { RunningAppsContext } from "../../Desktop/Contexts/RunningApps"
 import { AppList } from "../Apps"
 import { MediaViewerProps } from "../MediaViewer/MediaViewer"
-import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter } from "./FileExplorerHelpers"
+import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter, getParentPath } from "./FileExplorerHelpers"
 
 export type FileExplorerProps = {
     path: string
@@ -40,6 +40,7 @@ export default function FileExplorer({path}:FileExplorerProps){
 
                 } else{
                     runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(object as MyFileSystemFile).data, type:(object as MyFileSystemFile).type} as MediaViewerProps})
+                    pathEnter(getParentPath(pathCleaned))
                     setSelected("")
                     //Need to set currentPath and addressBoxPath to parent folder of file
                 }
@@ -71,9 +72,8 @@ export default function FileExplorer({path}:FileExplorerProps){
         } 
         else{
             if (response == "FILE"){
-                // alert(`The path ${pathCleaned} leads to a file` )
                 runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(object as MyFileSystemFile).data, type:(object as MyFileSystemFile).type} as MediaViewerProps})
-                setAddressBoxPath(currentPath)
+                pathEnter(getParentPath(path))
             } 
             else if (response == "FOLDER"){
                 setCurrentPath(pathCleaned)
@@ -109,7 +109,6 @@ export default function FileExplorer({path}:FileExplorerProps){
                 break;
 
             case "ArrowUp":
-                console.log("hi")
                 event.preventDefault()
 
                 if (-1 < highlightPathSuggestion && highlightPathSuggestion <= currentPathSuggestions!.length){

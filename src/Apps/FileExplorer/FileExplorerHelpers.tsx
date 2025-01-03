@@ -39,6 +39,14 @@ export function pathClean(path:string):string{
 
 }
 
+export function getParentPath(path:string):string{
+    path = pathClean(path)
+    let pathArray = pathToArray(path)
+    pathArray.pop()
+
+    return arrayToPath(pathArray)
+}
+
 
 export function folderItemType(item: MyFileSystemFolder | MyFileSystemFile | boolean, ):"FOLDER"|"FILE"|"BOOLEAN"{
     if (typeof(item) == "boolean"){
