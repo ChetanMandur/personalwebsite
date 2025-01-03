@@ -51,30 +51,34 @@ export function folderItemType(item: MyFileSystemFolder | MyFileSystemFile | boo
     }
 }
 
-export function doesPathExist(path: string):(MyFileSystemFolder|null|"FILE"){
+export function doesPathExist(path: string):([MyFileSystemFolder|null|MyFileSystemFile, "FOLDER"|"FILE"|"BOOLEAN"|"ERROR"]){
     const folderList: string[]= pathToArray(path)
    //  console.log("FOLDERLIST ", folderList.length, folderList)
 
     let currentFolder: MyFileSystemFolder = MyFileSystem
-
+    let counter = 1
     for (const i of folderList){
        try {
            switch (folderItemType(currentFolder[i])) {
                case "BOOLEAN":
-                   return null
+                   return [null, "BOOLEAN"]
                
                case "FILE":
-                   return "FILE"
+                    if (counter == folderList.length){
+                        return [currentFolder[i] as MyFileSystemFile, "FILE"]
+                    }
+                   return [null, "ERROR"]
 
                case "FOLDER":
                    currentFolder = currentFolder[i] as MyFileSystemFolder;
            }
 
        } catch (error) {
-           return null
+            return [null, "ERROR"]
        }
+       counter++
     }
-    return currentFolder
+    return [currentFolder, "FOLDER"]
 }
 
 export function fileThumbnailGetter(fileType: MyFileSystemFile["type"]):string{

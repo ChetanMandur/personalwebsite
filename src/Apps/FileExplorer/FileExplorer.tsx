@@ -20,7 +20,7 @@ export default function FileExplorer({path}:FileExplorerProps){
     const [showHidden, setShowHidden] = useState<boolean>(false)
 
     const [showPathSuggestions, setShowPathSuggestions] = useState<boolean>(false)
-    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<string[]|undefined>([])
+    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<[string, "FILE"|"FOLDER"][]|undefined>([])
     const [highlightPathSuggestion, setHighlightPathSuggestion] = useState<number>(-1)
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
@@ -30,12 +30,19 @@ export default function FileExplorer({path}:FileExplorerProps){
         if (path !=undefined){
             let pathCleaned:string = pathClean(path)
 
-            const pathExists:(MyFileSystemFolder|null|"FILE") = doesPathExist(pathCleaned)
+            const [object, response] = doesPathExist(pathCleaned)
 
-            if (pathExists != null && pathExists != "FILE"){
-                setCurrentPath(pathCleaned)
-                setAddressBoxPath(pathCleaned)
-                setCurrentFolder(Object.entries(pathExists as MyFileSystemFolder))
+            if (object != null){
+                if (response == "FOLDER"){
+                    setCurrentPath(pathCleaned)
+                    setAddressBoxPath(pathCleaned)
+                    setCurrentFolder(Object.entries(object as MyFileSystemFolder))
+
+                } else{
+                    runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(object as MyFileSystemFile).data, type:(object as MyFileSystemFile).type} as MediaViewerProps})
+                    setSelected("")
+                    //Need to set currentPath and addressBoxPath to parent folder of file
+                }
             }
             else{
                 setCurrentPath("/")
@@ -56,21 +63,28 @@ export default function FileExplorer({path}:FileExplorerProps){
     //Given a path, try and enter
     function pathEnter(path:string){
         let pathCleaned:string = pathClean(path)
-        const pathExists:(MyFileSystemFolder|null|"FILE") =  doesPathExist(pathCleaned)
+        const [object, response] =  doesPathExist(pathCleaned)
 
-        if (pathExists == null){
+        if (object == null){
             alert(`The path ${pathCleaned} does not exist.` )
             setAddressBoxPath(currentPath)
-        } else if (pathExists == "FILE"){
-            alert(`The path ${pathCleaned} leads to a file` )
-            setAddressBoxPath(currentPath)
-        } else{
-            setCurrentPath(pathCleaned)
-            setAddressBoxPath(pathCleaned)
-            setCurrentFolder(Object.entries(pathExists))
-            setSelected("")
+        } 
+        else{
+            if (response == "FILE"){
+                // alert(`The path ${pathCleaned} leads to a file` )
+                runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(object as MyFileSystemFile).data, type:(object as MyFileSystemFile).type} as MediaViewerProps})
+                setAddressBoxPath(currentPath)
+            } 
+            else if (response == "FOLDER"){
+                setCurrentPath(pathCleaned)
+                setAddressBoxPath(pathCleaned)
+                setCurrentFolder(Object.entries(object))
+                setSelected("")
+            }
         }
+
     }
+         
 
     //Given a folder name, try to enter from currentPath
     function folderEnter(folderName:string){
@@ -78,9 +92,11 @@ export default function FileExplorer({path}:FileExplorerProps){
         pathArray.push(folderName)
         let newPath = arrayToPath(pathArray)
 
+        const [object] = doesPathExist(newPath)
+
         setAddressBoxPath(newPath)
         setCurrentPath(newPath)
-        setCurrentFolder(Object.entries(doesPathExist(newPath)!))
+        setCurrentFolder(Object.entries(object as MyFileSystemFolder))
         setSelected("")
     }
 
@@ -101,7 +117,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                     if (highlightPathSuggestion -1 == -1){
                         setAddressBoxPath(currentPath)
                     } else{
-                        setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion-1])
+                        setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion-1][0])
                     }
                 }
                 break;
@@ -111,7 +127,7 @@ export default function FileExplorer({path}:FileExplorerProps){
 
                 if (-1 <= highlightPathSuggestion && highlightPathSuggestion < currentPathSuggestions!.length-1){
                     setHighlightPathSuggestion(highlightPathSuggestion+1)
-                    setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion+1])
+                    setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion+1][0])
 
                 }
                 break;
@@ -120,8 +136,8 @@ export default function FileExplorer({path}:FileExplorerProps){
                 if (event.currentTarget.selectionStart == addressBoxPath.length){
                     event.preventDefault()
                     if (highlightPathSuggestion != -1){
-                        pathEnter(currentPathSuggestions![highlightPathSuggestion])
-                        RenderPathSuggestions(currentPathSuggestions![highlightPathSuggestion])
+                        pathEnter(currentPathSuggestions![highlightPathSuggestion][0])
+                        RenderPathSuggestions(currentPathSuggestions![highlightPathSuggestion][0])
                         setHighlightPathSuggestion(-1)
                     }
                 }
@@ -140,9 +156,12 @@ export default function FileExplorer({path}:FileExplorerProps){
             pathArray.pop()
             let newPath = arrayToPath(pathArray)
 
+            const [object] = doesPathExist(newPath)
+
+
             setAddressBoxPath(newPath)
             setCurrentPath(newPath)
-            setCurrentFolder(Object.entries(doesPathExist(newPath)!))
+            setCurrentFolder(Object.entries(object as MyFileSystemFolder))
             setSelected("")
         }
     }
@@ -198,33 +217,45 @@ export default function FileExplorer({path}:FileExplorerProps){
 
 
         //Check current path, see if it exists
-        const pathCheck = doesPathExist(path)
+        const [object, response] = doesPathExist(path)
 
         //If it does exist (a complete path) then find all folders within path and display
-        if (pathCheck != null && pathCheck != "FILE"){
-
-            //Filter content to find folders
-            let foldersInPath = Object.entries(pathCheck).filter(
-                (item)=>{
-                    if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
-                        return false
+        if (object != null){
+            if (response == "FOLDER"){
+                //Filter content to find folders
+                let foldersInPath = Object.entries(object).filter(
+                    (item)=>{
+                        if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
+                            return false
+                        }
+                        const itemType = folderItemType(item[1])
+                        return (( itemType == "FOLDER" || itemType=="FILE" ))
                     }
-                    return ((folderItemType(item[1]) == "FOLDER"))
-                }
-            )
+                )
 
-            //Construct new path suggestions based on filtered content
-            let newPathSuggestions:string[] = []
-            for (const i of foldersInPath){
-                if (pathArray.length == 0){
-                    //If pathArray is 0, that means path = "/"
-                    newPathSuggestions.push(path + i[0])
-                } else{
-                    newPathSuggestions.push(path + "/" + i[0])
-
+                //Construct new path suggestions based on filtered content
+                let newPathSuggestions:typeof currentPathSuggestions = []
+                for (const i of foldersInPath){
+                    if (pathArray.length == 0){
+                        //If pathArray is 0, that means path = "/"
+                        if (folderItemType(i[1]) == "FOLDER"){
+                            newPathSuggestions.push([path + i[0], "FOLDER"])
+                        } else {
+                            newPathSuggestions.push([path + i[0], "FILE"])
+                        }
+                    } else{
+                        if (folderItemType(i[1]) == "FOLDER"){
+                            newPathSuggestions.push([path + "/" + i[0], "FOLDER"])
+                        } else {
+                            newPathSuggestions.push([path + "/" + i[0], "FILE"])
+                        }
+                    }
                 }
+                setCurrentPathSuggestions(newPathSuggestions)
             }
-            setCurrentPathSuggestions(newPathSuggestions)
+            else{
+                setCurrentPathSuggestions(undefined)
+            }
 
         }
 
@@ -237,27 +268,38 @@ export default function FileExplorer({path}:FileExplorerProps){
             let parentPath = arrayToPath(pathArray) //parentPath = pathArray - last item
 
             //Check to see if parent exists
-            const parentCheck = doesPathExist(parentPath)
+            const [parentObject, parentResponse] = doesPathExist(parentPath)
 
             //If parent exists, show folders that are close to the incomplete child
-            if (parentCheck != null && parentCheck != "FILE"){
-                let foldersInPath = Object.entries(parentCheck).filter(
+            if (parentObject != null && parentResponse == "FOLDER"){
+                let foldersInPath = Object.entries(parentObject).filter(
                     (item)=>{
                         if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
                             return false
                         }
-                        return ((folderItemType(item[1]) == "FOLDER") && (item[0].substring(0, incompleteChild?.length) == incompleteChild) )
+                        const itemType = folderItemType(item[1])
+                        return ((itemType == "FOLDER" || itemType == "FILE") && (item[0].substring(0, incompleteChild?.length) == incompleteChild) )
                     }
                 )
 
                 //Construct new path suggestions based on filtered content
-                let newPathSuggestions:string[] = []
+                let newPathSuggestions:typeof currentPathSuggestions = []
                 for (const i of foldersInPath){
                     if (pathArray.length == 0){
                         //If pathArray is 0, that means path = "/"
-                        newPathSuggestions.push(parentPath + i[0])
+                        if (folderItemType(i[1]) == "FOLDER"){
+                            newPathSuggestions.push([parentPath + i[0], "FOLDER"])
+                        }
+                        else {
+                            newPathSuggestions.push([parentPath + i[0], "FILE"])
+                        }
                     } else{
-                        newPathSuggestions.push(parentPath + "/" + i[0])
+                        if (folderItemType(i[1]) == "FOLDER"){
+                            newPathSuggestions.push([parentPath + "/" + i[0], "FOLDER"])
+                        }
+                        else {
+                            newPathSuggestions.push([parentPath + "/" + i[0], "FILE"])
+                        }
                     }
                 }
                 if (newPathSuggestions.length == 0){
@@ -293,7 +335,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                                 (
                                     currentPathSuggestions.map( (item, index)=>{
                                         return (
-                                            <div key={item} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item)}}>{item}</div>
+                                            <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item[0])}}>{item[0]} {(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div>
                                         )
                                     })
                                 ) 
