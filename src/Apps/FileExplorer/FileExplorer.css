@@ -60,9 +60,10 @@
 
       .back-button{
         user-select: none;
+        flex: 0 1 var(--menu-bar-height);
         img{
-          max-width: 100%;
-          max-height: 100%;
+          max-width: var(--menu-bar-height);
+          max-height: var(--menu-bar-height);
         }
       }
       input[type=text]{
