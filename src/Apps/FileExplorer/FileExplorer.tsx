@@ -335,7 +335,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                                 (
                                     currentPathSuggestions.map( (item, index)=>{
                                         return (
-                                            <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item[0])}}>{item[0]} {(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div>
+                                            <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item[0])}}>{item[0]} <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div></div>
                                         )
                                     })
                                 ) 

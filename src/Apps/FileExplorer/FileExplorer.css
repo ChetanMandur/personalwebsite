@@ -33,6 +33,13 @@
         .path-suggestion-item{
           width: 100%;
           padding:1vh;
+
+          .path-suggestion-item-type{
+            display:inline;
+            color: rgb(109, 109, 109);
+            font-style: italic;
+
+          }
         }
 
         .path-suggestion-item-active,
