@@ -106,21 +106,33 @@ export default function FileExplorer({path}:FileExplorerProps){
 
             case "ArrowUp":
                 event.preventDefault()
-                if (-1 < highlightPathSuggestion && highlightPathSuggestion <= currentPathSuggestions!.length){
-                    setHighlightPathSuggestion(highlightPathSuggestion-1)
-                    if (highlightPathSuggestion -1 == -1){
-                        setAddressBoxPath(currentPath)
-                    } else{
-                        setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion-1][0])
+                if (typeof currentPathSuggestions != "string"){
+                    if (-1 < highlightPathSuggestion && highlightPathSuggestion <= currentPathSuggestions!.length){
+                        setHighlightPathSuggestion(highlightPathSuggestion-1)
+                        if (highlightPathSuggestion -1 == -1){
+                            setAddressBoxPath(currentPath)
+                        } else{
+                            setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion-1][0])
+                        }
+                    } 
+                    else if (highlightPathSuggestion == -1){
+                        setHighlightPathSuggestion(currentPathSuggestions!.length-1)
+                        setAddressBoxPath(currentPathSuggestions![currentPathSuggestions!.length-1][0])
+    
                     }
                 }
                 break;
 
             case "ArrowDown":
                 event.preventDefault()
-                if (-1 <= highlightPathSuggestion && highlightPathSuggestion < currentPathSuggestions!.length-1){
-                    setHighlightPathSuggestion(highlightPathSuggestion+1)
-                    setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion+1][0])
+                if (typeof currentPathSuggestions != "string"){
+                    if (-1 <= highlightPathSuggestion && highlightPathSuggestion < currentPathSuggestions!.length-1){
+                        setHighlightPathSuggestion(highlightPathSuggestion+1)
+                        setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion+1][0])
+                    } else if (highlightPathSuggestion == currentPathSuggestions!.length-1){
+                        setHighlightPathSuggestion(-1)
+                        setAddressBoxPath(currentPath)
+                    }
                 }
                 break;
             
