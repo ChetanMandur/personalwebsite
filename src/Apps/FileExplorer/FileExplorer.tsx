@@ -56,9 +56,6 @@ export default function FileExplorer({path}:FileExplorerProps){
         }
     },[])
 
-    useEffect(()=>{
-        setHighlightPathSuggestion(-1)
-    },[showPathSuggestions])
 
     //Given a path, try and enter
     function pathEnter(path:string){
@@ -128,13 +125,20 @@ export default function FileExplorer({path}:FileExplorerProps){
                 break;
             
             case "ArrowRight":
-                if (event.currentTarget.selectionStart == addressBoxPath.length){
+                if (highlightPathSuggestion != -1){
                     event.preventDefault()
-                    if (highlightPathSuggestion != -1){
-                        pathEnter(currentPathSuggestions![highlightPathSuggestion][0])
-                        RenderPathSuggestions(currentPathSuggestions![highlightPathSuggestion][0])
-                        setHighlightPathSuggestion(-1)
-                    }
+                    pathEnter(currentPathSuggestions![highlightPathSuggestion][0])
+                    RenderPathSuggestions(currentPathSuggestions![highlightPathSuggestion][0])
+                    setHighlightPathSuggestion(0)
+                }
+                break;
+
+            case "ArrowLeft":
+                if (highlightPathSuggestion != -1){
+                    event.preventDefault()
+                    pathEnter(getParentPath(currentPath))
+                    RenderPathSuggestions(getParentPath(currentPath))
+                    setHighlightPathSuggestion(0)
                 }
                 break;
         
@@ -324,7 +328,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             <div className="back-button" onClick={()=>{backButtonPressed()}}>
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
-            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions()}} onBlur={()=>{setShowPathSuggestions(false);RenderPathSuggestions()}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
+            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions(); setHighlightPathSuggestion(-1)}} onBlur={()=>{setShowPathSuggestions(false);RenderPathSuggestions()}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
             {showPathSuggestions ? 
                 <div className="path-suggestion">
                     {
