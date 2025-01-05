@@ -120,6 +120,8 @@ export default function FileExplorer({path}:FileExplorerProps){
                         setAddressBoxPath(currentPathSuggestions![currentPathSuggestions!.length-1][0])
     
                     }
+                } else{
+                    setHighlightPathSuggestion( (highlightPathSuggestion != -1 ? (-1):(0)) )
                 }
                 break;
 
@@ -133,16 +135,26 @@ export default function FileExplorer({path}:FileExplorerProps){
                         setHighlightPathSuggestion(-1)
                         setAddressBoxPath(currentPath)
                     }
+                }else{
+                    setHighlightPathSuggestion( (highlightPathSuggestion != -1 ? (-1):(0)) )
                 }
                 break;
             
             case "ArrowRight":
-                if (highlightPathSuggestion != -1){
-                    event.preventDefault()
-                    pathEnter(currentPathSuggestions![highlightPathSuggestion][0])
-                    RenderPathSuggestions(currentPathSuggestions![highlightPathSuggestion][0])
-                    setHighlightPathSuggestion(0)
-                }
+                
+                    if (highlightPathSuggestion != -1){
+                        if (typeof currentPathSuggestions != "string"){
+                            event.preventDefault()
+                            pathEnter(currentPathSuggestions![highlightPathSuggestion][0])
+                            RenderPathSuggestions(currentPathSuggestions![highlightPathSuggestion][0])
+                            setHighlightPathSuggestion(0)
+                        } else {
+                            if (currentPathSuggestions != "ERROR"){
+                                event.currentTarget.blur()
+                            }
+                        }
+                    }
+                
                 break;
 
             case "ArrowLeft":
@@ -346,21 +358,21 @@ export default function FileExplorer({path}:FileExplorerProps){
                     {
                         typeof currentPathSuggestions == "string" ?
                         (
-                            currentPathSuggestions == "FILE" ?
-                            (
-                                <div className="path-suggestion-message">Path leads to a file</div>
-                            )
-                            :
-                            (
-                                currentPathSuggestions == "EMPTY" ?
+                                currentPathSuggestions == "FILE" ?
                                 (
-                                    <div className="path-suggestion-message">This path is empty</div>
+                                    <div className={"path-suggestion-message " + (highlightPathSuggestion==0 ? "path-suggestion-item-active": "")}>Path leads to a file</div>
                                 )
                                 :
                                 (
-                                    <div className="path-suggestion-message">Path error</div>
+                                    currentPathSuggestions == "EMPTY" ?
+                                    (
+                                        <div className={"path-suggestion-message " + (highlightPathSuggestion==0 ? "path-suggestion-item-active": "")}>This path is empty</div>
+                                    )
+                                    :
+                                    (
+                                        <div className={"path-suggestion-message " + (highlightPathSuggestion==0 ? "path-suggestion-item-active": "")}>Path error</div>
+                                    )
                                 )
-                            )
                         )
                         :
                         (
