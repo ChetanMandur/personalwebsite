@@ -42,8 +42,7 @@
           }
         }
 
-        .path-suggestion-item-active,
-        .path-suggestion-item:hover{
+        .path-suggestion-item-active{
           background-color: rgb(60, 60, 60);
         }
         

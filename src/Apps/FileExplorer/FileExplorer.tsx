@@ -76,6 +76,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                 setCurrentPath(path)
                 setAddressBoxPath(path)
                 setCurrentFolder(Object.entries(pathObject))
+                RenderPathSuggestions(path)
                 setSelected("")
             }
         }
@@ -146,7 +147,6 @@ export default function FileExplorer({path}:FileExplorerProps){
                         if (typeof currentPathSuggestions != "string"){
                             event.preventDefault()
                             pathEnter(currentPathSuggestions![highlightPathSuggestion][0])
-                            RenderPathSuggestions(currentPathSuggestions![highlightPathSuggestion][0])
                             setHighlightPathSuggestion(0)
                         } else {
                             if (currentPathSuggestions != "ERROR"){
@@ -161,12 +161,14 @@ export default function FileExplorer({path}:FileExplorerProps){
                 if (highlightPathSuggestion != -1){
                     event.preventDefault()
                     pathEnter(getParentPath(currentPath))
-                    RenderPathSuggestions(getParentPath(currentPath))
                     setHighlightPathSuggestion(0)
                 }
                 break;
         
             default:
+                if (highlightPathSuggestion != -1){
+                    setHighlightPathSuggestion(-1)
+                }
                 break;
         }
     }
@@ -378,7 +380,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                         (
                             currentPathSuggestions.map( (item, index)=>{
                                 return (
-                                    <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item[0])}} onMouseEnter={()=>{setHighlightPathSuggestion(-1)}} >{item[0]} <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div></div>
+                                    <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item[0])}} onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBoxPath(item[0])}} onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBoxPath(currentPath)}}>{item[0]} <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div></div>
                                 )
                             })
                         )
