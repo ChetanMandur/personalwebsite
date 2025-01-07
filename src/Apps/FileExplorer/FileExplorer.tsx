@@ -2,16 +2,16 @@ import { useContext, useEffect, useState } from "react"
 import "./FileExplorer.css"
 import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSystem"
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuData"
-import { RunningAppsContext } from "../../Desktop/Contexts/RunningApps"
+import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningApps"
 import { AppList } from "../Apps"
 import { MediaViewerProps } from "../MediaViewer/MediaViewer"
 import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter, getParentPath } from "./FileExplorerHelpers"
 
-export type FileExplorerProps = {
+export type FileExplorerProps = AppRunningID & {
     path: string
 }
 
-export default function FileExplorer({path}:FileExplorerProps){
+export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     const [currentPath, setCurrentPath] = useState<string>("")
     const [addressBoxPath, setAddressBoxPath] = useState<string>("")
     const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
@@ -374,13 +374,20 @@ export default function FileExplorer({path}:FileExplorerProps){
                 <></>
             }
         </div>
-        <div className="content" onClick={()=>{setSelected("")}} onContextMenu={(event)=>{contextMenuPropagation(event); 
-            contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
-            contextMenuDispatch({type:"SHOW"})
-        }}>
+        <div className="content" 
+            onClick={()=>{setSelected("")}} 
+            onContextMenu={(event)=>{
+                contextMenuPropagation(event); 
+                setSelected("");
+                contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
+                contextMenuDispatch({type:"SHOW"})
+            }}
+        >
             {
                 currentFolder.map ( (item) =>{
-                    if (folderItemType(item[1]) == "BOOLEAN"){
+                    const itemType = folderItemType(item[1])
+
+                    if (itemType == "BOOLEAN"){
                         return(null)
                     }
                     let itemStyle = (selected == item[0]) ? ("selected") : ("")
@@ -390,9 +397,41 @@ export default function FileExplorer({path}:FileExplorerProps){
                     }
                     
                     return(
-                        <div className={"item " + itemStyle} key={item[0]} onClick={(event)=>(itemClickedHandler(item, event))} onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}>
+                        <div className={"item " + itemStyle} key={item[0]} 
+                            onContextMenu={(event)=>{
+                                if (itemType == "FOLDER"){
+                                    contextMenuPropagation(event)
+                                    setSelected(item[0]);
+                                    contextMenuDispatch({
+                                        type: "SET",
+                                        event: event,
+                                        newOptions:{
+                                            "Open in new window": ()=>{
+                                                runningAppsDispatch({
+                                                    type:"ADD",
+                                                    app_name:"FileExplorer",
+                                                    app_properties: AppList["FileExplorer"],
+                                                    props: {
+                                                        path: currentPath + "/" + item[0]
+                                                    } as FileExplorerProps
+                                                });
+                                                runningAppsDispatch({
+                                                    type:"UPDATE-APP-FOCUS",
+                                                    app_running_id: app_running_id
+                                                })
+                                            }
+                                        } as ContextMenuOptions
+                                    })
+                                    contextMenuDispatch({
+                                        type:"SHOW"
+                                    })
+                                }
+                            }}  
+                            onClick={(event)=>(itemClickedHandler(item, event))} 
+                            onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}
+                        >
                             {/* goated  */}
-                            <div className="icon">{(folderItemType(item[1]) == "FILE") ? <img src={fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
+                            <div className="icon">{(itemType == "FILE") ? <img src={fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
                             <div className="name">{(item[0])}</div>
                         </div>
                     )
