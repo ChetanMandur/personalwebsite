@@ -2,9 +2,9 @@
 import "./UserSpace.css"
 import {AppList} from "../../Apps/Apps"
 import { useContext, useRef } from "react"
-import { RunningAppProperties, RunningAppsContext } from "../Contexts/RunningApps"
-import { StartMenuContext } from "../Contexts/StartMenu"
-import { ContextMenuContext } from "../Contexts/ContextMenuData"
+import { RunningAppProperties, RunningAppsContext } from "../Contexts/RunningAppsContext"
+import { StartMenuContext } from "../Contexts/StartMenuContext"
+import { ContextMenuContext } from "../Contexts/ContextMenuContext"
 
 
 type RunningAppPropsType = {

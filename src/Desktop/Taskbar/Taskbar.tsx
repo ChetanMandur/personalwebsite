@@ -3,9 +3,9 @@ import "./Taskbar.css"
 
 import { AppList } from "../../Apps/Apps"
 import StartMenu from "./StartMenu/StartMenu"
-import { StartMenuContext } from "../Contexts/StartMenu";
-import { RunningAppsContext } from "../Contexts/RunningApps";
-import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../Contexts/ContextMenuData";
+import { StartMenuContext } from "../Contexts/StartMenuContext";
+import { RunningAppsContext } from "../Contexts/RunningAppsContext";
+import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../Contexts/ContextMenuContext";
 
 
 

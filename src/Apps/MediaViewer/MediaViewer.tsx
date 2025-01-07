@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { AppRunningID } from "../../Desktop/Contexts/RunningApps"
+import { AppRunningID } from "../../Desktop/Contexts/RunningAppsContext"
 import { MyFileSystemFile } from "../FileExplorer/MyFileSystem"
 import "./MediaViewer.css"
 

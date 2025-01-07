@@ -1,8 +1,8 @@
 import { useContext } from "react"
 import "./StartMenu.css"
 import { AppList } from "../../../Apps/Apps"
-import { StartMenuContext } from "../../Contexts/StartMenu"
-import { RunningAppsContext } from "../../Contexts/RunningApps"
+import { StartMenuContext } from "../../Contexts/StartMenuContext"
+import { RunningAppsContext } from "../../Contexts/RunningAppsContext"
 import { FileExplorerProps } from "../../../Apps/FileExplorer/FileExplorer"
 import { HelloWorldProps } from "../../../Apps/HelloWorld/HelloWorld"
 

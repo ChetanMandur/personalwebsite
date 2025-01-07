@@ -1,7 +1,7 @@
 import {PropsWithChildren,useReducer, useState } from "react";
-import { StartMenuContext } from "./StartMenu";
-import { RunningAppsContext, runningAppsReducer } from "./RunningApps";
-import { ContextMenuContext, contextMenuReducer } from "./ContextMenuData";
+import { StartMenuContext } from "./StartMenuContext";
+import { RunningAppsContext, runningAppsReducer } from "./RunningAppsContext";
+import { ContextMenuContext, contextMenuReducer } from "./ContextMenuContext";
 
 export function StateContext(props:PropsWithChildren){
   const [startMenuOpen, setStartMenuOpen] = useState(false);

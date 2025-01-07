@@ -1,5 +1,5 @@
-import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuData";
-import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningApps";
+import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext";
+import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext";
 import "./HelloWorld.css"
 import { useContext, useLayoutEffect, useRef, useState} from "react";
 
