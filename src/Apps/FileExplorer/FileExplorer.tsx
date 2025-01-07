@@ -181,13 +181,7 @@ export default function FileExplorer({path}:FileExplorerProps){
             pathArray.pop()
             let newPath = arrayToPath(pathArray)
 
-            const [pathObject] = doesPathExist(newPath)
-
-
-            setAddressBoxPath(newPath)
-            setCurrentPath(newPath)
-            setCurrentFolder(Object.entries(pathObject as MyFileSystemFolder))
-            setSelected("")
+            pathEnter(newPath)
         }
     }
 
@@ -351,10 +345,10 @@ export default function FileExplorer({path}:FileExplorerProps){
     return(
     <div className="file-explorer">
         <div className="menu-bar"> 
-            <div className="back-button" onClick={()=>{backButtonPressed()}}>
+            <div className="back-button" onMouseDown={(event)=>{event.preventDefault();backButtonPressed()}}>
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
-            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions(); setHighlightPathSuggestion(-1)}} onBlur={()=>{setShowPathSuggestions(false);RenderPathSuggestions()}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
+            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions(); setHighlightPathSuggestion(-1)}} onBlur={()=>{setShowPathSuggestions(false)}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
             {showPathSuggestions ? 
                 <div className="path-suggestion">
                     {
@@ -380,7 +374,7 @@ export default function FileExplorer({path}:FileExplorerProps){
                         (
                             currentPathSuggestions.map( (item, index)=>{
                                 return (
-                                    <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={()=>{pathEnter(item[0])}} onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBoxPath(item[0])}} onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBoxPath(currentPath)}}>{item[0]} <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div></div>
+                                    <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBoxPath(item[0])}} onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBoxPath(currentPath)}}>{item[0]} <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div></div>
                                 )
                             })
                         )
