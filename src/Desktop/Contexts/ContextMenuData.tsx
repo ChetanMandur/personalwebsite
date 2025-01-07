@@ -13,7 +13,7 @@ export type ContextMenuProperties = {
 }
 
 export type ContextMenuReducerAction = {
-  type: "HIDE" | "SHOW" | "SET"
+  type: "HIDE" | "SET"
   event?: React.MouseEvent<HTMLDivElement, MouseEvent>,
   newOptions?: ContextMenuOptions,
 
@@ -32,10 +32,8 @@ export function contextMenuReducer(contextMenuData:ContextMenuProperties, action
         case "HIDE": 
             temp.visible = false
             break;
-        case "SHOW":
-            temp.visible = true
-            break;
         case "SET":
+            temp.visible = true
             temp.options = {...action.newOptions}
             temp.x = action.event?.clientX!
             temp.y = action.event?.clientY!

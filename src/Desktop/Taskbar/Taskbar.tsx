@@ -64,7 +64,7 @@ export default function Taskbar(){
 
               return(
               <div className="common-border active-app " 
-              onContextMenu={(event)=>{contextMenuPropagation(event);contextMenuDispatch({type:"SET", event:event, newOptions:context_options}); contextMenuDispatch({type:"SHOW"})}} 
+              onContextMenu={(event)=>{contextMenuPropagation(event);contextMenuDispatch({type:"SET", event:event, newOptions:context_options});}} 
               key={Math.random()} 
               onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
                 <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={AppList[app_id].icon}  alt="" />

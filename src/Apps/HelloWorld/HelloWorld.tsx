@@ -55,7 +55,6 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     <div className="image" style={{backgroundImage:imageURL}} onContextMenu={(event)=>{
     contextMenuPropagation(event); 
     contextMenuDispatch({type:"SET", newOptions:imageContextMenuOptions, event:event});
-    contextMenuDispatch({type:"SHOW"})
     }} > hi {name} {ohmylord}</div>
   </div>) 
 } 

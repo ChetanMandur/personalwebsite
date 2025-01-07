@@ -380,7 +380,6 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 contextMenuPropagation(event); 
                 setSelected("");
                 contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
-                contextMenuDispatch({type:"SHOW"})
             }}
         >
             {
@@ -421,9 +420,6 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                                 })
                                             }
                                         } as ContextMenuOptions
-                                    })
-                                    contextMenuDispatch({
-                                        type:"SHOW"
                                     })
                                 }
                             }}  
