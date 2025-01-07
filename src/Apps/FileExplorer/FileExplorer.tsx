@@ -354,21 +354,11 @@ export default function FileExplorer({path}:FileExplorerProps){
                     {
                         typeof currentPathSuggestions == "string" ?
                         (
-                                currentPathSuggestions == "FILE" ?
-                                (
-                                    <div className={"path-suggestion-message " + (highlightPathSuggestion==0 ? "path-suggestion-item-active": "")}>Path leads to a file</div>
-                                )
-                                :
-                                (
-                                    currentPathSuggestions == "EMPTY" ?
-                                    (
-                                        <div className={"path-suggestion-message " + (highlightPathSuggestion==0 ? "path-suggestion-item-active": "")}>This path is empty</div>
-                                    )
-                                    :
-                                    (
-                                        <div className={"path-suggestion-message " + (highlightPathSuggestion==0 ? "path-suggestion-item-active": "")}>Path error</div>
-                                    )
-                                )
+                            <div className={"path-suggestion-message " + (highlightPathSuggestion==0 ? "path-suggestion-item-active": "")} 
+                            onMouseMove={()=>{setHighlightPathSuggestion(0)}} 
+                            onMouseLeave={()=>{setHighlightPathSuggestion(-1)}}>
+                                {currentPathSuggestions == "FILE" ? ("Path leads to a file") : (currentPathSuggestions == "EMPTY" ? ("This path is empty"):("Path error"))}
+                            </div>
                         )
                         :
                         (
