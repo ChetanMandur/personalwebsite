@@ -14,12 +14,22 @@ export default function Tooltip(){
     },[tooltipData])
 
     const tooltipStyle : React.CSSProperties = (tooltipData.y > window.innerHeight/2)? {
-        left: `calc(${tooltipData.x}px + 1.2vh)`,
-        top: `calc(${(tooltipData.y - height)}px + 1vh)`,
+        // Bottom half of screen
+        left: `calc(${tooltipData.x}px + 1.5vh)`,
+        maxWidth: `calc(100vw - (${tooltipData.x}px + 1.5vh))`,
+
+        top: `calc(${(tooltipData.y - height)}px - 0.5vh)`,
+        maxHeight: `calc(100vh - (${(tooltipData.y - height)}px - 0.5vh))`,
+
 
     } : {
-        left: `calc(${tooltipData.x}px + 1.2vh)` ,
-        top: `calc(${(tooltipData.y)}px + 1vh)`,
+        // Top half of screen
+        left: `calc(${tooltipData.x}px + 1.5vh)` ,
+        maxWidth: `calc(100vw - (${tooltipData.x}px + 1.5vh))`,
+
+
+        top: `calc(${(tooltipData.y)}px + 0.5vh)`,
+        maxHeight: `calc(100vh - (${(tooltipData.y)}px + 0.5vh))`,
     }
 
     return(

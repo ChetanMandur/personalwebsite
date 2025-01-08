@@ -10,6 +10,7 @@
   overflow-y: scroll;
   height: 20%;
   resize: vertical;
+  user-select: none;
 }
 
 .hello-world:focus{
