@@ -45,8 +45,8 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
       <input type="checkbox" checked={test}  onChange={()=>{setTest(!test); console.log(test)}} name="" id="" />
     </form>
     <div className="long-form"
-    onMouseMove={(event)=>{if(test){tooltipDispatch({type:"SET", event: event, newData:"https://placedog.net/400/263?id=56", newDataType:"IMAGE"})}}}
-    onMouseOut={()=>{if(test){tooltipDispatch({type:"HIDE"})}}}
+    onMouseMove={(event)=>{if(test){tooltipDispatch({type:"SET",tooltipID:"longFormToolTip", event: event, newData:"https://placedog.net/400/263?id=56", newDataType:"IMAGE"})}}}
+    onMouseOut={()=>{if(test){tooltipDispatch({type:"HIDE",tooltipID:"longFormToolTip"})}}}
      >
       {(hasFocus)? ("I HAVE THE FOCUS"): ("ME..... caN YOU FOCUS ON..... ME...... ")}
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis placerat aliquam quam sed ultricies. Aliquam molestie, ex aliquam efficitur facilisis, mauris felis commodo risus, eget consequat justo dui at est. Sed vitae tortor velit. Fusce fringilla odio ut bibendum efficitur. Sed in augue fringilla tellus volutpat semper. Suspendisse at magna in sapien dapibus gravida nec at neque. Nullam sollicitudin mauris lorem, egestas semper elit elementum sit amet. In volutpat urna id facilisis sagittis.
@@ -62,8 +62,8 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     contextMenuPropagation(event); 
     contextMenuDispatch({type:"SET", newOptions:imageContextMenuOptions, event:event});
     }} 
-    onMouseMove={(event)=>{tooltipDispatch({type:"SET", event: event, newData:"Right click me!", newDataType:"TEXT"})}}
-    onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
+    onMouseMove={(event)=>{tooltipDispatch({type:"SET",tooltipID:"imageTooltip", event: event, newData:"Right click me!", newDataType:"TEXT"})}}
+    onMouseOut={()=>{tooltipDispatch({type:"HIDE",tooltipID:"imageTooltip"});}}
     > hi {name} {ohmylord}</div>
   </div>) 
 } 

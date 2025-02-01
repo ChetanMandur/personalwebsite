@@ -1,6 +1,6 @@
 import React, { createContext } from "react"
 
-type TooltipProperties = {
+export type TooltipProperties = {
     x: number,
     y: number,
     visible: boolean,
@@ -8,46 +8,63 @@ type TooltipProperties = {
     data:string
 }
 
+type TooltipList = {
+    [key: string] : TooltipProperties
+}
+
 type TooltipReducerAction = {
     type: "SET" | "HIDE",
-    event?: React.MouseEvent<HTMLDivElement, MouseEvent>
-    newDataType?: TooltipProperties["dataType"]
+    tooltipID: string,
+    event?: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    newDataType?: TooltipProperties["dataType"],
     newData?: string
 }
 
 
-export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipReducerAction): TooltipProperties{
+export function tooltipReducer(tooltipData: TooltipList, action: TooltipReducerAction): TooltipList{
     const newTooltipData = {...tooltipData}
     
     switch (action.type){
         case "SET":{
-            newTooltipData.visible = true
-            newTooltipData.x = action.event?.clientX!
-            newTooltipData.y = action.event?.clientY!
-            newTooltipData.data = action.newData!
-            newTooltipData.dataType = action.newDataType!
+            // const currentToolTip: TooltipProperties = {
+            //     visible: true,
+            //     x : action.event!.clientX!,
+            //     y : action.event!.clientY!,
+            //     data : action.newData!,
+            //     dataType : action.newDataType!
+
+            // }
+            // newTooltipData[action.tooltipID] = currentToolTip
+            // newTooltipData[action.tooltipID]["visible"] = true
+            // newTooltipData[action.tooltipID]["x"] = action.event!.clientX!
+            // newTooltipData[action.tooltipID]["y"] = action.event!.clientY!
+            // newTooltipData[action.tooltipID]["data"] = action.newData!
+            // newTooltipData[action.tooltipID]["dataType"] = action.newDataType!
+
+            newTooltipData[action.tooltipID]= {
+                visible: true,
+                x: action.event!.clientX!,
+                y: action.event!.clientY!,
+                data: action.newData!,
+                dataType: action.newDataType!
+            } as TooltipProperties
+
             break;
         }
 
         case "HIDE":{
-            newTooltipData.visible = false
-            newTooltipData.x = 0
-            newTooltipData.y = 0
-            newTooltipData.data = ""
-            newTooltipData.dataType = ""
+            delete newTooltipData[action.tooltipID]
             break;
             
         }
 
     }
-
     return newTooltipData
-
 }
 
 export type TooltipContextType = {
-    tooltipData: TooltipProperties,
+    tooltipList: TooltipList,
     tooltipDispatch: React.Dispatch<TooltipReducerAction>
 }
 
-export const TooltipContext = createContext<TooltipContextType>({tooltipData:{x:0, y:0, visible:false, data:"", dataType:""}, tooltipDispatch: ()=>{}})
+export const TooltipContext = createContext<TooltipContextType>({tooltipList:{}, tooltipDispatch: ()=>{}})

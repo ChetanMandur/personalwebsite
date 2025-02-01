@@ -1,15 +1,15 @@
-import { useContext, useLayoutEffect, useRef, useState } from "react";
-import { TooltipContext } from "../Contexts/TooltipContext";
+import { useLayoutEffect, useRef, useState } from "react";
+import { TooltipProperties } from "../Contexts/TooltipContext";
 import "./Tooltip.css"
 
-export default function Tooltip(){
-    const {tooltipData} = useContext(TooltipContext)
+export default function Tooltip({tooltipData}:{tooltipData:TooltipProperties}){
+    // const {tooltipData} = useContext(TooltipContext)
     const tooltipRef = useRef<HTMLDivElement>(null)
     const [height, setHeight] = useState(0)
 
 
     useLayoutEffect(()=>{
-        setHeight(tooltipRef.current?.offsetHeight!)
+        setHeight(tooltipRef.current!.offsetHeight!)
 
     },[tooltipData])
 
