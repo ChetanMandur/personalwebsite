@@ -6,6 +6,7 @@ import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/Running
 import { AppList } from "../Apps"
 import { MediaViewerProps } from "../MediaViewer/MediaViewer"
 import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter, getParentPath } from "./FileExplorerHelpers"
+import { TooltipContext } from "../../Desktop/Contexts/TooltipContext"
 
 export type FileExplorerProps = AppRunningID & {
     path: string
@@ -25,10 +26,12 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
+    const {tooltipDispatch} = useContext(TooltipContext)
+    
 
     useEffect(()=>{
         if (path !=undefined){
-            let pathCleaned:string = pathClean(path)
+            const pathCleaned:string = pathClean(path)
 
             const [pathObject, pathResponse] = doesPathExist(pathCleaned)
 
@@ -85,9 +88,9 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
     //Given a folder name, try to enter from currentPath
     function folderEnter(folderName:string){
-        let pathArray = pathToArray(currentPath)
+        const pathArray = pathToArray(currentPath)
         pathArray.push(folderName)
-        let newPath = arrayToPath(pathArray)
+        const newPath = arrayToPath(pathArray)
 
         const [pathObject] = doesPathExist(newPath)
 
@@ -176,10 +179,10 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
     //Handler for when back button is pressed
     function backButtonPressed(){
-        let pathArray = pathToArray(currentPath)
+        const pathArray = pathToArray(currentPath)
         if (pathArray.length != 0){
             pathArray.pop()
-            let newPath = arrayToPath(pathArray)
+            const newPath = arrayToPath(pathArray)
 
             pathEnter(newPath)
         }
@@ -214,7 +217,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         }
     }
 
-    let toggleHiddenFilesContextMenu = {} as ContextMenuOptions
+    const toggleHiddenFilesContextMenu = {} as ContextMenuOptions
     if (!showHidden){
         toggleHiddenFilesContextMenu["Show hidden files"] = ()=>{setShowHidden(true)}
     } else{
@@ -232,7 +235,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
         //Clean path and find pathArray
         path = pathClean(path)
-        let pathArray = pathToArray(path)
+        const pathArray = pathToArray(path)
 
 
         //Check current path, see if it exists
@@ -242,7 +245,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         if (pathObject != null){
             if (pathResponse == "FOLDER"){
                 //Filter content to find folders
-                let filesInPath = Object.entries(pathObject).filter(
+                const filesInPath = Object.entries(pathObject).filter(
                     (item)=>{
                         if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
                             return false
@@ -254,7 +257,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
                 if (filesInPath.length != 0){
                     //Construct new path suggestions based on filtered content
-                    let newPathSuggestions:typeof currentPathSuggestions = []
+                    const newPathSuggestions:typeof currentPathSuggestions = []
                     for (const i of filesInPath){
                         if (pathArray.length == 0){
                             //If pathArray is 0, that means path = "/"
@@ -285,17 +288,17 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         //If it doesnt exist (either incomplete name/doesnt exist)
         else{
             // Find child
-            let incompleteChild = pathArray.pop() //incompleteChild = last item in pathArray
+            const incompleteChild = pathArray.pop() //incompleteChild = last item in pathArray
 
             // Find parent path
-            let parentPath = arrayToPath(pathArray) //parentPath = pathArray - last item
+            const parentPath = arrayToPath(pathArray) //parentPath = pathArray - last item
 
             //Check to see if parent exists
             const [parentObject, parentResponse] = doesPathExist(parentPath)
 
             //If parent exists, show folders that are close to the incomplete child
             if (parentObject != null && parentResponse == "FOLDER"){
-                let filesInPath = Object.entries(parentObject).filter(
+                const filesInPath = Object.entries(parentObject).filter(
                     (item)=>{
                         if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
                             return false
@@ -306,7 +309,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 )
 
                 //Construct new path suggestions based on filtered content
-                let newPathSuggestions:typeof currentPathSuggestions = []
+                const newPathSuggestions:typeof currentPathSuggestions = []
                 for (const i of filesInPath){
                     if (pathArray.length == 0){
                         //If pathArray is 0, that means path = "/"
@@ -389,7 +392,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                     if (itemType == "BOOLEAN"){
                         return(null)
                     }
-                    let itemStyle = (selected == item[0]) ? ("selected") : ("")
+                    const itemStyle = (selected == item[0]) ? ("selected") : ("")
 
                     if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
                         return null
@@ -423,8 +426,10 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                     })
                                 }
                             }}  
-                            onClick={(event)=>(itemClickedHandler(item, event))} 
+                            onClick={(event)=>{itemClickedHandler(item, event); tooltipDispatch({type:"HIDE",tooltipID:item[0]});}} 
                             onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}
+                            onMouseMove={(event)=>{tooltipDispatch({type:"SET",tooltipID:item[0], event: event, newData:item[0], newDataType:"TEXT"})}}
+                            onMouseOut={()=>{tooltipDispatch({type:"HIDE",tooltipID:item[0]});}}
                         >
                             {/* goated  */}
                             <div className="icon">{(itemType == "FILE") ? <img src={fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
