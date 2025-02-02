@@ -17,10 +17,13 @@ export default function Desktop() {
       <div className="main-container" onContextMenu={(event)=>{contextMenuPropagation(event); if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}} onClick={()=>{ if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}}>
         <UserSpace/>
         <Taskbar/>
-        {contextMenuData.visible ? <ContextMenu/> : <></>}
-        { Object.entries(tooltipList).map((value) =>{
-          return <Tooltip tooltipData={value[1]}/>
-        })}
+        {contextMenuData.visible ? 
+          <ContextMenu/> 
+          :
+          Object.entries(tooltipList).map((value) =>{
+            return <Tooltip key={value[0] + Math.random()} tooltipData={value[1]}/>
+          })
+        }
       </div>  
   );
 }

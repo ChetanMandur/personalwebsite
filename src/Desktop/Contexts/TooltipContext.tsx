@@ -26,21 +26,6 @@ export function tooltipReducer(tooltipData: TooltipList, action: TooltipReducerA
     
     switch (action.type){
         case "SET":{
-            // const currentToolTip: TooltipProperties = {
-            //     visible: true,
-            //     x : action.event!.clientX!,
-            //     y : action.event!.clientY!,
-            //     data : action.newData!,
-            //     dataType : action.newDataType!
-
-            // }
-            // newTooltipData[action.tooltipID] = currentToolTip
-            // newTooltipData[action.tooltipID]["visible"] = true
-            // newTooltipData[action.tooltipID]["x"] = action.event!.clientX!
-            // newTooltipData[action.tooltipID]["y"] = action.event!.clientY!
-            // newTooltipData[action.tooltipID]["data"] = action.newData!
-            // newTooltipData[action.tooltipID]["dataType"] = action.newDataType!
-
             newTooltipData[action.tooltipID]= {
                 visible: true,
                 x: action.event!.clientX!,
