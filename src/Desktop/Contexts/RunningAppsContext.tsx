@@ -26,7 +26,8 @@ export type RunningAppProperties = {
   zIndex:number,
   props:object,
 
-  app_properties: AppProperties
+  appProperties: AppProperties,
+  appAdditionalTitle?: string,
 }
 
 
@@ -38,13 +39,14 @@ export type RunningAppsReducerActionType =
  "ADD" |
  "DELETE" |
  "UPDATE-APP-FOCUS" |
+ "UPDATE-APP-ADDITIONAL-TITLE" |
  "TITLEBAR-CLICKED" |
  "TITLEBAR-UNCLICKED" |
  "RESIZE-CLICKED" |
  "RESIZE-UNCLICKED"|
  "WINDOW-MOVE"|
  "MINIMIZE-HANDLER"|
- "MAXIMIZE"
+ "MAXIMIZE" 
 
 
 export type RunningAppsReducerAction = {
@@ -56,7 +58,8 @@ export type RunningAppsReducerAction = {
   resizeClickedLocation?: RunningAppProperties["resizeClicked"],
   maximizeType?: RunningAppProperties["maximizeType"],
   forceMinimize?: boolean,
-  props?: object
+  props?: object,
+  appAdditionalTitle?: string
 }
 
 function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
@@ -77,7 +80,7 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
     isMinimized: false,
     zIndex: 999,
     props:{...app_properties.props},
-    app_properties: app_properties
+    appProperties: app_properties
   })
 }
 
@@ -209,6 +212,11 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     }
     case "UPDATE-APP-FOCUS":{
       newData = focusChange({...runningAppsData}, action.app_running_id!, false)
+      break;
+    }
+
+    case "UPDATE-APP-ADDITIONAL-TITLE":{
+      newData[action.app_running_id!]["appAdditionalTitle"] = action.appAdditionalTitle!
       break;
     }
 
