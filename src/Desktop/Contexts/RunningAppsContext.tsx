@@ -5,6 +5,9 @@ export type AppRunningID = {
   app_running_id: string
 }
 
+type PointerEvent = {
+  event: React.PointerEvent<HTMLDivElement>
+}
 
 export type RunningAppProperties = {
   ref: React.MutableRefObject<null | HTMLDivElement>,
@@ -35,32 +38,19 @@ export type RunningAppListType = {
   [key:string] : RunningAppProperties
 }
 
-export type RunningAppsReducerActionType =  
- "ADD" |
- "DELETE" |
- "UPDATE-APP-FOCUS" |
- "UPDATE-APP-ADDITIONAL-TITLE" |
- "TITLEBAR-CLICKED" |
- "TITLEBAR-UNCLICKED" |
- "RESIZE-CLICKED" |
- "RESIZE-UNCLICKED"|
- "WINDOW-MOVE"|
- "MINIMIZE-HANDLER"|
- "MAXIMIZE" 
-
-
-export type RunningAppsReducerAction = {
-  type: RunningAppsReducerActionType
-  app_running_id?: string,
-  running_properties?: RunningAppProperties,
-  app_name?: string,
-  event?: React.PointerEvent<HTMLDivElement>,
-  resizeClickedLocation?: RunningAppProperties["resizeClicked"],
-  maximizeType?: RunningAppProperties["maximizeType"],
-  forceMinimize?: boolean,
-  props?: object,
-  appAdditionalTitle?: string
-}
+ export type RunningAppsReducerAction = 
+ {type: "ADD", app_name: string, props?: object} |
+ {type:"DELETE"} & AppRunningID |
+ {type:"UPDATE-APP-FOCUS"} & AppRunningID |
+ {type:"UPDATE-APP-ADDITIONAL-TITLE", appAdditionalTitle: string} & AppRunningID |
+ {type:"TITLEBAR-CLICKED"} & AppRunningID & PointerEvent |
+ {type:"TITLEBAR-UNCLICKED"} |
+ {type:"RESIZE-CLICKED", resizeClickedLocation: RunningAppProperties["resizeClicked"]} & AppRunningID & PointerEvent |
+ {type:"RESIZE-UNCLICKED"}|
+ {type:"WINDOW-MOVE"} & PointerEvent|
+ {type:"MINIMIZE-HANDLER", forceMinimize: boolean} & AppRunningID|
+ {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]}  & AppRunningID 
+  
 
 function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
 
@@ -196,7 +186,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       // if app is not minimized
       else{      
         // if app is in focus   
-        if (current_app["zIndex"] == 999 || (action.forceMinimize == true && action.forceMinimize != undefined)){
+        if (current_app["zIndex"] == 999 || (action.forceMinimize == true)){
           //minmize the app
           current_app["isMinimized"] = true;
           newData[action.app_running_id!] = current_app

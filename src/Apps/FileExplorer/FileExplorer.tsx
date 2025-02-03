@@ -39,7 +39,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                     setCurrentPath(pathCleaned)
                     setAddressBoxPath(pathCleaned)
                     setCurrentFolder(Object.entries(pathObject as MyFileSystemFolder))
-                    runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id, appAdditionalTitle: pathToArray(pathCleaned).pop()})
+                    runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id, appAdditionalTitle: pathToArray(pathCleaned).pop()!})
 
                 } else{
                     runningAppsDispatch({type:"ADD", app_name:"MediaViewer", props:{data:(pathObject as MyFileSystemFile).data, type:(pathObject as MyFileSystemFile).type} as MediaViewerProps})
@@ -79,7 +79,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 setCurrentPath(path)
                 setAddressBoxPath(path)
                 setCurrentFolder(Object.entries(pathObject))
-                runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: pathToArray(path).pop()})
+                runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: pathToArray(path).pop()!})
 
                 RenderPathSuggestions(path)
                 setSelected("")
@@ -99,7 +99,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         setAddressBoxPath(newPath)
         setCurrentPath(newPath)
         setCurrentFolder(Object.entries(pathObject as MyFileSystemFolder))
-        runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: pathToArray(newPath).pop()})
+        runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: pathToArray(newPath).pop()!})
 
         setSelected("")
     }
