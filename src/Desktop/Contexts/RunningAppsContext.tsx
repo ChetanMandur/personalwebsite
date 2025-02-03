@@ -1,5 +1,5 @@
 import { createContext, createRef } from "react";
-import { AppProperties } from "../../Apps/Apps";
+import { AppList, AppProperties } from "../../Apps/Apps";
 
 export type AppRunningID = {
   app_running_id: string
@@ -24,7 +24,9 @@ export type RunningAppProperties = {
   isMinimized: boolean,
 
   zIndex:number,
-  props:{},
+  props:object,
+
+  app_properties: AppProperties
 }
 
 
@@ -50,12 +52,11 @@ export type RunningAppsReducerAction = {
   app_running_id?: string,
   running_properties?: RunningAppProperties,
   app_name?: string,
-  app_properties?: AppProperties ,
   event?: React.PointerEvent<HTMLDivElement>,
   resizeClickedLocation?: RunningAppProperties["resizeClicked"],
   maximizeType?: RunningAppProperties["maximizeType"],
   forceMinimize?: boolean,
-  props?: {}
+  props?: object
 }
 
 function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
@@ -75,7 +76,8 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
     maximizeType: null,
     isMinimized: false,
     zIndex: 999,
-    props:{...app_properties.props}
+    props:{...app_properties.props},
+    app_properties: app_properties
   })
 }
 
@@ -140,8 +142,8 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
   switch (action.type){
     case "ADD": {
       const app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
-      
-      newData[app_running_id] = {...DefaultRunningAppPropertiesGenerator(action.app_properties!)}
+      const app_properties = AppList[action.app_name!]
+      newData[app_running_id] = {...DefaultRunningAppPropertiesGenerator(app_properties)}
       newData[app_running_id]["props"] = {...newData[app_running_id!]["props"], ...action.props, app_running_id:app_running_id } 
 
       newData = focusChange({...newData}, app_running_id!, false)

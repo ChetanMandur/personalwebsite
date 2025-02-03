@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import "./Taskbar.css"
 
-import { AppList } from "../../Apps/Apps"
 import StartMenu from "./StartMenu/StartMenu"
 import { StartMenuContext } from "../Contexts/StartMenuContext";
 import { RunningAppsContext } from "../Contexts/RunningAppsContext";
@@ -45,10 +44,9 @@ export default function Taskbar(){
            {
             RunningAppArray.map((item)=>{ 
               const app_running_id = item[0]
-              const app_id = app_running_id.split("#")[0]
               const running_properties = item[1]
 
-              let context_options: ContextMenuOptions = {Close: ()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})},}
+              const context_options: ContextMenuOptions = {Close: ()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})},}
 
               if (running_properties.isMinimized){
                 context_options["Restore"] = ()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER",forceMinimize:true, app_running_id:app_running_id})}
@@ -67,7 +65,7 @@ export default function Taskbar(){
               onContextMenu={(event)=>{contextMenuPropagation(event);contextMenuDispatch({type:"SET", event:event, newOptions:context_options});}} 
               key={Math.random()} 
               onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id});}}> 
-                <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={AppList[app_id].icon}  alt="" />
+                <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={running_properties.app_properties.icon}  alt="" />
                 <div className={"status "+ (running_properties["isMinimized"] ? "" : (running_properties["zIndex"] == 999 ? "status-focused": "status-unfocused"))}/>
                </div>
               )

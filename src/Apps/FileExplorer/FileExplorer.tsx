@@ -3,7 +3,6 @@ import "./FileExplorer.css"
 import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSystem"
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
-import { AppList } from "../Apps"
 import { MediaViewerProps } from "../MediaViewer/MediaViewer"
 import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter, getParentPath } from "./FileExplorerHelpers"
 import { TooltipContext } from "../../Desktop/Contexts/TooltipContext"
@@ -42,7 +41,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                     setCurrentFolder(Object.entries(pathObject as MyFileSystemFolder))
 
                 } else{
-                    runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(pathObject as MyFileSystemFile).data, type:(pathObject as MyFileSystemFile).type} as MediaViewerProps})
+                    runningAppsDispatch({type:"ADD", app_name:"MediaViewer", props:{data:(pathObject as MyFileSystemFile).data, type:(pathObject as MyFileSystemFile).type} as MediaViewerProps})
                     pathEnter(getParentPath(pathCleaned))
                     setSelected("")
                 }
@@ -71,7 +70,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         } 
         else{
             if (pathResponse == "FILE"){
-                runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(pathObject as MyFileSystemFile).data, type:(pathObject as MyFileSystemFile).type} as MediaViewerProps})
+                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{data:(pathObject as MyFileSystemFile).data, type:(pathObject as MyFileSystemFile).type} as MediaViewerProps})
                 pathEnter(getParentPath(path))
                 setShowPathSuggestions(false)
             } 
@@ -207,7 +206,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
             }
             case "FILE":{
-                runningAppsDispatch({type:"ADD", app_name:"MediaViewer", app_properties: AppList["MediaViewer"], props:{data:(item[1] as MyFileSystemFile).data, type:(item[1] as MyFileSystemFile).type} as MediaViewerProps})
+                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{data:(item[1] as MyFileSystemFile).data, type:(item[1] as MyFileSystemFile).type} as MediaViewerProps})
                 setSelected("")
                 break;
             }
@@ -412,7 +411,6 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                                 runningAppsDispatch({
                                                     type:"ADD",
                                                     app_name:"FileExplorer",
-                                                    app_properties: AppList["FileExplorer"],
                                                     props: {
                                                         path: currentPath + "/" + item[0]
                                                     } as FileExplorerProps

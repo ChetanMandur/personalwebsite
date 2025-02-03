@@ -1,6 +1,5 @@
 
 import "./UserSpace.css"
-import {AppList} from "../../Apps/Apps"
 import { useContext, useRef } from "react"
 import { RunningAppProperties, RunningAppsContext } from "../Contexts/RunningAppsContext"
 import { StartMenuContext } from "../Contexts/StartMenuContext"
@@ -10,11 +9,10 @@ import { ContextMenuContext } from "../Contexts/ContextMenuContext"
 type RunningAppPropsType = {
   app_running_id:string,
   running_properties: RunningAppProperties,
-  app_id: string
 }
 
 
-export function RunningApp({app_running_id, running_properties, app_id}:RunningAppPropsType){
+export function RunningApp({app_running_id, running_properties}:RunningAppPropsType){
   const {runningAppsData,runningAppsDispatch}= useContext(RunningAppsContext)
   const app_window_style : React.CSSProperties = {}
 
@@ -72,15 +70,15 @@ export function RunningApp({app_running_id, running_properties, app_id}:RunningA
     </div> : <></>}
     <div className="app">
       <div className="titlebar" onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", maximizeType:"FULL",app_running_id:app_running_id})}} >
-        <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}><img src={AppList[app_id].icon}/></div>
-        <div className="name"  onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>{AppList[app_id].name}</div>
+        <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}><img src={running_properties.app_properties.icon}/></div>
+        <div className="name"  onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>{running_properties.app_properties.name}</div>
         <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id})}}>-</div>
         <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}}>[]</div>
         <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
       </div>
       <div className="content">
         {running_properties["zIndex"] == 999 ? <></> : <div className="content-overlay"/>}
-        {AppList[app_id].app(running_properties.props)}
+        {running_properties.app_properties.app(running_properties.props)}
       </div>
     </div>
   </div> 
@@ -102,7 +100,6 @@ export default function UserSpace(){
         {
             Object.entries(runningAppsData).map((item, index)=>{
               const app_running_id = item[0]
-              const app_id = app_running_id.split("#")[0]
               const running_properties = runningAppsData[app_running_id]
 
               if (running_properties["maximizeType"] != null && running_properties["titlebarClicked"]){
@@ -200,7 +197,7 @@ export default function UserSpace(){
 
               return(
                 <div className={app_running_id} key={app_running_id}>
-                  <RunningApp app_running_id={app_running_id} app_id={app_id} running_properties={running_properties}/>
+                  <RunningApp app_running_id={app_running_id} running_properties={running_properties}/>
                   <div className={"outline " + running_properties["maximizeType"]} ref={ref => outline_ref.current[index] = ref}></div>
                 </div>
               )

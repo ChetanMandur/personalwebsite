@@ -5,8 +5,11 @@ import { MediaViewer, MediaViewerProps } from "./MediaViewer/MediaViewer";
 export type AppProperties = {
   name: string;
   icon: string;
+  
+  // eslint-disable-next-line no-empty-pattern, @typescript-eslint/no-explicit-any
   app: ({}:any)=>JSX.Element;
-  props: {}
+  /////^^^ONE DAY I WILL FIX THIS, until then yolo
+  props: object,
   defaultWidthRatio: number;
   defaultHeightRatio:number,
 }
