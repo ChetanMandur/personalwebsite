@@ -70,7 +70,8 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
     isMinimized: false,
     zIndex: 999,
     props:{...app_properties.props},
-    appProperties: app_properties
+    appProperties: app_properties,
+    appAdditionalTitle: undefined,
   })
 }
 
@@ -206,6 +207,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     }
 
     case "UPDATE-APP-ADDITIONAL-TITLE":{
+      // console.log("UPDATE-APP-ADDITIONAL-TITLE", action.appAdditionalTitle!)
       newData[action.app_running_id!]["appAdditionalTitle"] = action.appAdditionalTitle!
       break;
     }

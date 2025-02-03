@@ -3,8 +3,8 @@ import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSyst
 //When output is [], that means we are on root
 //Each element is a path starting from root, ie.  = /[0]/[1]/[2]
 export function pathToArray(path:string):string[]{
-    let array:string[] = []
-    let splitPath = path.split("/")
+    const array:string[] = []
+    const splitPath = path.split("/")
 
     for (const i of splitPath){
         if (i != ""){
@@ -41,7 +41,7 @@ export function pathClean(path:string):string{
 
 export function getParentPath(path:string):string{
     path = pathClean(path)
-    let pathArray = pathToArray(path)
+    const pathArray = pathToArray(path)
     pathArray.pop()
 
     return arrayToPath(pathArray)
@@ -81,7 +81,7 @@ export function doesPathExist(path: string):([MyFileSystemFolder|null|MyFileSyst
                    currentFolder = currentFolder[i] as MyFileSystemFolder;
            }
 
-       } catch (error) {
+       } catch {
             return [null, "ERROR"]
        }
        counter++

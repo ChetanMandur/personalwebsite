@@ -11,10 +11,12 @@ export type FileExplorerProps = AppRunningID & {
     path: string
 }
 
+type FolderEntry = [string, MyFileSystemFolder | MyFileSystemFile | boolean]
+
 export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     const [currentPath, setCurrentPath] = useState<string>("")
     const [addressBoxPath, setAddressBoxPath] = useState<string>("")
-    const [currentFolder, setCurrentFolder] = useState<[string, MyFileSystemFolder | MyFileSystemFile | boolean][]>([])
+    const [currentFolder, setCurrentFolder] = useState<FolderEntry[]>([])
 
     const [selected, setSelected] = useState<string>("")
     const [showHidden, setShowHidden] = useState<boolean>(false)
@@ -87,25 +89,8 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         }
     }
          
-
-    //Given a folder name, try to enter from currentPath
-    function folderEnter(folderName:string){
-        const pathArray = pathToArray(currentPath)
-        pathArray.push(folderName)
-        const newPath = arrayToPath(pathArray)
-
-        const [pathObject] = doesPathExist(newPath)
-
-        setAddressBoxPath(newPath)
-        setCurrentPath(newPath)
-        setCurrentFolder(Object.entries(pathObject as MyFileSystemFolder))
-        runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: pathToArray(newPath).pop()!})
-
-        setSelected("")
-    }
-
     //Key handler for address bar
-    function onAddressSubmit(event: React.KeyboardEvent<HTMLInputElement>){
+    function addressKeyHandler(event: React.KeyboardEvent<HTMLInputElement>){
         switch (event.key) {
             case "Enter":
                 pathEnter(addressBoxPath)
@@ -194,7 +179,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
 
     //Handler when item is pressed
-    function itemClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile |boolean], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+    function itemClickedHandler(item: FolderEntry, event: React.MouseEvent<HTMLDivElement, MouseEvent>){
         event.stopPropagation();
         if (selected != item[0]){
             setSelected(item[0])
@@ -202,11 +187,11 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     }
 
     //Handler when item is double clicked (ie. user opens item)
-    function itemDoubleClickedHandler(item: [string, MyFileSystemFolder | MyFileSystemFile | boolean], event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+    function itemDoubleClickedHandler(item: FolderEntry, event: React.MouseEvent<HTMLDivElement, MouseEvent>){
         event.stopPropagation();
         switch(folderItemType(item[1])){
             case "FOLDER":{
-                folderEnter(item[0])
+                pathEnter(currentPath + "/" +item[0])
                 break;
 
             }
@@ -355,7 +340,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             <div className="back-button" onMouseDown={(event)=>{event.preventDefault();backButtonPressed()}}>
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
-            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions(); setHighlightPathSuggestion(-1)}} onBlur={()=>{setShowPathSuggestions(false)}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{onAddressSubmit(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
+            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions(); setHighlightPathSuggestion(-1)}} onBlur={()=>{setShowPathSuggestions(false)}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{addressKeyHandler(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
             {showPathSuggestions ? 
                 <div className="path-suggestion">
                     {
