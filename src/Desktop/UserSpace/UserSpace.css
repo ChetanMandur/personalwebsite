@@ -124,6 +124,10 @@
       display: flex;
       flex-direction: column;
       flex: 1 1 auto;
+      overflow: hidden;
+      width:100%;
+      height:100%;
+
 
       .titlebar {
 
@@ -150,12 +154,15 @@
         .name {
           flex: 1 1 auto;
           white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
           align-self: center;
 
         }
 
         .titlebar-option {
           flex: 0 1 var(--titlebar-height);
+          min-width: var(--titlebar-height);
           display: flex;
           justify-content: center;
           align-items: center;

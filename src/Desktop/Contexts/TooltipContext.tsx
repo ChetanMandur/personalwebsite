@@ -4,7 +4,7 @@ export type TooltipProperties = {
     x: number,
     y: number,
     visible: boolean,
-    dataType: "TEXT"| "IMAGE" | "",
+    dataType: "TEXT"| "IMAGE" ,
     data:string
 }
 
@@ -12,14 +12,9 @@ type TooltipList = {
     [key: string] : TooltipProperties
 }
 
-type TooltipReducerAction = {
-    type: "SET" | "HIDE",
-    tooltipID: string,
-    event?: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    newDataType?: TooltipProperties["dataType"],
-    newData?: string
-}
-
+type TooltipReducerAction = 
+{type: "SET", tooltipID: string, event: React.MouseEvent<HTMLDivElement, MouseEvent>, newDataType: TooltipProperties["dataType"], newData: string} |
+{type: "HIDE", tooltipID: string, }
 
 export function tooltipReducer(tooltipData: TooltipList, action: TooltipReducerAction): TooltipList{
     const newTooltipData = {...tooltipData}

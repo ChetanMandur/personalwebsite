@@ -131,6 +131,14 @@ function focusChange(data:RunningAppListType, app_running_id:string, app_removed
 
 }
 
+export function titlebarTextGenerator(running_properties: RunningAppProperties):string{
+  if (running_properties.appAdditionalTitle != undefined){
+    return running_properties.appProperties.name + " - " + running_properties.appAdditionalTitle
+  } else {
+    return running_properties.appProperties.name
+  }
+}
+
 export function runningAppsReducer(runningAppsData:RunningAppListType, action:RunningAppsReducerAction):RunningAppListType{
   let newData = {...runningAppsData}
   switch (action.type){

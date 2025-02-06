@@ -73,7 +73,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         } 
         else{
             if (pathResponse == "FILE"){
-                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{data:(pathObject as MyFileSystemFile).data, type:(pathObject as MyFileSystemFile).type} as MediaViewerProps})
+                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{data:(pathObject as MyFileSystemFile).data, type:(pathObject as MyFileSystemFile).type, name:pathToArray(path).pop()!} as MediaViewerProps})
                 pathEnter(getParentPath(path))
                 setShowPathSuggestions(false)
             } 
@@ -196,7 +196,8 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
             }
             case "FILE":{
-                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{data:(item[1] as MyFileSystemFile).data, type:(item[1] as MyFileSystemFile).type} as MediaViewerProps})
+                // runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{data:(item[1] as MyFileSystemFile).data, type:(item[1] as MyFileSystemFile).type} as MediaViewerProps})
+                pathEnter(currentPath + "/" +item[0])
                 setSelected("")
                 break;
             }
