@@ -12,7 +12,7 @@ import Tooltip from "./Tooltip/Tooltip";
 
 export default function Desktop() {
   const {contextMenuData, contextMenuDispatch}=useContext(ContextMenuContext)
-  const {tooltipList} = useContext(TooltipContext)
+  const {tooltipData} = useContext(TooltipContext)
   return (
       <div className="main-container" onContextMenu={(event)=>{contextMenuPropagation(event); if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}} onClick={()=>{ if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}}>
         <UserSpace/>
@@ -20,9 +20,12 @@ export default function Desktop() {
         {contextMenuData.visible ? 
           <ContextMenu/> 
           :
-          Object.entries(tooltipList).map((value) =>{
-            return <Tooltip key={value[0] + Math.random()} tooltipData={value[1]}/>
-          })
+          <></>
+        }
+        {tooltipData.visible ? 
+          <Tooltip key={Math.random()}/> 
+          :
+          <></>
         }
       </div>  
   );

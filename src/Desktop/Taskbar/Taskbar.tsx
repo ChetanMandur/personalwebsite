@@ -3,8 +3,9 @@ import "./Taskbar.css"
 
 import StartMenu from "./StartMenu/StartMenu"
 import { StartMenuContext } from "../Contexts/StartMenuContext";
-import { RunningAppsContext } from "../Contexts/RunningAppsContext";
+import { RunningAppsContext, titlebarTextGenerator } from "../Contexts/RunningAppsContext";
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../Contexts/ContextMenuContext";
+import { TooltipContext } from "../Contexts/TooltipContext";
 
 
 
@@ -12,6 +13,7 @@ export default function Taskbar(){
   const {startMenuOpen, setStartMenuOpen} = useContext(StartMenuContext);
   const {runningAppsData, runningAppsDispatch} = useContext(RunningAppsContext);
   const {contextMenuData,contextMenuDispatch} = useContext(ContextMenuContext)
+  const {tooltipDispatch} = useContext(TooltipContext)
 
   const [date, setDate] = useState(new Date())
 
@@ -37,7 +39,7 @@ export default function Taskbar(){
   }
 
   return(
-      <div className="taskbar" onContextMenu={(event)=>{contextMenuPropagation(event);if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}}> 
+      <div className="taskbar"  onContextMenu={(event)=>{contextMenuPropagation(event);if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}}> 
         <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
         {startMenuOpen ? <StartMenu/>:<></>}
         <div className="active-apps" onClick={()=>{setStartMenuOpen(false)}}> 
@@ -64,6 +66,8 @@ export default function Taskbar(){
               <div className="common-border active-app " 
               onContextMenu={(event)=>{contextMenuPropagation(event);contextMenuDispatch({type:"SET", event:event, newOptions:context_options});}} 
               key={Math.random()} 
+              onMouseMove={(event)=>{tooltipDispatch({type:"SET", newData:titlebarTextGenerator(running_properties), newDataType:"TEXT",event:event})}}
+              onMouseOut={(event)=>{event.stopPropagation();tooltipDispatch({type:"HIDE"})}}
               onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id, forceMinimize:false});}}> 
                 <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={running_properties.appProperties.icon}  alt="" />
                 <div className={"status "+ (running_properties["isMinimized"] ? "" : (running_properties["zIndex"] == 999 ? "status-focused": "status-unfocused"))}/>

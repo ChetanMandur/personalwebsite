@@ -8,14 +8,14 @@ export function StateContext(props:PropsWithChildren){
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [runningAppsData, runningAppsDispatch] = useReducer(runningAppsReducer, {})
   const [contextMenuData, contextMenuDispatch] = useReducer(contextMenuReducer, {x:0,y:0,visible:false, options:{}})
-  const [tooltipList, tooltipDispatch] = useReducer(tooltipReducer, {})
+  const [tooltipData, tooltipDispatch] = useReducer(tooltipReducer, {x:0, y:0, data: "", dataType: null, visible:false})
 
   return(
     
       <StartMenuContext.Provider value={{startMenuOpen, setStartMenuOpen}}>
         <RunningAppsContext.Provider value = {{runningAppsData, runningAppsDispatch}}>
           <ContextMenuContext.Provider value={{contextMenuData,contextMenuDispatch}}>
-            <TooltipContext.Provider value={{tooltipList, tooltipDispatch}}>
+            <TooltipContext.Provider value={{tooltipData, tooltipDispatch}}>
               {props.children}
             </TooltipContext.Provider>
           </ContextMenuContext.Provider>

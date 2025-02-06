@@ -76,8 +76,8 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
       <div className="titlebar" onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", maximizeType:"FULL",app_running_id:app_running_id})}} >
         <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}><img src={running_properties.appProperties.icon}/></div>
         <div className="name" 
-          onMouseMove={(event)=>{tooltipDispatch({type:"SET", tooltipID:titlebarText, newData: titlebarText, newDataType:"TEXT", event:event})}}  
-          onMouseOut={()=>{tooltipDispatch({type:"HIDE",tooltipID:titlebarText})}}
+          onMouseMove={(event)=>{tooltipDispatch({type:"SET",newData: titlebarText, newDataType:"TEXT", event:event})}}  
+          onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
           onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>
             {titlebarText}
         </div>

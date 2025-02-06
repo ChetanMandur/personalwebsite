@@ -415,10 +415,10 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                     })
                                 }
                             }}  
-                            onClick={(event)=>{itemClickedHandler(item, event); tooltipDispatch({type:"HIDE",tooltipID:item[0]});}} 
+                            onClick={(event)=>{itemClickedHandler(item, event); tooltipDispatch({type:"HIDE"});}} 
                             onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}
-                            onMouseMove={(event)=>{tooltipDispatch({type:"SET",tooltipID:item[0], event: event, newData:item[0], newDataType:"TEXT"})}}
-                            onMouseOut={()=>{tooltipDispatch({type:"HIDE",tooltipID:item[0]});}}
+                            onMouseMove={(event)=>{tooltipDispatch({type:"SET", event: event, newData:item[0], newDataType:"TEXT"})}}
+                            onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
                         >
                             {/* goated  */}
                             <div className="icon">{(itemType == "FILE") ? <img src={fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>

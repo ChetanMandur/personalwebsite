@@ -4,36 +4,31 @@ export type TooltipProperties = {
     x: number,
     y: number,
     visible: boolean,
-    dataType: "TEXT"| "IMAGE" ,
+    dataType: "TEXT"| "IMAGE" | null ,
     data:string
 }
 
-type TooltipList = {
-    [key: string] : TooltipProperties
-}
-
 type TooltipReducerAction = 
-{type: "SET", tooltipID: string, event: React.MouseEvent<HTMLDivElement, MouseEvent>, newDataType: TooltipProperties["dataType"], newData: string} |
-{type: "HIDE", tooltipID: string, }
+{type: "SET", event: React.MouseEvent<HTMLDivElement, MouseEvent>, newDataType: TooltipProperties["dataType"], newData: string} |
+{type: "HIDE"}
 
-export function tooltipReducer(tooltipData: TooltipList, action: TooltipReducerAction): TooltipList{
-    const newTooltipData = {...tooltipData}
-    
+export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipReducerAction): TooltipProperties{
+    let newTooltipData: TooltipProperties = {...tooltipData}
     switch (action.type){
         case "SET":{
-            newTooltipData[action.tooltipID]= {
+            newTooltipData = {
                 visible: true,
                 x: action.event!.clientX!,
                 y: action.event!.clientY!,
                 data: action.newData!,
-                dataType: action.newDataType!
+                dataType: action.newDataType!,
             } as TooltipProperties
 
             break;
         }
 
         case "HIDE":{
-            delete newTooltipData[action.tooltipID]
+            newTooltipData["visible"] = false
             break;
             
         }
@@ -43,8 +38,8 @@ export function tooltipReducer(tooltipData: TooltipList, action: TooltipReducerA
 }
 
 export type TooltipContextType = {
-    tooltipList: TooltipList,
+    tooltipData: TooltipProperties,
     tooltipDispatch: React.Dispatch<TooltipReducerAction>
 }
 
-export const TooltipContext = createContext<TooltipContextType>({tooltipList:{}, tooltipDispatch: ()=>{}})
+export const TooltipContext = createContext<TooltipContextType>({tooltipData:{x:0, y:0, data:"", dataType: null, visible:false}, tooltipDispatch: ()=>{}})
