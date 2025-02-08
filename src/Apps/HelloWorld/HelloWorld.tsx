@@ -12,11 +12,12 @@ export type HelloWorldProps = AppRunningID & {
 
 export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldProps){
   const [test, setTest] = useState(false)
+  const [appRunningIDpicker, setAppRunningIDpicker] = useState(app_running_id)
   const [imageURL, setImageURL] = useState("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")
 
   const appRef =useRef<HTMLDivElement|null>(null)
 
-  const {runningAppsData} = useContext(RunningAppsContext)
+  const {runningAppsData, runningAppsDispatch} = useContext(RunningAppsContext)
   const {contextMenuDispatch} = useContext(ContextMenuContext)
   const {tooltipDispatch} = useContext(TooltipContext)
 
@@ -39,10 +40,12 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
 
 
   return(
-  <div className="hello-world" ref={appRef} tabIndex={0} onKeyDown={(event)=>{event.stopPropagation();console.log(app_running_id, event.key)}}>
+  <div className="hello-world" ref={appRef} onKeyDown={(event)=>{console.log(app_running_id, event.key)}}>
     Hello world
     <form action="">
-      <input type="checkbox" checked={test}  onChange={()=>{setTest(!test); console.log(test)}} name="" id="" />
+      <input type="checkbox" checked={test}  onChange={()=>{setTest(!test); console.log(test)}} name="testCheckBox" id="testCheckBox" />
+      <input type="checkbox"   onChange={()=>{runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id:appRunningIDpicker, props:{...runningAppsData[appRunningIDpicker]["props"], ohmylord: Math.random().toString()} as HelloWorldProps}); console.log("props changed!!!!!!!!!")}} name="propChangeBox" id="propChangeBox" />
+      <input type="text" name="appRunningIDpicker" id="appRunningIDpicker" value={appRunningIDpicker} onChange={(event)=>{setAppRunningIDpicker(event.target.value)}} />    
     </form>
     <div className="long-form"
     onMouseMove={(event)=>{if(test){tooltipDispatch({type:"SET", event: event, newData:"https://placedog.net/400/263?id=56", newDataType:"IMAGE"})}}}
@@ -64,6 +67,6 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     }} 
     onMouseMove={(event)=>{tooltipDispatch({type:"SET", event: event, newData:"Right click me!", newDataType:"TEXT"})}}
     onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
-    > hi {name} {ohmylord}</div>
+    > {app_running_id} hi {name} {ohmylord} </div>
   </div>) 
 } 

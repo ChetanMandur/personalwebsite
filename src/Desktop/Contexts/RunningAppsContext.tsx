@@ -43,6 +43,7 @@ export type RunningAppListType = {
  {type:"DELETE"} & AppRunningID |
  {type:"UPDATE-APP-FOCUS"} & AppRunningID |
  {type:"UPDATE-APP-ADDITIONAL-TITLE", appAdditionalTitle: string} & AppRunningID |
+ {type:"UPDATE-APP-PROPS", props: object} & AppRunningID |
  {type:"TITLEBAR-CLICKED"} & AppRunningID & PointerEvent |
  {type:"TITLEBAR-UNCLICKED"} |
  {type:"RESIZE-CLICKED", resizeClickedLocation: RunningAppProperties["resizeClicked"]} & AppRunningID & PointerEvent |
@@ -156,6 +157,10 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       newData = focusChange(newData, action.app_running_id!, true)
       break;
 
+    }
+    case "UPDATE-APP-PROPS":{
+      newData[action.app_running_id]["props"] = {...newData[action.app_running_id!]["props"],...action.props}
+      break;
     }
     case "RESIZE-CLICKED":{
       newData[action.app_running_id!]["resizeClicked"] = action.resizeClickedLocation!
