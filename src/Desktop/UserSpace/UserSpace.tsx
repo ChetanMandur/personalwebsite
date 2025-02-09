@@ -59,7 +59,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
   const titlebarText = titlebarTextGenerator(running_properties)
 
   return(
-  <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (running_properties["zIndex"]==999 ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsData[app_running_id]["ref"]} key={app_running_id}>
+  <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (running_properties["zIndex"]==999 ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsData[app_running_id]["ref"]} key={app_running_id+"runningApp"}>
     {running_properties["maximizeType"] == null ? <div className="hitboxes">
       <div className="box" id="TopL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TL"})}}></div>
       <div className="box" id="TopR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TR"})}}></div>
@@ -210,7 +210,7 @@ export default function UserSpace(){
               
 
               return(
-                <div className={app_running_id} key={app_running_id}>
+                <div className={app_running_id} key={app_running_id+"appContainer"}>
                   <RunningApp app_running_id={app_running_id} running_properties={running_properties}/>
                   <div className={"outline " + running_properties["maximizeType"]} ref={ref => outline_ref.current[index] = ref}></div>
                 </div>

@@ -10,7 +10,7 @@ export default function ContextMenu(){
     const [height, setHeight] = useState(0)
 
     useLayoutEffect(()=>{
-        setHeight(contextMenuRef.current?.offsetHeight!)  
+        setHeight(contextMenuRef.current!.offsetHeight!)  
     },[contextMenuData])
 
     const contextStyle :React.CSSProperties = (contextMenuData.y > window.innerHeight/2)? {
@@ -29,7 +29,7 @@ export default function ContextMenu(){
             Object.entries(contextMenuData.options).map((option, index)=>{
 
             return(
-                <div key={index} className="context-menu-option" onClick={option[1]}>
+                <div key={index+"contextMenuOption"} className="context-menu-option" onClick={option[1]}>
                     {option[0]}
                 </div>
             )

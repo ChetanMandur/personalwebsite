@@ -357,7 +357,14 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                         (
                             currentPathSuggestions.map( (item, index)=>{
                                 return (
-                                    <div key={item[0]} className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBoxPath(item[0])}} onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBoxPath(currentPath)}}>{item[0]} <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div></div>
+                                    <div key={item[0]+"pathSuggestionItem"} 
+                                        className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} 
+                                        onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} 
+                                        onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBoxPath(item[0])}} 
+                                        onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBoxPath(currentPath)}}>
+                                            {item[0]} 
+                                            <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div>
+                                    </div>
                                 )
                             })
                         )
@@ -389,7 +396,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                     }
                     
                     return(
-                        <div className={"item " + itemStyle} key={item[0]} 
+                        <div className={"item " + itemStyle} key={item[0]+"contentItem"} 
                             onContextMenu={(event)=>{
                                 if (itemType == "FOLDER"){
                                     contextMenuPropagation(event)

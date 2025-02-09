@@ -65,9 +65,9 @@ export default function Taskbar(){
               return(
               <div className="common-border active-app " 
               onContextMenu={(event)=>{contextMenuPropagation(event);contextMenuDispatch({type:"SET", event:event, newOptions:context_options});}} 
-              key={Math.random()} 
+              key={app_running_id+"taskbarIcon"} 
               onMouseMove={(event)=>{tooltipDispatch({type:"SET", newData:titlebarTextGenerator(running_properties), newDataType:"TEXT",event:event})}}
-              onMouseOut={(event)=>{event.stopPropagation();tooltipDispatch({type:"HIDE"})}}
+              onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
               onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id, forceMinimize:false});}}> 
                 <img className={(running_properties["isMinimized"] ? "icon-minimized" : "icon-unminimized")} src={running_properties.appProperties.icon}  alt="" />
                 <div className={"status "+ (running_properties["isMinimized"] ? "" : (running_properties["zIndex"] == 999 ? "status-focused": "status-unfocused"))}/>

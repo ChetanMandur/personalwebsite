@@ -16,6 +16,8 @@ export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipRe
     let newTooltipData: TooltipProperties = {...tooltipData}
     switch (action.type){
         case "SET":{
+            // console.log("tooltip SET")
+
             newTooltipData = {
                 visible: true,
                 x: action.event!.clientX!,
@@ -28,6 +30,8 @@ export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipRe
         }
 
         case "HIDE":{
+            // console.log("tooltip HIDE")
+            
             newTooltipData["visible"] = false
             break;
             
