@@ -53,7 +53,7 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
       <input type="checkbox"   onChange={()=>{runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id:appRunningIDpicker, props:{...runningAppsData[appRunningIDpicker]["props"], ohmylord: Math.random().toString()} as HelloWorldProps}); console.log("props changed!!!!!!!!!")}} name="propChangeBox" id="propChangeBox" />
       <input type="text" name="appRunningIDpicker" id="appRunningIDpicker" value={appRunningIDpicker} onChange={(event)=>{setAppRunningIDpicker(event.target.value)}} />    
     </form>
-    <div className="long-form"  
+    <div className="long-form" tabIndex={-1}
     onMouseMove={(event)=>{if(test){tooltipDispatch({type:"SET", event: event, newData:"https://placedog.net/400/263?id=56", newDataType:"IMAGE"})}}}
     onMouseOut={()=>{if(test){tooltipDispatch({type:"HIDE"})}}}
      >
