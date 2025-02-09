@@ -405,7 +405,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                         type: "SET",
                                         event: event,
                                         newOptions:{
-                                            "Open in new window": ()=>{
+                                            "Open in the background": ()=>{
                                                 runningAppsDispatch({
                                                     type:"ADD",
                                                     app_name:"FileExplorer",
@@ -417,7 +417,17 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                                     type:"UPDATE-APP-FOCUS",
                                                     app_running_id: app_running_id
                                                 })
-                                            }
+                                            },
+                                            "Open in new window": ()=>{
+                                                runningAppsDispatch({
+                                                    type:"ADD",
+                                                    app_name:"FileExplorer",
+                                                    props: {
+                                                        path: currentPath + "/" + item[0]
+                                                    } as FileExplorerProps
+                                                });
+                                            },
+                                            
                                         } as ContextMenuOptions
                                     })
                                 }
