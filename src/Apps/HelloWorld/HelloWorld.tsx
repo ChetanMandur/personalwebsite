@@ -2,7 +2,7 @@ import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext";
 import { TooltipContext } from "../../Desktop/Contexts/TooltipContext";
 import "./HelloWorld.css"
-import { useContext, useLayoutEffect, useRef, useState} from "react";
+import { useContext, useEffect, useRef, useState} from "react";
 
 
 export type HelloWorldProps = AppRunningID & {
@@ -24,14 +24,20 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
   const hasFocus = runningAppsData[app_running_id].zIndex == 999
 
 
-  useLayoutEffect(()=>{
-    if (hasFocus){
-      appRef.current!.focus()
+  useEffect(()=>{
+    function keyDownHandler(event:KeyboardEvent){
+      if (hasFocus){
+        console.log(app_running_id, event.key)
+      }
     }
-  },[runningAppsData[app_running_id]])
-
-
   
+    document.addEventListener("keydown", keyDownHandler)
+
+    return () => document.removeEventListener("keydown", keyDownHandler)
+  },[hasFocus, app_running_id])
+
+
+
 
   const imageContextMenuOptions: ContextMenuOptions = {
     "Show me the cat": ()=>{setImageURL("url(https://placecats.com/neo_2/300/200)")},
@@ -40,14 +46,14 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
 
 
   return(
-  <div className="hello-world" ref={appRef} onKeyDown={(event)=>{console.log(app_running_id, event.key)}}>
+  <div className="hello-world"   ref={appRef}>
     Hello world
-    <form action="">
+    <form action=""  >
       <input type="checkbox" checked={test}  onChange={()=>{setTest(!test); console.log(test)}} name="testCheckBox" id="testCheckBox" />
       <input type="checkbox"   onChange={()=>{runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id:appRunningIDpicker, props:{...runningAppsData[appRunningIDpicker]["props"], ohmylord: Math.random().toString()} as HelloWorldProps}); console.log("props changed!!!!!!!!!")}} name="propChangeBox" id="propChangeBox" />
       <input type="text" name="appRunningIDpicker" id="appRunningIDpicker" value={appRunningIDpicker} onChange={(event)=>{setAppRunningIDpicker(event.target.value)}} />    
     </form>
-    <div className="long-form"
+    <div className="long-form"  
     onMouseMove={(event)=>{if(test){tooltipDispatch({type:"SET", event: event, newData:"https://placedog.net/400/263?id=56", newDataType:"IMAGE"})}}}
     onMouseOut={()=>{if(test){tooltipDispatch({type:"HIDE"})}}}
      >
@@ -59,9 +65,9 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
       Nunc ut varius ante. Quisque vel sapien eros. Vivamus tempor elementum ex sed bibendum. Quisque vitae nibh et erat aliquet euismod nec at diam. Aenean vitae elit lorem. Sed eget auctor sem. Vestibulum non velit varius, accumsan massa vel, scelerisque ante. Etiam dignissim justo magna, sed consequat nibh dictum sit amet.
     </div>
 
-    {test ? <div className="image2" style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> : <></>}
+    {test ? <div className="image2"   style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> : <></>}
     
-    <div className="image" style={{backgroundImage:imageURL}} onContextMenu={(event)=>{
+    <div className="image"   style={{backgroundImage:imageURL}} onContextMenu={(event)=>{
     contextMenuPropagation(event); 
     contextMenuDispatch({type:"SET", newOptions:imageContextMenuOptions, event:event});
     }} 
