@@ -56,7 +56,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
             case "VIDEO":
                 return (
                     <>
-                        <canvas ref={canvasRef} />            
+                        <canvas ref={canvasRef} onDoubleClick={(event)=>{event.stopPropagation();runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}} onClick={(event)=>{event.stopPropagation();if(videoRef.current?.paused){videoRef.current.play()}else{videoRef.current?.pause()}}} />            
                         <video ref={videoRef} onPlay={()=>{onPlayHandler()}} src={currentData} hidden={true} autoPlay controls />
 
                     </>
