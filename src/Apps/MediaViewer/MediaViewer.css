@@ -15,6 +15,50 @@
         height: 100%;
     }
 
+    .video-overlay{
+        position: absolute;
+        --top-offset: calc(var(--titlebar-height));
+        top: var(--top-offset);
+        width: calc(100% - var(--bar-border-outline-width)*2);
+        height: calc(100% - var(--top-offset) - var(--bar-border-outline-width) );
+
+        background-color: rgba(255, 0, 0, 0.559);
+
+        pointer-events: none;
+
+        .bottom-bar{
+            pointer-events: all;
+            position: absolute;
+            bottom:0;
+            width: 100%;
+            height: 2.4vh;
+            background-color: green;
+            display: flex;
+            flex-direction: row;
+
+            .playback-button{
+                flex: 0 1 2.4vh;
+                width:2.4vh;
+                background-color: brown;
+                pointer-events: all;
+                img{
+                    height:100%;
+                    width:100%
+                }
+            }
+
+            .seek-bar{
+                flex: 1 1 auto;
+                background-color: blue;
+                .seek-bar-progress{
+                    width:0%;
+                    height:100%;
+                    background-color: aquamarine;
+                }
+            }
+        }
+    }
+
     canvas{
         object-fit: fill;
         width: 100%;
