@@ -12,16 +12,26 @@ export type MediaViewerProps = AppRunningID & {
 type VideoProperties = {
     playing: boolean,
     seekBarProgressLength: number,
+    seekBarClicked:boolean,
     videoRef: React.MutableRefObject<HTMLVideoElement | null>,
     canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
     seekBarRef: React.MutableRefObject<HTMLDivElement | null>,
+}
+
+const defaultVideoProperties : VideoProperties = {
+    playing: true,
+    seekBarProgressLength: 0,
+    seekBarClicked: false,
+    videoRef:createRef<HTMLVideoElement>(), 
+    canvasRef:createRef<HTMLCanvasElement>(),
+    seekBarRef: createRef<HTMLDivElement>()
 }
 
 
 export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps){
     const [currentData] = useState<string>(data ?? "")
     const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
-    const [currentVideoProperties, setCurrentVideoProperties] = useState<VideoProperties>({playing:true, seekBarProgressLength:0,videoRef:createRef<HTMLVideoElement>(), canvasRef:createRef<HTMLCanvasElement>() ,seekBarRef: createRef<HTMLDivElement>()})
+    const [currentVideoProperties, setCurrentVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
 
     
@@ -70,6 +80,21 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
         }
     }
 
+    function videoScrubbing(event: React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent ){
+        const seekBarBoundingClientRect = currentVideoProperties.seekBarRef.current!.getBoundingClientRect()!
+        const seekBarClickedRatio = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
+        currentVideoProperties.videoRef.current!.currentTime = currentVideoProperties.videoRef.current!.duration * seekBarClickedRatio
+
+        if (!currentVideoProperties.playing){
+            const playPromise = currentVideoProperties.videoRef.current!.play()
+            playPromise.then(
+                ()=>{
+                    currentVideoProperties.videoRef.current!.pause()
+                }
+            )
+        }
+    }
+
     function MediaGenerator():JSX.Element{
         switch (currentType) {
             case "IMAGE":
@@ -79,7 +104,17 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
             case "VIDEO":
                 return (
                     <>
-                        <canvas ref={currentVideoProperties.canvasRef} onDoubleClick={(event)=>{event.stopPropagation();runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}} onClick={(event)=>{event.stopPropagation();playPauseHandler()}} />            
+                        <canvas ref={currentVideoProperties.canvasRef} 
+                            onDoubleClick={(event)=>{
+                                event.stopPropagation();
+                                runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
+                            }} 
+                            onClick={(event)=>{
+                                event.stopPropagation();
+                                playPauseHandler()
+                            }}
+                            
+                            />            
                         <div className="video-overlay">
                             <div className="bottom-bar">
                                 <div className="playback-button"
@@ -92,19 +127,13 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
                                 </div> 
                                 <div className="seek-bar" ref={currentVideoProperties.seekBarRef}
                                     onMouseDown={(event)=>{
-                                        event.stopPropagation()
-                                        const seekBarBoundingClientRect = currentVideoProperties.seekBarRef.current!.getBoundingClientRect()!
-                                        const seekBarClickedRatio = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
-                                        currentVideoProperties.videoRef.current!.currentTime = currentVideoProperties.videoRef.current!.duration * seekBarClickedRatio
-
-                                        if (!currentVideoProperties.playing){
-                                            const playPromise = currentVideoProperties.videoRef.current!.play()
-                                            playPromise.then(
-                                                ()=>{
-                                                    currentVideoProperties.videoRef.current!.pause()
-                                                }
-                                            )
-                                        }
+                                        setCurrentVideoProperties(pendingState => ({...pendingState, seekBarClicked: true}))
+                                        videoScrubbing(event)
+                                        document.addEventListener("mouseup", ()=>{
+                                            setCurrentVideoProperties(pendingState => ({...pendingState, seekBarClicked: false}));
+                                            document.removeEventListener("mousemove", videoScrubbing)
+                                        }, {once:true})
+                                        document.addEventListener("mousemove", videoScrubbing)
                                     }}
                                 >
                                     <div className="seek-bar-progress" style={{width:currentVideoProperties.seekBarProgressLength}}> 
