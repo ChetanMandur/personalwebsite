@@ -50,7 +50,9 @@
             .seek-bar{
                 flex: 1 1 auto;
                 background-color: blue;
+                pointer-events: all;
                 .seek-bar-progress{
+                    pointer-events: none;
                     width:0%;
                     height:100%;
                     background-color: aquamarine;

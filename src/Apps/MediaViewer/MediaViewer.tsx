@@ -1,4 +1,4 @@
-import React, { createRef, useContext, useEffect, useRef, useState } from "react"
+import React, { createRef, useContext, useEffect,  useState } from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import { MyFileSystemFile } from "../FileExplorer/MyFileSystem"
 import "./MediaViewer.css"
@@ -11,59 +11,63 @@ export type MediaViewerProps = AppRunningID & {
 
 type VideoProperties = {
     playing: boolean,
-    currentTime: number,
-    progressRatio: number,
-    seekBarRef: React.MutableRefObject<HTMLDivElement | null>
+    seekBarProgressLength: number,
+    videoRef: React.MutableRefObject<HTMLVideoElement | null>,
+    canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
+    seekBarRef: React.MutableRefObject<HTMLDivElement | null>,
 }
 
 
 export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps){
     const [currentData] = useState<string>(data ?? "")
     const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
-    const [currentVideoProperties, setCurrentVideoProperties] = useState<VideoProperties>({playing:true, currentTime:0, progressRatio:0, seekBarRef: createRef<HTMLDivElement>()})
+    const [currentVideoProperties, setCurrentVideoProperties] = useState<VideoProperties>({playing:true, seekBarProgressLength:0,videoRef:createRef<HTMLVideoElement>(), canvasRef:createRef<HTMLCanvasElement>() ,seekBarRef: createRef<HTMLDivElement>()})
     const {runningAppsDispatch} = useContext(RunningAppsContext)
 
-    const videoRef = useRef<HTMLVideoElement|null>(null)
-    const canvasRef = useRef<HTMLCanvasElement|null>(null)    
     
     useEffect(()=>{
-        // console.log(app_running_id, name)
         runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: name })
     },[app_running_id,name, runningAppsDispatch])
+    
 
-    // useLayoutEffect(()=>{
-    //     if (type == "VIDEO"){
-    //         // canvasRef.current?.getContext("2d")
-    //         // videoRef.current!.play()
-    //     }
-
-    // },[type])
-
-    // useEffect(()=>{
-    //     if (currentVideoProperties.playing){
-    //         console.log(currentVideoProperties)
-
-    //     }
-
-    // }, [currentVideoProperties])
 
     function renderFrame(){
-        if (videoRef.current != null && canvasRef.current != null){
-            setCurrentVideoProperties(pendingState => ({...pendingState, 
-                currentTime: videoRef.current?.currentTime ?? 0, 
-                progressRatio: ((videoRef.current?.currentTime ?? 0) / (videoRef.current?.duration ?? 1) * pendingState.seekBarRef.current!.getBoundingClientRect().width)}
-            ))
-            canvasRef.current?.getContext("2d")?.drawImage(videoRef.current, 0,0, canvasRef.current.width, canvasRef.current.height )
+        setCurrentVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
+        if (currentVideoProperties.videoRef.current != null && currentVideoProperties.canvasRef.current != null){
+            currentVideoProperties.canvasRef.current?.getContext("2d")?.drawImage(currentVideoProperties.videoRef.current, 0,0, currentVideoProperties.canvasRef.current.width, currentVideoProperties.canvasRef.current.height )
         }
     }
 
 
     function onPlayHandler(){
-        if (!videoRef.current?.paused && !videoRef.current?.ended && videoRef != null){
+        if (!currentVideoProperties.videoRef.current?.paused && !currentVideoProperties.videoRef.current?.ended && currentVideoProperties.videoRef != null){
             renderFrame();
             setTimeout(()=>{onPlayHandler()},0)
-        } 
-        
+        }
+    }
+
+
+    //this is probs so expensive but yolo <------ i wonder if memos or callbacks or something will make this better.... YOLO
+    function onPauseHandler(){
+        if ((currentVideoProperties.videoRef.current?.paused || currentVideoProperties.videoRef.current?.ended) && currentVideoProperties.videoRef != null){
+            setCurrentVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
+            setTimeout(()=>{onPauseHandler()},0)
+        }
+
+    }
+
+    function calculateSeekBarProgress():number{
+        if (currentVideoProperties.videoRef.current != null && !isNaN(currentVideoProperties.videoRef.current.duration) && currentVideoProperties.seekBarRef.current != null){
+            return ((currentVideoProperties.videoRef.current.currentTime /(currentVideoProperties.videoRef.current.duration))  * (currentVideoProperties.seekBarRef.current.getBoundingClientRect().width))
+        } else {return 0}
+    }
+
+    function playPauseHandler(){
+        if(currentVideoProperties.videoRef.current?.paused){
+            currentVideoProperties.videoRef.current.play()
+        }else{
+            currentVideoProperties.videoRef.current?.pause()
+        }
     }
 
     function MediaGenerator():JSX.Element{
@@ -75,19 +79,40 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
             case "VIDEO":
                 return (
                     <>
-                        <canvas ref={canvasRef} onDoubleClick={(event)=>{event.stopPropagation();runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}} onClick={(event)=>{event.stopPropagation();if(videoRef.current?.paused){videoRef.current.play()}else{videoRef.current?.pause()}}} />            
+                        <canvas ref={currentVideoProperties.canvasRef} onDoubleClick={(event)=>{event.stopPropagation();runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}} onClick={(event)=>{event.stopPropagation();playPauseHandler()}} />            
                         <div className="video-overlay">
                             <div className="bottom-bar">
-                                <div className="playback-button">
+                                <div className="playback-button"
+                                    onClick={(event)=>{
+                                        event.stopPropagation()
+                                        playPauseHandler()
+                                    }}
+                                >
                                     <img src={currentVideoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
                                 </div> 
-                                <div className="seek-bar" ref={currentVideoProperties.seekBarRef}>
-                                    <div className="seek-bar-progress" style={{width:(currentVideoProperties.progressRatio)}}> 
+                                <div className="seek-bar" ref={currentVideoProperties.seekBarRef}
+                                    onMouseDown={(event)=>{
+                                        event.stopPropagation()
+                                        const seekBarBoundingClientRect = currentVideoProperties.seekBarRef.current!.getBoundingClientRect()!
+                                        const seekBarClickedRatio = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
+                                        currentVideoProperties.videoRef.current!.currentTime = currentVideoProperties.videoRef.current!.duration * seekBarClickedRatio
+
+                                        if (!currentVideoProperties.playing){
+                                            const playPromise = currentVideoProperties.videoRef.current!.play()
+                                            playPromise.then(
+                                                ()=>{
+                                                    currentVideoProperties.videoRef.current!.pause()
+                                                }
+                                            )
+                                        }
+                                    }}
+                                >
+                                    <div className="seek-bar-progress" style={{width:currentVideoProperties.seekBarProgressLength}}> 
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <video ref={videoRef} 
+                        <video ref={currentVideoProperties.videoRef} 
                         onPlay={()=>{
                             onPlayHandler(); 
                             setCurrentVideoProperties((pendingState) =>{
@@ -99,6 +124,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
 
                         }} 
                         onPause={()=>{
+                            onPauseHandler()
                             setCurrentVideoProperties((pendingState) =>{
                                 return {
                                     ...pendingState,
