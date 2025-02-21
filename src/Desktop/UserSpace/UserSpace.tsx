@@ -90,9 +90,9 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
         <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} 
         onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
       </div>
-      <div className="content">
-        {running_properties["zIndex"] == 999 ? <></> : <div className="content-overlay"/>}
+      <div className="app-content">
         {running_properties.appProperties.app(running_properties.props)}
+        {running_properties["zIndex"] == 999 ? <></> : <div className="content-overlay"/>}
       </div>
     </div>
   </div> 

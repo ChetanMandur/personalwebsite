@@ -176,22 +176,25 @@
 
       }
 
-      .content {
+      .app-content {
         padding: var(--app-border-size);
         padding-top: 0;
         flex: 1 1 auto;
         overflow: hidden;
         overflow-wrap: anywhere;
+        position: relative;
 
         .content-overlay {
           position: absolute;
 
-          width: calc(100% - var(--app-border-size)*1.7);
-          height: calc(100% - var(--app-border-size) - var(--titlebar-height));
+          top:0;
+          width: calc(100% - var(--app-border-size)*(2 - 0.01));
+          height: calc(100% - var(--app-border-size)*(1 - 0.01));
 
           background-color: rgba(0, 0, 0, 0.60);
 
         }
+
       }
     }
   }

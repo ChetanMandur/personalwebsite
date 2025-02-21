@@ -374,7 +374,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 <></>
             }
         </div>
-        <div className="content" 
+        <div className="folder-content" 
             onClick={()=>{setSelected("")}} 
             onContextMenu={(event)=>{
                 contextMenuPropagation(event); 

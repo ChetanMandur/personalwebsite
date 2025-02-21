@@ -16,7 +16,7 @@
 
       .path-suggestion{
         position:absolute;
-        --top-offset: calc(var(--menu-bar-height) + var(--titlebar-height) + var(--bar-border-outline-width));
+        --top-offset: calc(var(--menu-bar-height) + var(--bar-border-outline-width));
         top: var(--top-offset);
         max-height: calc(100% - var(--top-offset));
         width:calc(100% - var(--bar-border-outline-width)*2);
@@ -88,13 +88,14 @@
 
     }
 
-    .content{
+    .folder-content{
       background-color: var(--bar-default-colour);
       display:flex;
       flex-direction: row;
       align-content: flex-start;
       flex-wrap: wrap;
       column-gap: 1vh;
+      flex: 1 1 auto;
 
       .item{
         user-select: none;
