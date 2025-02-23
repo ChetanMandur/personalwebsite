@@ -9,29 +9,45 @@ export type MediaViewerProps = AppRunningID & {
     type: MyFileSystemFile["type"]
 }
 
+type VideoCustomOptions = {
+    playbackRate: number,
+    preservesPitch: boolean
+}
+
+type RefCollection = {
+    videoRef: React.MutableRefObject<HTMLVideoElement | null>,
+    canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
+    seekBarRef: React.MutableRefObject<HTMLDivElement | null>,
+}
+
 type VideoProperties = {
     playing: boolean,
     seekBarProgressLength: number,
     seekBarClicked:boolean,
-    videoRef: React.MutableRefObject<HTMLVideoElement | null>,
-    canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
-    seekBarRef: React.MutableRefObject<HTMLDivElement | null>,
+    refCollection: RefCollection,
+    videoCustomOptions: VideoCustomOptions
 }
 
 const defaultVideoProperties : VideoProperties = {
     playing: true,
     seekBarProgressLength: 0,
     seekBarClicked: false,
-    videoRef:createRef<HTMLVideoElement>(), 
-    canvasRef:createRef<HTMLCanvasElement>(),
-    seekBarRef: createRef<HTMLDivElement>()
+    refCollection: {
+        videoRef:createRef<HTMLVideoElement>(), 
+        canvasRef:createRef<HTMLCanvasElement>(),
+        seekBarRef: createRef<HTMLDivElement>(),
+    },
+    videoCustomOptions: {
+        playbackRate: 1,
+        preservesPitch: true
+    }
 }
 
 
 export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps){
     const [currentData] = useState<string>(data ?? "")
     const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
-    const [currentVideoProperties, setCurrentVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
+    const [videoProperties, setVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
 
     
@@ -42,15 +58,23 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
 
 
     function renderFrame(){
-        setCurrentVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
-        if (currentVideoProperties.videoRef.current != null && currentVideoProperties.canvasRef.current != null){
-            currentVideoProperties.canvasRef.current?.getContext("2d")?.drawImage(currentVideoProperties.videoRef.current, 0,0, currentVideoProperties.canvasRef.current.width, currentVideoProperties.canvasRef.current.height )
+        setVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
+        if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
+            videoProperties.refCollection.videoRef.current.playbackRate = videoProperties.videoCustomOptions.playbackRate
+            videoProperties.refCollection.videoRef.current.preservesPitch = videoProperties.videoCustomOptions.preservesPitch
+            videoProperties.refCollection.canvasRef.current.getContext("2d")?.drawImage(
+                videoProperties.refCollection.videoRef.current, 
+                0,
+                0, 
+                videoProperties.refCollection.canvasRef.current.width, 
+                videoProperties.refCollection.canvasRef.current.height 
+            )
         }
     }
 
 
     function onPlayHandler(){
-        if (!currentVideoProperties.videoRef.current?.paused && !currentVideoProperties.videoRef.current?.ended && currentVideoProperties.videoRef != null){
+        if (!videoProperties.refCollection.videoRef.current?.paused && !videoProperties.refCollection.videoRef.current?.ended && videoProperties.refCollection.videoRef != null){
             renderFrame();
             setTimeout(()=>{onPlayHandler()},0)
         }
@@ -59,37 +83,37 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
 
     //this is probs so expensive but yolo <------ i wonder if memos or callbacks or something will make this better.... YOLO
     function onPauseHandler(){
-        if ((currentVideoProperties.videoRef.current?.paused || currentVideoProperties.videoRef.current?.ended) && currentVideoProperties.videoRef != null){
-            setCurrentVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
+        if ((videoProperties.refCollection.videoRef.current?.paused || videoProperties.refCollection.videoRef.current?.ended) && videoProperties.refCollection.videoRef != null){
+            setVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
             setTimeout(()=>{onPauseHandler()},0)
         }
 
     }
 
     function calculateSeekBarProgress():number{
-        if (currentVideoProperties.videoRef.current != null && !isNaN(currentVideoProperties.videoRef.current.duration) && currentVideoProperties.seekBarRef.current != null){
-            return ((currentVideoProperties.videoRef.current.currentTime /(currentVideoProperties.videoRef.current.duration))  * (currentVideoProperties.seekBarRef.current.getBoundingClientRect().width))
+        if (videoProperties.refCollection.videoRef.current != null && !isNaN(videoProperties.refCollection.videoRef.current.duration) && videoProperties.refCollection.seekBarRef.current != null){
+            return ((videoProperties.refCollection.videoRef.current.currentTime /(videoProperties.refCollection.videoRef.current.duration))  * (videoProperties.refCollection.seekBarRef.current.getBoundingClientRect().width))
         } else {return 0}
     }
 
     function playPauseHandler(){
-        if(currentVideoProperties.videoRef.current?.paused){
-            currentVideoProperties.videoRef.current.play()
+        if(videoProperties.refCollection.videoRef.current?.paused){
+            videoProperties.refCollection.videoRef.current.play()
         }else{
-            currentVideoProperties.videoRef.current?.pause()
+            videoProperties.refCollection.videoRef.current?.pause()
         }
     }
 
     function videoScrubbing(event: React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent ){
-        const seekBarBoundingClientRect = currentVideoProperties.seekBarRef.current!.getBoundingClientRect()!
+        const seekBarBoundingClientRect = videoProperties.refCollection.seekBarRef.current!.getBoundingClientRect()!
         const seekBarClickedRatio = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
-        currentVideoProperties.videoRef.current!.currentTime = currentVideoProperties.videoRef.current!.duration * seekBarClickedRatio
+        videoProperties.refCollection.videoRef.current!.currentTime = videoProperties.refCollection.videoRef.current!.duration * seekBarClickedRatio
 
-        if (!currentVideoProperties.playing){
-            const playPromise = currentVideoProperties.videoRef.current!.play()
+        if (!videoProperties.playing){
+            const playPromise = videoProperties.refCollection.videoRef.current!.play()
             playPromise.then(
                 ()=>{
-                    currentVideoProperties.videoRef.current!.pause()
+                    videoProperties.refCollection.videoRef.current!.pause()
                 }
             )
         }
@@ -104,7 +128,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
             case "VIDEO":
                 return (
                     <>
-                        <canvas ref={currentVideoProperties.canvasRef} 
+                        <canvas ref={videoProperties.refCollection.canvasRef} 
                             onDoubleClick={(event)=>{
                                 event.stopPropagation();
                                 runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
@@ -123,28 +147,28 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
                                         playPauseHandler()
                                     }}
                                 >
-                                    <img src={currentVideoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
+                                    <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
                                 </div> 
-                                <div className="seek-bar" ref={currentVideoProperties.seekBarRef}
+                                <div className="seek-bar" ref={videoProperties.refCollection.seekBarRef}
                                     onMouseDown={(event)=>{
-                                        setCurrentVideoProperties(pendingState => ({...pendingState, seekBarClicked: true}))
+                                        setVideoProperties(pendingState => ({...pendingState, seekBarClicked: true}))
                                         videoScrubbing(event)
                                         document.addEventListener("mouseup", ()=>{
-                                            setCurrentVideoProperties(pendingState => ({...pendingState, seekBarClicked: false}));
+                                            setVideoProperties(pendingState => ({...pendingState, seekBarClicked: false}));
                                             document.removeEventListener("mousemove", videoScrubbing)
                                         }, {once:true})
                                         document.addEventListener("mousemove", videoScrubbing)
                                     }}
                                 >
-                                    <div className="seek-bar-progress" style={{width:currentVideoProperties.seekBarProgressLength}}> 
+                                    <div className="seek-bar-progress" style={{width:videoProperties.seekBarProgressLength}}> 
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <video ref={currentVideoProperties.videoRef} 
+                        <video ref={videoProperties.refCollection.videoRef} 
                         onPlay={()=>{
                             onPlayHandler(); 
-                            setCurrentVideoProperties((pendingState) =>{
+                            setVideoProperties((pendingState) =>{
                                 return {
                                     ...pendingState,
                                     playing:true
@@ -154,7 +178,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
                         }} 
                         onPause={()=>{
                             onPauseHandler()
-                            setCurrentVideoProperties((pendingState) =>{
+                            setVideoProperties((pendingState) =>{
                                 return {
                                     ...pendingState,
                                     playing: false
