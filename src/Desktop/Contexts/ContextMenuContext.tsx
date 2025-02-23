@@ -2,7 +2,7 @@ import React, { createContext } from "react"
 
 
 export type ContextMenuOptions = {
-    [key:string]: (event?:React.MouseEvent<HTMLDivElement, MouseEvent>)=>(void)
+    [key:string]: (event?:React.MouseEvent)=>(void)
 }
 
 export type ContextMenuProperties = {
@@ -12,19 +12,12 @@ export type ContextMenuProperties = {
   options: ContextMenuOptions
 }
 
-export type ContextMenuReducerAction = {
-  type: "HIDE" | "SET"
-  event?: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  newOptions?: ContextMenuOptions,
+export type ContextMenuReducerAction = {type: "SET", event: React.MouseEvent, newOptions: ContextMenuOptions} | {type:"HIDE"}
 
-}
-
-
-export function contextMenuPropagation(event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+export function contextMenuPropagation(event: React.MouseEvent){
   event.stopPropagation();
   event.preventDefault()
 }
-
 
 export function contextMenuReducer(contextMenuData:ContextMenuProperties, action:ContextMenuReducerAction):ContextMenuProperties {
     const temp = {...contextMenuData}
@@ -35,8 +28,8 @@ export function contextMenuReducer(contextMenuData:ContextMenuProperties, action
         case "SET":
             temp.visible = true
             temp.options = {...action.newOptions}
-            temp.x = action.event?.clientX!
-            temp.y = action.event?.clientY!
+            temp.x = action.event.clientX!
+            temp.y = action.event.clientY!
             break;
     }
     return(temp)

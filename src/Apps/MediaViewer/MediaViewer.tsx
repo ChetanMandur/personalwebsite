@@ -2,6 +2,8 @@ import React, { createRef, useContext, useEffect,  useState } from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import { MyFileSystemFile } from "../FileExplorer/MyFileSystem"
 import "./MediaViewer.css"
+import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext"
+import { MediaControllerProps } from "../MediaController/MediaController"
 
 export type MediaViewerProps = AppRunningID & {
     name: string,
@@ -9,7 +11,7 @@ export type MediaViewerProps = AppRunningID & {
     type: MyFileSystemFile["type"]
 }
 
-type VideoCustomOptions = {
+export type VideoCustomOptions = {
     playbackRate: number,
     preservesPitch: boolean
 }
@@ -50,18 +52,26 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     const [videoProperties, setVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
 
+    const {contextMenuDispatch} = useContext(ContextMenuContext)
+
     
     useEffect(()=>{
         runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: name })
     },[app_running_id,name, runningAppsDispatch])
     
 
+    function updateVideoCustomOptions(newOptions: VideoCustomOptions){
+        videoProperties.refCollection.videoRef.current!.playbackRate = newOptions.playbackRate
+        videoProperties.refCollection.videoRef.current!.preservesPitch = newOptions.preservesPitch
+        setVideoProperties(pendingState =>({...pendingState, videoCustomOptions:newOptions}))
+        
+
+    }
 
     function renderFrame(){
         setVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
         if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
-            videoProperties.refCollection.videoRef.current.playbackRate = videoProperties.videoCustomOptions.playbackRate
-            videoProperties.refCollection.videoRef.current.preservesPitch = videoProperties.videoCustomOptions.preservesPitch
+            
             videoProperties.refCollection.canvasRef.current.getContext("2d")?.drawImage(
                 videoProperties.refCollection.videoRef.current, 
                 0,
@@ -136,6 +146,31 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
                             onClick={(event)=>{
                                 event.stopPropagation();
                                 playPauseHandler()
+                            }}
+                            onContextMenu={(event)=>{
+                                contextMenuPropagation(event);
+                                contextMenuDispatch(
+                                    {
+                                        type:"SET",
+                                        event:event,
+                                        newOptions:{
+                                            "Open Controller": ()=>{
+                                                runningAppsDispatch(
+                                                    {
+                                                        type:"ADD",
+                                                        app_name: "MediaController",
+                                                        props:{
+                                                            startingValues: videoProperties.videoCustomOptions,
+                                                            updateVideoCustomOptions: updateVideoCustomOptions
+                                                        } as MediaControllerProps
+    
+                                                    }
+                                                )
+                                            }
+                                        } as ContextMenuOptions
+                                    }
+                                )
+
                             }}
                             
                             />            
