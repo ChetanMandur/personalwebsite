@@ -32,7 +32,7 @@ export const MyFileSystem : MyFileSystemFolder = {
         },
         "i know live":{
             type:"VIDEO",
-            data: "https://l0kz5q.dm.files.1drv.com/y4mltVUKp6E9_czlhGho8r2bpg8KIKcppVlP0NYpVIcE8QJyMA-_Jwy3UhfARoX6pUsiZMjSMzkjAokVcOG9aHyIamz5BHFkkk0F6D4N2NdRxmKnaYi1zu9tF2tM2Z3QrTzO4XzHkXCepQByHvxynuVu9N03mknM29H-GLoIXEKofXNxW7nt0uKFiytG3a6dqAeebQ_5DqQwEBcIZtDfnqz2qscfUv74TV-eNNIf_-BOuE?AVOverride=1",
+            data: "https://cdn.discordapp.com/attachments/1342590689938243595/1342591002418085888/videoplayback.mp4?ex=67ba30cf&is=67b8df4f&hm=f6862e0cfe810ff3e81237554937d7b630789155368f13e7c4cc0b2951a2759c&",
             hidden:false,
         }
     },
