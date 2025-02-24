@@ -32,7 +32,7 @@ export const MyFileSystem : MyFileSystemFolder = {
         },
         "i know live":{
             type:"VIDEO",
-            data: "https://cdn.discordapp.com/attachments/1342590689938243595/1342591002418085888/videoplayback.mp4?ex=67ba30cf&is=67b8df4f&hm=f6862e0cfe810ff3e81237554937d7b630789155368f13e7c4cc0b2951a2759c&",
+            data: "./iknow.mp4",
             hidden:false,
         }
     },
