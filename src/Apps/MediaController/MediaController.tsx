@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AppRunningID } from "../../Desktop/Contexts/RunningAppsContext"
 import { VideoCustomOptions } from "../MediaViewer/MediaViewer"
 import "./MediaController.css"
@@ -6,12 +6,22 @@ import "./MediaController.css"
 export type MediaControllerProps = AppRunningID & {
     startingValues: VideoCustomOptions,
     updateVideoCustomOptions: (newOptions : VideoCustomOptions) => void
+    connectToMediaViewer: (newControllerAppID:string) => void
 }
 
 
 
-export function MediaController({app_running_id,startingValues, updateVideoCustomOptions}:MediaControllerProps){
+export function MediaController({app_running_id,startingValues, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
     const [values, setValues] = useState<VideoCustomOptions>(startingValues)
+
+    useEffect(()=>{
+        connectToMediaViewer(app_running_id)
+
+        return ()=>{
+            connectToMediaViewer("")
+
+        }
+    },[app_running_id, connectToMediaViewer])
 
 
     function perservePitchHandler(){
@@ -28,7 +38,7 @@ export function MediaController({app_running_id,startingValues, updateVideoCusto
         <div className="media-controller">
             <input type="checkbox" checked={values.preservesPitch}  onChange={perservePitchHandler} name="perservePitch" id="perservePitch" />
             <input type="range" value={values.playbackRate} min={0} max={4} step={0.1}  onChange={playbackRateHandler} name="playbackRate" id="playbackRate" />
-            {app_running_id} {values.playbackRate} {startingValues.preservesPitch ? "yes" : "no"}
+            {app_running_id} {values.playbackRate} {values.preservesPitch ? "yes" : "no"}
         </div>
     )
 

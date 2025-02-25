@@ -8,7 +8,7 @@ import { MediaControllerProps } from "../MediaController/MediaController"
 export type MediaViewerProps = AppRunningID & {
     name: string,
     data: string,
-    type: MyFileSystemFile["type"]
+    type: MyFileSystemFile["type"],
 }
 
 export type VideoCustomOptions = {
@@ -50,10 +50,24 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     const [currentData] = useState<string>(data ?? "")
     const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
     const [videoProperties, setVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
+    const [controllerAppRunningID, setControllerAppRunningID] = useState<string >("")
+
+
     const {runningAppsDispatch} = useContext(RunningAppsContext)
-
     const {contextMenuDispatch} = useContext(ContextMenuContext)
+    
 
+    useEffect(()=>{
+        return () => {
+            if (controllerAppRunningID != ""){
+
+                runningAppsDispatch({
+                    type:"DELETE",
+                    app_running_id: controllerAppRunningID
+                })
+            }
+        }
+    },[controllerAppRunningID, runningAppsDispatch])
     
     useEffect(()=>{
         runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: name })
@@ -64,8 +78,10 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
         videoProperties.refCollection.videoRef.current!.playbackRate = newOptions.playbackRate
         videoProperties.refCollection.videoRef.current!.preservesPitch = newOptions.preservesPitch
         setVideoProperties(pendingState =>({...pendingState, videoCustomOptions:newOptions}))
-        
+    }
 
+    function connectToMediaViewer(newControllerAppID: string){
+        setControllerAppRunningID(newControllerAppID)
     }
 
     function renderFrame(){
@@ -129,6 +145,50 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
         }
     }
 
+    function generateContextMenu() : ContextMenuOptions{
+        if (controllerAppRunningID == ""){
+            return (
+                {
+                    "Open Controller": ()=>{
+                        runningAppsDispatch(
+                            {
+                                type:"ADD",
+                                app_name: "MediaController",
+                                props:{
+                                    startingValues: videoProperties.videoCustomOptions,
+                                    updateVideoCustomOptions: updateVideoCustomOptions,
+                                    connectToMediaViewer: connectToMediaViewer
+                                } as MediaControllerProps
+                            }
+                        )
+                    }
+                }
+            )
+        } else{
+            return (
+                {
+                    "Focus Controller": ()=>{
+                        runningAppsDispatch(
+                            {
+                                type:"UPDATE-APP-FOCUS",
+                                app_running_id: controllerAppRunningID
+                                
+                            }
+                        )
+                    },
+                    "Close Controller": ()=>{
+                        runningAppsDispatch(
+                            {
+                                type:"DELETE",
+                                app_running_id: controllerAppRunningID
+                            }
+                        )
+                    }
+                }
+            )
+        }
+    }
+
     function MediaGenerator():JSX.Element{
         switch (currentType) {
             case "IMAGE":
@@ -153,21 +213,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
                                     {
                                         type:"SET",
                                         event:event,
-                                        newOptions:{
-                                            "Open Controller": ()=>{
-                                                runningAppsDispatch(
-                                                    {
-                                                        type:"ADD",
-                                                        app_name: "MediaController",
-                                                        props:{
-                                                            startingValues: videoProperties.videoCustomOptions,
-                                                            updateVideoCustomOptions: updateVideoCustomOptions
-                                                        } as MediaControllerProps
-    
-                                                    }
-                                                )
-                                            }
-                                        } as ContextMenuOptions
+                                        newOptions: generateContextMenu()
                                     }
                                 )
 
