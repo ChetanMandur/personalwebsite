@@ -34,11 +34,20 @@ export function MediaController({app_running_id,startingValues, updateVideoCusto
         updateVideoCustomOptions({...values, playbackRate: Number(event.target.value)})
     }
 
+    function grayscaleHandler(){
+        // console.log(values)
+        setValues({...values, grayscale: !values.grayscale})
+        updateVideoCustomOptions({...values, grayscale: !values.grayscale})
+        // setValues({...values, grayscale: true})
+        // updateVideoCustomOptions({...values, grayscale: true})
+    }
+
     return (
         <div className="media-controller">
             <input type="checkbox" checked={values.preservesPitch}  onChange={perservePitchHandler} name="perservePitch" id="perservePitch" />
             <input type="range" value={values.playbackRate} min={0} max={4} step={0.1}  onChange={playbackRateHandler} name="playbackRate" id="playbackRate" />
-            {app_running_id} {values.playbackRate} {values.preservesPitch ? "yes" : "no"}
+            <input type="checkbox" checked={values.grayscale}  onChange={grayscaleHandler} name="grayscale" id="grayscale" />
+            {app_running_id} {values.playbackRate} {values.preservesPitch ? "yes" : "no"} {values.grayscale ? "yes" : "no"}
         </div>
     )
 

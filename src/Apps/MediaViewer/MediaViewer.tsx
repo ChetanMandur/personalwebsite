@@ -13,7 +13,8 @@ export type MediaViewerProps = AppRunningID & {
 
 export type VideoCustomOptions = {
     playbackRate: number,
-    preservesPitch: boolean
+    preservesPitch: boolean,
+    grayscale: boolean
 }
 
 type RefCollection = {
@@ -41,7 +42,8 @@ const defaultVideoProperties : VideoProperties = {
     },
     videoCustomOptions: {
         playbackRate: 1,
-        preservesPitch: true
+        preservesPitch: true,
+        grayscale: false,
     }
 }
 
@@ -51,7 +53,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
     const [videoProperties, setVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
     const [controllerAppRunningID, setControllerAppRunningID] = useState<string >("")
-
+    // const [playbackTimeout, setPlaybackTimeout] = useState<number|undefined>(undefined)
 
     const {runningAppsDispatch} = useContext(RunningAppsContext)
     const {contextMenuDispatch} = useContext(ContextMenuContext)
@@ -75,9 +77,17 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     
 
     function updateVideoCustomOptions(newOptions: VideoCustomOptions){
+        // videoProperties.refCollection.videoRef.current!.pause()
+        // clearTimeout(playbackTimeout)
+        // setTimeout(()=>{videoProperties.refCollection.videoRef.current!.pause()}, 0)
+        
         videoProperties.refCollection.videoRef.current!.playbackRate = newOptions.playbackRate
         videoProperties.refCollection.videoRef.current!.preservesPitch = newOptions.preservesPitch
-        setVideoProperties(pendingState =>({...pendingState, videoCustomOptions:newOptions}))
+        setVideoProperties(pendingState =>({...pendingState, videoCustomOptions:{...pendingState.videoCustomOptions, ...newOptions}}))
+
+        // setTimeout(()=>{videoProperties.refCollection.videoRef.current!.play()}, 0)
+        // videoProperties.refCollection.videoRef.current!.play()
+
     }
 
     function connectToMediaViewer(newControllerAppID: string){
@@ -87,28 +97,65 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     function renderFrame(){
         setVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
         if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
-            
-            videoProperties.refCollection.canvasRef.current.getContext("2d")?.drawImage(
+           
+            const videoContext = videoProperties.refCollection.canvasRef.current.getContext("2d")! 
+
+            videoContext.drawImage(
                 videoProperties.refCollection.videoRef.current, 
                 0,
                 0, 
                 videoProperties.refCollection.canvasRef.current.width, 
                 videoProperties.refCollection.canvasRef.current.height 
             )
+
+            const videoFrame = videoContext.getImageData(
+                0,
+                0, 
+                videoProperties.refCollection.canvasRef.current.width, 
+                videoProperties.refCollection.canvasRef.current.height 
+            );
+
+            const totalPixels = videoFrame.data.length/4
+
+            // console.log("RENDER FRAME", videoProperties.videoCustomOptions)
+            for (let i = 0; i < totalPixels; i++) {
+                const red = videoFrame.data[i*4]
+                const green = videoFrame.data[i*4 + 1]
+                const blue = videoFrame.data[i*4 + 2]
+                // const alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
+
+                // if (videoProperties.videoCustomOptions.grayscale){
+                if (true){
+
+                    const grey = (red + green + blue) /3;
+
+                    videoFrame.data[i * 4 + 0] = grey;
+                    videoFrame.data[i * 4 + 1] = grey;
+                    videoFrame.data[i * 4 + 2] = grey;
+                }
+            }
+            videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
         }
     }
 
 
     function onPlayHandler(){
+        // console.log("played")
         if (!videoProperties.refCollection.videoRef.current?.paused && !videoProperties.refCollection.videoRef.current?.ended && videoProperties.refCollection.videoRef != null){
             renderFrame();
             setTimeout(()=>{onPlayHandler()},0)
+            // if (playbackTimeout != undefined){
+            //     setTimeout(()=>{onPlayHandler()},0)
+            // } else{
+            //     setPlaybackTimeout(setTimeout(()=>{onPlayHandler()},0))
+            // }
         }
     }
 
 
     //this is probs so expensive but yolo <------ i wonder if memos or callbacks or something will make this better.... YOLO
     function onPauseHandler(){
+        // console.log("paused")
         if ((videoProperties.refCollection.videoRef.current?.paused || videoProperties.refCollection.videoRef.current?.ended) && videoProperties.refCollection.videoRef != null){
             setVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
             setTimeout(()=>{onPauseHandler()},0)
