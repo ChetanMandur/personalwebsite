@@ -31,24 +31,26 @@ type VideoProperties = {
     videoCustomOptions: VideoCustomOptions
 }
 
-const defaultVideoProperties : VideoProperties = {
-    playing: true,
-    seekBarProgressLength: 0,
-    seekBarClicked: false,
-    refCollection: {
-        videoRef:createRef<HTMLVideoElement>(), 
-        canvasRef:createRef<HTMLCanvasElement>(),
-        seekBarRef: createRef<HTMLDivElement>(),
-    },
-    videoCustomOptions: {
-        playbackRate: 1,
-        preservesPitch: true,
-        grayscale: false,
-    }
-}
+
 
 
 export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps){
+    const defaultVideoProperties : VideoProperties = {
+        playing: true,
+        seekBarProgressLength: 0,
+        seekBarClicked: false,
+        refCollection: {
+            videoRef:createRef<HTMLVideoElement>(), 
+            canvasRef:createRef<HTMLCanvasElement>(),
+            seekBarRef: createRef<HTMLDivElement>(),
+        },
+        videoCustomOptions: {
+            playbackRate: 1,
+            preservesPitch: true,
+            grayscale: false,
+        }
+    }
+
     const [currentData] = useState<string>(data ?? "")
     const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
     const [videoProperties, setVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
@@ -248,7 +250,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
             
             case "VIDEO":
                 return (
-                    <>
+                    <div className="video-media" key={"video-media"+app_running_id}>
                         <canvas ref={videoProperties.refCollection.canvasRef} 
                             onDoubleClick={(event)=>{
                                 event.stopPropagation();
@@ -270,7 +272,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
 
                             }}
                             
-                            />            
+                        />            
                         <div className="video-overlay">
                             <div className="bottom-bar">
                                 <div className="playback-button"
@@ -281,7 +283,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
                                 >
                                     <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
                                 </div> 
-                                <div className="seek-bar" ref={videoProperties.refCollection.seekBarRef}
+                                <div className="seek-bar"  ref={videoProperties.refCollection.seekBarRef}
                                     onMouseDown={(event)=>{
                                         setVideoProperties(pendingState => ({...pendingState, seekBarClicked: true}))
                                         videoScrubbing(event)
@@ -319,7 +321,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
                         }} 
                         src={currentData} 
                         hidden={true} autoPlay controls />
-                    </>
+                    </div>
                 )
 
             

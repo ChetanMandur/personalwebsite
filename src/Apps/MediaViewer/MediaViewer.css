@@ -10,62 +10,68 @@
         background-size: 100% 100%;
     }
 
-    video{
-        object-fit: fill;
-        width: 100%;
-        height: 100%;
-    }
-
-    .video-overlay{
-        position: absolute;
-        top:0;
+    .video-media{
         width: 100%;
         height: 100%;
 
-        /* background-color: rgba(255, 0, 0, 0.559); */
-
-        pointer-events: none;
-
-        .bottom-bar{
-            pointer-events: all;
-            position: absolute;
-            bottom:0;
+        
+        video{
+            object-fit: fill;
             width: 100%;
-            height: 2.4vh;
-            background-color: green;
-            display: flex;
-            flex-direction: row;
-            user-select: none;
-
-            .playback-button{
-                flex: 0 1 2.4vh;
-                width:2.4vh;
-                background-color: brown;
+            height: 100%;
+        }
+    
+        .video-overlay{
+            position: absolute;
+            top:0;
+            width: 100%;
+            height: 100%;
+    
+            /* background-color: rgba(255, 0, 0, 0.559); */
+    
+            pointer-events: none;
+    
+            .bottom-bar{
                 pointer-events: all;
-                img{
-                    height:100%;
-                    width:100%
+                position: absolute;
+                bottom:0;
+                width: 100%;
+                height: 2.4vh;
+                background-color: green;
+                display: flex;
+                flex-direction: row;
+                user-select: none;
+    
+                .playback-button{
+                    flex: 0 1 2.4vh;
+                    width:2.4vh;
+                    background-color: brown;
+                    pointer-events: all;
+                    img{
+                        height:100%;
+                        width:100%
+                    }
                 }
-            }
-
-            .seek-bar{
-                flex: 1 1 auto;
-                background-color: blue;
-                pointer-events: all;
-                .seek-bar-progress{
-                    pointer-events: none;
-                    width:0%;
-                    height:100%;
-                    background-color: aquamarine;
+    
+                .seek-bar{
+                    flex: 1 1 auto;
+                    background-color: blue;
+                    pointer-events: all;
+                    .seek-bar-progress{
+                        pointer-events: none;
+                        width:0%;
+                        height:100%;
+                        background-color: aquamarine;
+                    }
                 }
             }
         }
-    }
-
-    canvas{
-        object-fit: fill;
-        width: 100%;
-        height: 100%;
+    
+        canvas{
+            object-fit: fill;
+            width: 100%;
+            height: 100%;
+        }
     }
 
     embed{

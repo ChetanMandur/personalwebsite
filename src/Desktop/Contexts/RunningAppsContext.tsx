@@ -216,6 +216,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     }
     case "UPDATE-APP-FOCUS":{
       newData = focusChange({...runningAppsData}, action.app_running_id!, false)
+      newData[action.app_running_id].isMinimized = false;
       break;
     }
 
