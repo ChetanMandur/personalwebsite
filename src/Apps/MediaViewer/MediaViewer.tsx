@@ -52,8 +52,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     const [currentData] = useState<string>(data ?? "")
     const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
     const [videoProperties, setVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
-    const [controllerAppRunningID, setControllerAppRunningID] = useState<string >("")
-    // const [playbackTimeout, setPlaybackTimeout] = useState<number|undefined>(undefined)
+    const [controllerAppRunningID, setControllerAppRunningID] = useState<string>("")
 
     const {runningAppsDispatch} = useContext(RunningAppsContext)
     const {contextMenuDispatch} = useContext(ContextMenuContext)
@@ -62,7 +61,6 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     useEffect(()=>{
         return () => {
             if (controllerAppRunningID != ""){
-
                 runningAppsDispatch({
                     type:"DELETE",
                     app_running_id: controllerAppRunningID
@@ -74,19 +72,23 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     useEffect(()=>{
         runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: name })
     },[app_running_id,name, runningAppsDispatch])
-    
+
 
     function updateVideoCustomOptions(newOptions: VideoCustomOptions){
-        // videoProperties.refCollection.videoRef.current!.pause()
-        // clearTimeout(playbackTimeout)
-        // setTimeout(()=>{videoProperties.refCollection.videoRef.current!.pause()}, 0)
-        
+
+
         videoProperties.refCollection.videoRef.current!.playbackRate = newOptions.playbackRate
         videoProperties.refCollection.videoRef.current!.preservesPitch = newOptions.preservesPitch
-        setVideoProperties(pendingState =>({...pendingState, videoCustomOptions:{...pendingState.videoCustomOptions, ...newOptions}}))
 
-        // setTimeout(()=>{videoProperties.refCollection.videoRef.current!.play()}, 0)
-        // videoProperties.refCollection.videoRef.current!.play()
+        setVideoProperties((pendingState) =>{
+            newOptions = {...pendingState.videoCustomOptions, ...newOptions}
+            if (!pendingState.playing){
+                renderFrame(newOptions)
+
+            }
+            return {...pendingState, videoCustomOptions:newOptions}
+        })
+
 
     }
 
@@ -94,8 +96,7 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
         setControllerAppRunningID(newControllerAppID)
     }
 
-    function renderFrame(){
-        setVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
+    function renderFrame(videoCustomOptions: VideoCustomOptions){
         if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
            
             const videoContext = videoProperties.refCollection.canvasRef.current.getContext("2d")! 
@@ -124,14 +125,17 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
                 const blue = videoFrame.data[i*4 + 2]
                 // const alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
 
-                // if (videoProperties.videoCustomOptions.grayscale){
-                if (true){
+                if (videoCustomOptions.grayscale){
 
                     const grey = (red + green + blue) /3;
 
                     videoFrame.data[i * 4 + 0] = grey;
                     videoFrame.data[i * 4 + 1] = grey;
                     videoFrame.data[i * 4 + 2] = grey;
+
+                    // videoFrame.data[i * 4 + 0] = 255 - red;
+                    // videoFrame.data[i * 4 + 1] = 255 - green;
+                    // videoFrame.data[i * 4 + 2] = 255 - blue;
                 }
             }
             videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
@@ -142,13 +146,13 @@ export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps)
     function onPlayHandler(){
         // console.log("played")
         if (!videoProperties.refCollection.videoRef.current?.paused && !videoProperties.refCollection.videoRef.current?.ended && videoProperties.refCollection.videoRef != null){
-            renderFrame();
+            setVideoProperties(
+                (pendingState)=>{
+                    renderFrame(pendingState.videoCustomOptions)
+                    return {...pendingState, seekBarProgressLength: calculateSeekBarProgress()}
+                }
+            )
             setTimeout(()=>{onPlayHandler()},0)
-            // if (playbackTimeout != undefined){
-            //     setTimeout(()=>{onPlayHandler()},0)
-            // } else{
-            //     setPlaybackTimeout(setTimeout(()=>{onPlayHandler()},0))
-            // }
         }
     }
 
