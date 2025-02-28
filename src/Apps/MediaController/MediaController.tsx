@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { AppRunningID } from "../../Desktop/Contexts/RunningAppsContext"
-import { VideoCustomOptions } from "../MediaViewer/MediaViewer"
 import "./MediaController.css"
+import { VideoCustomOptions } from "../MediaViewer/VideoMedia/VideoMedia"
 
 export type MediaControllerProps = AppRunningID & {
     startingValues: VideoCustomOptions,
@@ -45,7 +45,7 @@ export function MediaController({app_running_id,startingValues, updateVideoCusto
     return (
         <div className="media-controller">
             <input type="checkbox" checked={values.preservesPitch}  onChange={perservePitchHandler} name="perservePitch" id="perservePitch" />
-            <input type="range" value={values.playbackRate} min={0} max={4} step={0.1}  onChange={playbackRateHandler} name="playbackRate" id="playbackRate" />
+            <input type="range" value={values.playbackRate} min={0.1} max={2} step={0.01}  onChange={playbackRateHandler} name="playbackRate" id="playbackRate" />
             <input type="checkbox" checked={values.grayscale}  onChange={grayscaleHandler} name="grayscale" id="grayscale" />
             {app_running_id} {values.playbackRate} {values.preservesPitch ? "yes" : "no"} {values.grayscale ? "yes" : "no"}
         </div>
