@@ -25,6 +25,7 @@ export function MediaController({app_running_id,startingValues, updateVideoCusto
 
 
     function changeValue<T extends keyof VideoCustomOptions>(newOptionKey: T, newOptionValue: VideoCustomOptions[T]){
+        // console.log(newOptionKey, newOptionValue)
         setValues({...values, [newOptionKey]:newOptionValue})
         updateVideoCustomOptions(newOptionKey, newOptionValue)
     }
@@ -32,10 +33,18 @@ export function MediaController({app_running_id,startingValues, updateVideoCusto
 
     return (
         <div className="media-controller">
-            <input type="checkbox" checked={values.preservesPitch} onChange={(event)=>{changeValue("preservesPitch", Boolean(event.target.value))}} name="perservePitch" id="perservePitch" />
+            <input type="checkbox" checked={values.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!values.preservesPitch))}} name="perservePitch" id="perservePitch" />
             <input type="range" value={values.playbackRate} min={0.1} max={2} step={0.01} onChange={(event)=>{changeValue("playbackRate", Number(event.target.value))}} name="playbackRate" id="playbackRate" />
-            <input type="checkbox" checked={values.grayscale} onChange={(event)=>{changeValue("grayscale", Boolean(event.target.value))}} name="grayscale" id="grayscale" />
-            {app_running_id} {values.playbackRate} {values.preservesPitch ? "yes" : "no"} {values.grayscale ? "yes" : "no"}
+            <input type="checkbox" checked={values.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!values.grayscale))}} name="grayscale" id="grayscale" />
+            <input type="checkbox" checked={values.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!values.inverseColour))}} name="inverseColour" id="inverseColour" />
+
+            {/* <input type="range" value={values} min={} max={} step={} onChange={(event)=>{changeValue(, Number(event.target.value))}} name="playbackRate" id="playbackRate" /> */}
+            {/* <input type="checkbox" checked={values} onChange={()=>{changeValue(,!values)}} name="" id="" /> */}
+            {app_running_id} 
+            {values.playbackRate} 
+            {values.preservesPitch ? "yes" : "no"} 
+            {values.grayscale ? "yes" : "no"} 
+            {values.inverseColour ? "yes" : "no"}
         </div>
     )
 

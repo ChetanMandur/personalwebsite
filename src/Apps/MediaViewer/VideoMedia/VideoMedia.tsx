@@ -14,7 +14,8 @@ type VideoMediaProps = AppRunningID & {
 export type VideoCustomOptions = {
     playbackRate: number,
     preservesPitch: boolean,
-    grayscale: boolean
+    grayscale: boolean,
+    inverseColour: boolean
 }
 
 type RefCollection = {
@@ -46,6 +47,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             playbackRate: 1,
             preservesPitch: true,
             grayscale: false,
+            inverseColour: false,
         }
     }
 
@@ -80,7 +82,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 videoProperties.refCollection.canvasRef.current.height 
             )
 
-            const videoFrame = videoContext.getImageData(
+            let videoFrame = videoContext.getImageData(
                 0,
                 0, 
                 videoProperties.refCollection.canvasRef.current.width, 
@@ -107,6 +109,31 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                     // videoFrame.data[i * 4 + 0] = 255 - red;
                     // videoFrame.data[i * 4 + 1] = 255 - green;
                     // videoFrame.data[i * 4 + 2] = 255 - blue;
+                }
+            }
+            videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
+
+
+            //rn this is just copy paste code, but ima make this a for-loop later 
+            videoFrame = videoContext.getImageData(
+                0,
+                0, 
+                videoProperties.refCollection.canvasRef.current.width, 
+                videoProperties.refCollection.canvasRef.current.height 
+            );
+
+
+            for (let i = 0; i < totalPixels; i++) {
+                const red = videoFrame.data[i*4]
+                const green = videoFrame.data[i*4 + 1]
+                const blue = videoFrame.data[i*4 + 2]
+                // const alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
+
+                if (videoCustomOptions.inverseColour){
+
+                    videoFrame.data[i * 4 + 0] = 255 - red;
+                    videoFrame.data[i * 4 + 1] = 255 - green;
+                    videoFrame.data[i * 4 + 2] = 255 - blue;
                 }
             }
             videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
