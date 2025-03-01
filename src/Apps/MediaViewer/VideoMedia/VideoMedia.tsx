@@ -121,19 +121,25 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
 
     
 
-    function updateVideoCustomOptions(newOptions: VideoCustomOptions){
-        videoProperties.refCollection.videoRef.current!.playbackRate = newOptions.playbackRate
-        videoProperties.refCollection.videoRef.current!.preservesPitch = newOptions.preservesPitch
-
+    function updateVideoCustomOptions<T extends keyof VideoCustomOptions>(newOptionKey: T, newOptionValue: VideoCustomOptions[T]){
+        switch (newOptionKey) {
+            case "playbackRate":
+                videoProperties.refCollection.videoRef.current!.playbackRate = newOptionValue as number
+                break;
+            case "preservesPitch":
+                videoProperties.refCollection.videoRef.current!.preservesPitch = newOptionValue as boolean;
+                break;
+            default:
+                break;
+        }
+        
         setVideoProperties((pendingState) =>{
-            newOptions = {...pendingState.videoCustomOptions, ...newOptions}
+            const newOptions:VideoCustomOptions = {...pendingState.videoCustomOptions, [newOptionKey]:newOptionValue}
             if (!pendingState.playing){
                 renderFrame(newOptions)
-
             }
             return {...pendingState, videoCustomOptions:newOptions}
         })
-
 
     }
 
@@ -302,6 +308,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 })
             }} 
             src={currentData} 
+            crossOrigin="anonymous"
             hidden={true} autoPlay controls />
         </div>
     )
