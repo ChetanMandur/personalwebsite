@@ -26,6 +26,7 @@ type RefCollection = {
 
 type VideoProperties = {
     playing: boolean,
+    videoFill: boolean
     seekBarProgressLength: number,
     seekBarClicked:boolean,
     refCollection: RefCollection,
@@ -36,6 +37,7 @@ type VideoProperties = {
 export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     const defaultVideoProperties : VideoProperties = {
         playing: true,
+        videoFill: true,
         seekBarProgressLength: 0,
         seekBarClicked: false,
         refCollection: {
@@ -222,47 +224,57 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     }
 
     function generateContextMenu() : ContextMenuOptions{
-        if (controllerAppRunningID == ""){
-            return (
-                {
-                    "Open Controller": ()=>{
-                        runningAppsDispatch(
-                            {
-                                type:"ADD",
-                                app_name: "MediaController",
-                                props:{
-                                    startingValues: videoProperties.videoCustomOptions,
-                                    updateVideoCustomOptions: updateVideoCustomOptions,
-                                    connectToMediaViewer: connectToMediaViewer
-                                } as MediaControllerProps
-                            }
-                        )
-                    }
-                }
-            )
+        const output: ContextMenuOptions = {}
+        
+        if(videoProperties.videoFill){
+            output["Fit Video Into View"] = ()=>{
+                setVideoProperties(pendingState => ({
+                    ...pendingState, videoFill:false
+                }) )
+            }
+            
         } else{
-            return (
-                {
-                    "Focus Controller": ()=>{
-                        runningAppsDispatch(
-                            {
-                                type:"UPDATE-APP-FOCUS",
-                                app_running_id: controllerAppRunningID
-                                
-                            }
-                        )
-                    },
-                    "Close Controller": ()=>{
-                        runningAppsDispatch(
-                            {
-                                type:"DELETE",
-                                app_running_id: controllerAppRunningID
-                            }
-                        )
-                    }
-                }
-            )
+            output["Fill Video Into View"] = ()=>{
+                setVideoProperties(pendingState => ({
+                    ...pendingState, videoFill:true
+                }) )
+            }
         }
+
+        if (controllerAppRunningID == ""){
+            output["Open Controller"] = ()=>{
+                runningAppsDispatch(
+                    {
+                        type:"ADD",
+                        app_name: "MediaController",
+                        props:{
+                            startingValues: videoProperties.videoCustomOptions,
+                            updateVideoCustomOptions: updateVideoCustomOptions,
+                            connectToMediaViewer: connectToMediaViewer
+                        } as MediaControllerProps
+                    }
+                )
+            }
+        } else{
+            output["Focus Controller"] = ()=>{
+                runningAppsDispatch(
+                    {
+                        type:"UPDATE-APP-FOCUS",
+                        app_running_id: controllerAppRunningID
+                        
+                    }
+                )
+            }
+            output["Close Controller"] = ()=>{
+                runningAppsDispatch(
+                    {
+                        type:"DELETE",
+                        app_running_id: controllerAppRunningID
+                    }
+                )
+            }
+        }
+        return output
     }
     return (
         <div className="video-media" key={"video-media"+app_running_id}>
@@ -286,6 +298,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                     )
 
                 }}
+                style={{objectFit:(videoProperties.videoFill ? "fill" : "contain")}}
                 
             />            
             <div className="video-overlay">
