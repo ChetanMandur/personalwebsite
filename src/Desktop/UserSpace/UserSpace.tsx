@@ -57,9 +57,10 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
   }
 
   const titlebarText = titlebarTextGenerator(running_properties)
+  const isAppFocused = (running_properties["zIndex"] == 999 || running_properties["maximizeType"] != null)
 
   return(
-  <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (running_properties["zIndex"]==999 ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsData[app_running_id]["ref"]} key={app_running_id+"runningApp"}>
+  <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (isAppFocused ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsData[app_running_id]["ref"]} key={app_running_id+"runningApp"}>
     {running_properties["maximizeType"] == null ? <div className="hitboxes">
       <div className="box" id="TopL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TL"})}}></div>
       <div className="box" id="TopR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TR"})}}></div>
@@ -81,18 +82,18 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}>
             {titlebarText}
         </div>
-        <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")}
+        <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")}
          onClick={()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id, forceMinimize:false})}}>-</div>
 
-        <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} 
+        <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
         onClick={()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}}>[]</div>
 
-        <div className={"common-border titlebar-option " + (running_properties["zIndex"]==999 ? "" : "titlebar-option-unfocused")} 
+        <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
         onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
       </div>
       <div className="app-content">
         {running_properties.appProperties.app(running_properties.props)}
-        {running_properties["zIndex"] == 999 ? <></> : <div className="content-overlay"/>}
+        {isAppFocused ? <></> : <div className="content-overlay"/>}
       </div>
     </div>
   </div> 
