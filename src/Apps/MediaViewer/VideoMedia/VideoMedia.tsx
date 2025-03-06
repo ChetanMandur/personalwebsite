@@ -22,6 +22,7 @@ type RefCollection = {
     videoRef: React.MutableRefObject<HTMLVideoElement | null>,
     canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
     seekBarRef: React.MutableRefObject<HTMLDivElement | null>,
+    animationID: React.MutableRefObject<number | null>,
 }
 
 type VideoProperties = {
@@ -44,6 +45,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             videoRef:createRef<HTMLVideoElement>(), 
             canvasRef:createRef<HTMLCanvasElement>(),
             seekBarRef: createRef<HTMLDivElement>(),
+            animationID: createRef<number|null>()
         },
         videoCustomOptions: {
             playbackRate: 1,
@@ -57,8 +59,19 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     const [controllerAppRunningID, setControllerAppRunningID] = useState<string>("")
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
-    const {runningAppsDispatch} = useContext(RunningAppsContext)
+    const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
     
+
+    useEffect(()=>{
+        console.log("RESIZE")
+        setVideoProperties(pendingProperties => (
+            {
+                ...pendingProperties,
+                seekBarProgressLength: calculateSeekBarProgress()
+            }
+        ))
+
+    }, [runningAppsData[app_running_id].height, runningAppsData[app_running_id].width, runningAppsData[app_running_id].maximizeType ])
 
     useEffect(()=>{
         return () => {
@@ -71,7 +84,48 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
         }
     },[controllerAppRunningID, runningAppsDispatch])
 
-    function renderFrame(videoCustomOptions: VideoCustomOptions){
+    useEffect(()=>{
+        console.log("play/pause")
+        if (videoProperties.refCollection.videoRef.current){
+            if (videoProperties.playing){
+                restartRenderFrame()
+            }
+            else{
+                cancelRender()
+            }
+        }
+    },[videoProperties.playing])
+
+
+    useEffect(()=>{
+        if (!videoProperties.playing){
+
+            singleRenderFrame()
+        } 
+    },[videoProperties.seekBarProgressLength])
+
+
+    useEffect(()=>{
+        console.log("update custom options",videoProperties)
+        restartRenderFrame()
+    },[videoProperties.videoCustomOptions])
+
+
+    function singleRenderFrame(){
+        videoProperties.refCollection.animationID.current! = requestAnimationFrame(renderFrame)
+    }
+
+    function cancelRender(){
+        cancelAnimationFrame(videoProperties.refCollection.animationID.current!)
+    }
+
+    function restartRenderFrame(){
+        cancelRender()
+        singleRenderFrame()
+    }
+    
+    function renderFrame(){
+        console.log("renderFrame:", videoProperties.playing, !videoProperties.refCollection.videoRef.current!.paused)
         if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
            
             const videoContext = videoProperties.refCollection.canvasRef.current.getContext("2d")! 
@@ -100,7 +154,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 const blue = videoFrame.data[i*4 + 2]
                 // const alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
 
-                if (videoCustomOptions.grayscale){
+                if (videoProperties.videoCustomOptions.grayscale){
 
                     const grey = (red + green + blue) /3;
 
@@ -131,7 +185,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 const blue = videoFrame.data[i*4 + 2]
                 // const alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
 
-                if (videoCustomOptions.inverseColour){
+                if (videoProperties.videoCustomOptions.inverseColour){
 
                     videoFrame.data[i * 4 + 0] = 255 - red;
                     videoFrame.data[i * 4 + 1] = 255 - green;
@@ -139,6 +193,20 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 }
             }
             videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
+
+
+            if (videoProperties.playing){
+                setVideoProperties(pendingProperties => (
+                    {
+                        ...pendingProperties,
+                        seekBarProgressLength: calculateSeekBarProgress()
+                    }
+                ))   
+                singleRenderFrame()
+            } 
+            else{
+                cancelRender()
+            }
         }
     }
 
@@ -164,9 +232,6 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
         
         setVideoProperties((pendingState) =>{
             const newOptions:VideoCustomOptions = {...pendingState.videoCustomOptions, [newOptionKey]:newOptionValue}
-            if (!pendingState.playing){
-                renderFrame(newOptions)
-            }
             return {...pendingState, videoCustomOptions:newOptions}
         })
 
@@ -176,35 +241,14 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
         setControllerAppRunningID(newControllerAppID)
     }
 
-    function onPlayHandler(){
-        // console.log("played")
-        if (!videoProperties.refCollection.videoRef.current?.paused && !videoProperties.refCollection.videoRef.current?.ended && videoProperties.refCollection.videoRef != null){
-            setVideoProperties(
-                (pendingState)=>{
-                    renderFrame(pendingState.videoCustomOptions)
-                    return {...pendingState, seekBarProgressLength: calculateSeekBarProgress()}
-                }
-            )
-            setTimeout(()=>{onPlayHandler()},0)
-        }
-    }
-
-    //this is probs so expensive but yolo <------ i wonder if memos or callbacks or something will make this better.... YOLO
-    function onPauseHandler(){
-        // console.log("paused")
-        if ((videoProperties.refCollection.videoRef.current?.paused || videoProperties.refCollection.videoRef.current?.ended) && videoProperties.refCollection.videoRef != null){
-            setVideoProperties(pendingState => ({...pendingState, seekBarProgressLength: calculateSeekBarProgress()}))
-            setTimeout(()=>{onPauseHandler()},0)
-        }
-
-    }
-
-
     function playPauseHandler(){
-        if(videoProperties.refCollection.videoRef.current?.paused){
-            videoProperties.refCollection.videoRef.current.play()
-        }else{
-            videoProperties.refCollection.videoRef.current?.pause()
+        if (videoProperties.refCollection.videoRef.current){
+            if (videoProperties.refCollection.videoRef.current.paused){
+                videoProperties.refCollection.videoRef.current.play()
+            }
+            else{
+                videoProperties.refCollection.videoRef.current.pause()
+            }
         }
     }
 
@@ -213,14 +257,8 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
         const seekBarClickedRatio = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
         videoProperties.refCollection.videoRef.current!.currentTime = videoProperties.refCollection.videoRef.current!.duration * seekBarClickedRatio
 
-        if (!videoProperties.playing){
-            const playPromise = videoProperties.refCollection.videoRef.current!.play()
-            playPromise.then(
-                ()=>{
-                    videoProperties.refCollection.videoRef.current!.pause()
-                }
-            )
-        }
+        setVideoProperties(pendingProperties => ({...pendingProperties, seekBarProgressLength: calculateSeekBarProgress()}))
+
     }
 
     function generateContextMenu() : ContextMenuOptions{
@@ -328,27 +366,21 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 </div>
             </div>
             <video ref={videoProperties.refCollection.videoRef} 
-            onPlay={()=>{
-                onPlayHandler(); 
-                setVideoProperties((pendingState) =>{
-                    return {
-                        ...pendingState,
-                        playing:true
-                    }
-                })
-
-            }} 
-            onPause={()=>{
-                onPauseHandler()
-                setVideoProperties((pendingState) =>{
-                    return {
-                        ...pendingState,
-                        playing: false
-                    }
-                })
-            }} 
             src={currentData} 
             crossOrigin="anonymous"
+            onPlay={()=>{
+                setVideoProperties(pendingProperties =>({
+                    ...pendingProperties,
+                    playing: true
+                }))
+            }}
+
+            onPause={()=>{
+                setVideoProperties(pendingProperties =>({
+                    ...pendingProperties,
+                    playing: false
+                }))
+            }}
             hidden={true} autoPlay controls />
         </div>
     )
