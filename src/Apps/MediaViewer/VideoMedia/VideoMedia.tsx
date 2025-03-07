@@ -88,10 +88,10 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
         console.log("play/pause")
         if (videoProperties.refCollection.videoRef.current){
             if (videoProperties.playing){
-                restartRenderFrame()
+                restartRender(false)
             }
             else{
-                cancelRender()
+                clearRender()
             }
         }
     },[videoProperties.playing])
@@ -99,33 +99,41 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
 
     useEffect(()=>{
         if (!videoProperties.playing){
-
-            singleRenderFrame()
+            startRender(true)
+            // restartRender(true)
         } 
     },[videoProperties.seekBarProgressLength])
 
 
     useEffect(()=>{
         console.log("update custom options",videoProperties)
-        restartRenderFrame()
+        restartRender(videoProperties.playing ? false : true)
     },[videoProperties.videoCustomOptions])
 
 
-    function singleRenderFrame(){
-        videoProperties.refCollection.animationID.current! = requestAnimationFrame(renderFrame)
+    function startRender(once:boolean){
+        // console.log("startRender previous:", videoProperties.refCollection.animationID.current!)
+        videoProperties.refCollection.animationID.current! = requestAnimationFrame(()=>{
+            renderFrame(once)
+        })
+        // console.log("startRender new:", videoProperties.refCollection.animationID.current!)
     }
 
-    function cancelRender(){
+    function clearRender(){
+        // console.log("clearRender", videoProperties.refCollection.animationID.current!, "\n     ")
         cancelAnimationFrame(videoProperties.refCollection.animationID.current!)
+        videoProperties.refCollection.animationID.current! = 0
     }
 
-    function restartRenderFrame(){
-        cancelRender()
-        singleRenderFrame()
+
+    function restartRender(once:boolean){
+        clearRender()
+        startRender(once)
     }
     
-    function renderFrame(){
-        console.log("renderFrame:", videoProperties.playing, !videoProperties.refCollection.videoRef.current!.paused)
+    function renderFrame(once:boolean){
+        // console.log("renderFrame:", videoProperties.playing, !videoProperties.refCollection.videoRef.current!.paused)
+        // console.log("renderFrame:", videoProperties.refCollection.animationID.current!)
         if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
            
             const videoContext = videoProperties.refCollection.canvasRef.current.getContext("2d")! 
@@ -194,19 +202,22 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             }
             videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
 
-
-            if (videoProperties.playing){
-                setVideoProperties(pendingProperties => (
-                    {
-                        ...pendingProperties,
-                        seekBarProgressLength: calculateSeekBarProgress()
-                    }
-                ))   
-                singleRenderFrame()
-            } 
-            else{
-                cancelRender()
+            setVideoProperties(pendingProperties => (
+                {
+                    ...pendingProperties,
+                    seekBarProgressLength: calculateSeekBarProgress()
+                }
+            ))   
+            
+            if (!once){
+                // console.log("renderFrame LOOP")
+                startRender(once)
             }
+            else{
+                // console.log("renderFrame ONCE")
+                clearRender()
+            }
+
         }
     }
 
