@@ -39,6 +39,16 @@ export const MyFileSystem : MyFileSystemFolder = {
             type: "VIDEO",
             data:"./2016xxlcypher.mp4",
             hidden:false
+        },
+        "60fps":{
+            type: "VIDEO",
+            data:"./60fps.mp4",
+            hidden:false
+        },
+        "30fps":{
+            type: "VIDEO",
+            data:"./30fps.mp4",
+            hidden:false
         }
     },
     Documents:{
