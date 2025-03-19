@@ -22,11 +22,12 @@ type RefCollection = {
     videoRef: React.MutableRefObject<HTMLVideoElement | null>,
     canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
     seekBarRef: React.MutableRefObject<HTMLDivElement | null>,
-    animationID: React.MutableRefObject<number | null>,
+    currentTimeUpdateRef: React.MutableRefObject<number | null>,
 }
 
 type VideoProperties = {
     playing: boolean,
+    currentTime: number,
     videoFill: boolean
     seekBarProgressLength: number,
     seekBarClicked:boolean,
@@ -34,10 +35,10 @@ type VideoProperties = {
     videoCustomOptions: VideoCustomOptions
 }
 
-
 export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     const defaultVideoProperties : VideoProperties = {
         playing: true,
+        currentTime: 0,
         videoFill: true,
         seekBarProgressLength: 0,
         seekBarClicked: false,
@@ -45,7 +46,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             videoRef:createRef<HTMLVideoElement>(), 
             canvasRef:createRef<HTMLCanvasElement>(),
             seekBarRef: createRef<HTMLDivElement>(),
-            animationID: createRef<number|null>()
+            currentTimeUpdateRef: createRef<number|null>()
         },
         videoCustomOptions: {
             playbackRate: 1,
@@ -60,7 +61,14 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
-    
+
+    useEffect(()=>{
+
+        return () =>{
+                cancelAnimationFrame(videoProperties.refCollection.currentTimeUpdateRef.current!)
+                // console.log("returning", videoProperties.refCollection.animationID.current!)
+        }
+    },[])
 
     useEffect(()=>{
         console.log("RESIZE")
@@ -85,55 +93,47 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     },[controllerAppRunningID, runningAppsDispatch])
 
     useEffect(()=>{
-        console.log("play/pause")
+        // console.log("play/pause")
+
+        const updateCurrentTimeLoop = () =>{
+            // console.log("updating current time",videoProperties.refCollection.animationID.current )
+            setVideoProperties(pendingState =>({...pendingState, currentTime: pendingState.refCollection.videoRef.current!.currentTime}))
+            videoProperties.refCollection.currentTimeUpdateRef.current = requestAnimationFrame(updateCurrentTimeLoop)
+        }
+
         if (videoProperties.refCollection.videoRef.current){
             if (videoProperties.playing){
-                restartRender(false)
+                console.log("play")
+                
+                videoProperties.refCollection.currentTimeUpdateRef.current = requestAnimationFrame(updateCurrentTimeLoop)
+
             }
             else{
-                clearRender()
+                console.log("pause")
+                cancelAnimationFrame(videoProperties.refCollection.currentTimeUpdateRef.current!)
+                videoProperties.refCollection.currentTimeUpdateRef.current = null
             }
         }
+
+        
+        
     },[videoProperties.playing])
 
-
     useEffect(()=>{
-        if (!videoProperties.playing){
-            startRender(true)
-            // restartRender(true)
-        } 
-    },[videoProperties.seekBarProgressLength])
-
+        // console.log("currentTime updated",videoProperties.currentTime)
+        requestAnimationFrame(renderFrame)
+        setVideoProperties(pendingProperties => ({...pendingProperties, seekBarProgressLength: calculateSeekBarProgress()}))
+    },[videoProperties.currentTime])
 
     useEffect(()=>{
         console.log("update custom options",videoProperties)
-        restartRender(videoProperties.playing ? false : true)
+        if (!videoProperties.playing){
+            requestAnimationFrame(renderFrame)
+        }
     },[videoProperties.videoCustomOptions])
 
-
-    function startRender(once:boolean){
-        // console.log("startRender previous:", videoProperties.refCollection.animationID.current!)
-        videoProperties.refCollection.animationID.current! = requestAnimationFrame(()=>{
-            renderFrame(once)
-        })
-        // console.log("startRender new:", videoProperties.refCollection.animationID.current!)
-    }
-
-    function clearRender(){
-        // console.log("clearRender", videoProperties.refCollection.animationID.current!, "\n     ")
-        cancelAnimationFrame(videoProperties.refCollection.animationID.current!)
-        videoProperties.refCollection.animationID.current! = 0
-    }
-
-
-    function restartRender(once:boolean){
-        clearRender()
-        startRender(once)
-    }
-    
-    function renderFrame(once:boolean){
-        // console.log("renderFrame:", videoProperties.playing, !videoProperties.refCollection.videoRef.current!.paused)
-        // console.log("renderFrame:", videoProperties.refCollection.animationID.current!)
+    function renderFrame(){
+        // console.log("renderFrame")
         if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
            
             const videoContext = videoProperties.refCollection.canvasRef.current.getContext("2d")! 
@@ -155,7 +155,6 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
 
             const totalPixels = videoFrame.data.length/4
 
-            // console.log("RENDER FRAME", videoProperties.videoCustomOptions)
             for (let i = 0; i < totalPixels; i++) {
                 const red = videoFrame.data[i*4]
                 const green = videoFrame.data[i*4 + 1]
@@ -201,23 +200,6 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 }
             }
             videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
-
-            setVideoProperties(pendingProperties => (
-                {
-                    ...pendingProperties,
-                    seekBarProgressLength: calculateSeekBarProgress()
-                }
-            ))   
-            
-            if (!once){
-                // console.log("renderFrame LOOP")
-                startRender(once)
-            }
-            else{
-                // console.log("renderFrame ONCE")
-                clearRender()
-            }
-
         }
     }
 
@@ -264,11 +246,11 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     }
 
     function videoScrubbing(event: React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent ){
-        const seekBarBoundingClientRect = videoProperties.refCollection.seekBarRef.current!.getBoundingClientRect()!
-        const seekBarClickedRatio = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
-        videoProperties.refCollection.videoRef.current!.currentTime = videoProperties.refCollection.videoRef.current!.duration * seekBarClickedRatio
-
-        setVideoProperties(pendingProperties => ({...pendingProperties, seekBarProgressLength: calculateSeekBarProgress()}))
+        const seekBarBoundingClientRect:DOMRect = videoProperties.refCollection.seekBarRef.current!.getBoundingClientRect()!
+        const seekBarClickedRatio:number = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
+        const newTime:number = videoProperties.refCollection.videoRef.current!.duration * seekBarClickedRatio
+        videoProperties.refCollection.videoRef.current!.currentTime = newTime
+        setVideoProperties(pendingProperties => ({...pendingProperties, currentTime: newTime}))
 
     }
 
