@@ -11,7 +11,7 @@ type VideoMediaProps = AppRunningID & {
 }
 
 
-export type VideoCustomOptions = {
+type VideoCustomOptions = {
     playbackRate: number,
     preservesPitch: boolean,
     grayscale: boolean,
@@ -33,6 +33,10 @@ type VideoProperties = {
     seekBarClicked:boolean,
     refCollection: RefCollection,
     videoCustomOptions: VideoCustomOptions
+}
+
+export type VideoUpdatableOptions = VideoCustomOptions & {
+    currentTime: number
 }
 
 export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
@@ -104,7 +108,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
         if (videoProperties.refCollection.videoRef.current){
             if (videoProperties.playing){
                 console.log("play")
-                
+                videoProperties.refCollection.videoRef.current.currentTime = videoProperties.currentTime
                 videoProperties.refCollection.currentTimeUpdateRef.current = requestAnimationFrame(updateCurrentTimeLoop)
 
             }
@@ -211,7 +215,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
 
     
 
-    function updateVideoCustomOptions<T extends keyof VideoCustomOptions>(newOptionKey: T, newOptionValue: VideoCustomOptions[T]){
+    function updateVideoCustomOptions<T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]){
         switch (newOptionKey) {
             case "playbackRate":
                 videoProperties.refCollection.videoRef.current!.playbackRate = newOptionValue as number
@@ -219,14 +223,23 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             case "preservesPitch":
                 videoProperties.refCollection.videoRef.current!.preservesPitch = newOptionValue as boolean;
                 break;
+            case "currentTime":
+                setVideoProperties((pendingState) =>{
+                    return {...pendingState, currentTime: newOptionValue as number}
+                })
+                videoProperties.refCollection.videoRef.current!.currentTime = newOptionValue as number;
+
+                break;
             default:
                 break;
         }
         
-        setVideoProperties((pendingState) =>{
-            const newOptions:VideoCustomOptions = {...pendingState.videoCustomOptions, [newOptionKey]:newOptionValue}
-            return {...pendingState, videoCustomOptions:newOptions}
-        })
+       if (newOptionKey != "currentTime"){
+            setVideoProperties((pendingState) =>{
+                const newOptions:VideoCustomOptions = {...pendingState.videoCustomOptions, [newOptionKey]:newOptionValue}
+                return {...pendingState, videoCustomOptions:newOptions}
+            })
+       }
 
     }
 
@@ -279,7 +292,8 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                         type:"ADD",
                         app_name: "MediaController",
                         props:{
-                            startingValues: videoProperties.videoCustomOptions,
+                            startingValues: {...videoProperties.videoCustomOptions, currentTime:videoProperties.currentTime},
+                            videoRef: videoProperties.refCollection.videoRef,
                             updateVideoCustomOptions: updateVideoCustomOptions,
                             connectToMediaViewer: connectToMediaViewer
                         } as MediaControllerProps

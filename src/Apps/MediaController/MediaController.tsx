@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react"
 import { AppRunningID } from "../../Desktop/Contexts/RunningAppsContext"
 import "./MediaController.css"
-import { VideoCustomOptions } from "../MediaViewer/VideoMedia/VideoMedia"
+import { VideoUpdatableOptions } from "../MediaViewer/VideoMedia/VideoMedia"
 
 export type MediaControllerProps = AppRunningID & {
-    startingValues: VideoCustomOptions,
-    updateVideoCustomOptions: <T extends keyof VideoCustomOptions>(newOptionKey: T, newOptionValue: VideoCustomOptions[T]) => void,
+    startingValues: VideoUpdatableOptions,
+    videoRef: React.MutableRefObject<HTMLVideoElement | null>,
+    updateVideoCustomOptions: <T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]) => void,
     connectToMediaViewer: (newControllerAppID:string) => void
 }
 
 
 
-export function MediaController({app_running_id,startingValues, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
-    const [values, setValues] = useState<VideoCustomOptions>(startingValues)
+export function MediaController({app_running_id,startingValues, videoRef, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
+    const [values, setValues] = useState<VideoUpdatableOptions>(startingValues)
+
+    const [currentTime, setCurrentTime]= useState<number>(0)
 
     useEffect(()=>{
         connectToMediaViewer(app_running_id)
@@ -23,8 +26,21 @@ export function MediaController({app_running_id,startingValues, updateVideoCusto
         }
     },[app_running_id, connectToMediaViewer])
 
+    useEffect(()=>{
+        const intervalID = setInterval(()=>{setCurrentTime(videoRef.current!.currentTime)}, 0)
 
-    function changeValue<T extends keyof VideoCustomOptions>(newOptionKey: T, newOptionValue: VideoCustomOptions[T]){
+        return ()=>{
+            clearInterval(intervalID)
+        }
+
+    },[])
+
+    // useEffect(()=>{
+    //     console.log("values", values)
+    // },[values])
+
+
+    function changeValue<T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]){
         // console.log(newOptionKey, newOptionValue)
         setValues({...values, [newOptionKey]:newOptionValue})
         updateVideoCustomOptions(newOptionKey, newOptionValue)
@@ -45,6 +61,9 @@ export function MediaController({app_running_id,startingValues, updateVideoCusto
             {values.preservesPitch ? "yes" : "no"} 
             {values.grayscale ? "yes" : "no"} 
             {values.inverseColour ? "yes" : "no"}
+            {/* {currentTime} */}
+            <input type="range" value={currentTime} min={0} max={videoRef.current?.duration} step={0.01} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
+
         </div>
     )
 
