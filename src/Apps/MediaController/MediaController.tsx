@@ -45,27 +45,27 @@ export function MediaController({app_running_id,startingValues, videoRef, update
         <div className="media-controller">
             <div className="media-controller-section">
                 Progress Bar
-                <input type="range" value={values.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
+                <input type="range"  tabIndex={-1} value={values.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
                 {values.currentTime.toFixed(6)}
             </div>
             <div className="media-controller-section">
                 Preserve Pitch
-                <input type="checkbox" checked={values.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!values.preservesPitch))}} name="perservePitch" id="perservePitch" />
+                <input type="checkbox" tabIndex={-1} checked={values.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!values.preservesPitch))}} name="perservePitch" id="perservePitch" />
             </div>
 
             <div className="media-controller-section">
                 Playback Rate
-                <input type="range" value={values.playbackRate} min={0} max={2} step={0.1} onChange={(event)=>{changeValue("playbackRate", Number(event.target.value))}} name="playbackRate" id="playbackRate" />
+                <input type="range" tabIndex={-1} value={values.playbackRate} min={0} max={2} step={0.1} onChange={(event)=>{changeValue("playbackRate", Number(event.target.value))}} name="playbackRate" id="playbackRate" />
                 {values.playbackRate}
             </div>
             <div className="media-controller-section-holder">
                 <div className="media-controller-section">
                     Grayscale
-                    <input type="checkbox" checked={values.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!values.grayscale))}} name="grayscale" id="grayscale" />
+                    <input type="checkbox" tabIndex={-1} checked={values.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!values.grayscale))}} name="grayscale" id="grayscale" />
                 </div>
                 <div className="media-controller-section">
-                    Inverse Colour
-                    <input type="checkbox" checked={values.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!values.inverseColour))}} name="inverseColour" id="inverseColour" />
+                    Inverse
+                    <input type="checkbox" tabIndex={-1} checked={values.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!values.inverseColour))}} name="inverseColour" id="inverseColour" />
                 </div>
             </div>
 
