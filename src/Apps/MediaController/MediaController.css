@@ -1,8 +1,4 @@
 .media-controller{
-    /* padding-top: 0.5vh; */
-    /* padding-bottom: 0.5vh; */
-    /* margin-bottom: 0.5vh; */
-    /* padding:0.5vh; */
     height:100%;
     background-color: var(--bar-default-colour);
     display: flex;
@@ -18,10 +14,22 @@
         
     }
     .media-controller-section{
-        padding-bottom: 0.5vh;
+        padding-top: 1vh;
         align-items: center;
         display:flex;
         flex-direction: column;
+
+        .media-controller-section-progressbar{
+            display: flex;
+            flex-direction: row;
+            .media-controller-section-progressbar-playpause-button{
+                flex: 0 1 2.4vh;
+                img{
+                    height: 100%;
+                    width: 100%;
+                }
+            } 
+        }
 
         input[type="range"]{
             padding-top: 1vh;
@@ -37,7 +45,6 @@
 
         input[type="range"]::-webkit-slider-runnable-track {
             height: 0.1vh;
-            /* background: var(--bar-default-colour); */
             background-color: var(--bar-border-colour);
             
             border: var(--bar-border-outline);
