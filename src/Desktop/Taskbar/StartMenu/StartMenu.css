@@ -19,8 +19,6 @@
     padding-right: 1%;
     overflow-y: scroll;
     overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: black var(--bar-default-colour);
 
     .app-entry {
       width: 100%;
