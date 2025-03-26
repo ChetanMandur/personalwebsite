@@ -139,11 +139,14 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
 
     function renderFrame(){
         // console.log("renderFrame")
+        //Check if videoRef and canvasRef are available
         if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
-           
-            const videoContext = videoProperties.refCollection.canvasRef.current.getContext("2d")! 
+            
+            //Store context for canvas 
+            const canvasContext = videoProperties.refCollection.canvasRef.current.getContext("2d")! 
 
-            videoContext.drawImage(
+            // Paint canvas with frame from video player
+            canvasContext.drawImage(
                 videoProperties.refCollection.videoRef.current, 
                 0,
                 0, 
@@ -151,60 +154,53 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 videoProperties.refCollection.canvasRef.current.height 
             )
 
-            let videoFrame = videoContext.getImageData(
+            // Grab frame information from canvas
+            const videoFrame = canvasContext.getImageData(
                 0,
-                0, 
+                0,
                 videoProperties.refCollection.canvasRef.current.width, 
-                videoProperties.refCollection.canvasRef.current.height 
-            );
+                videoProperties.refCollection.canvasRef.current.height
+            )
 
+            // Determine the amount of pixels in the frame
+            // In videoFrame.data, it stores pixel data from top left -> bottom right in an array
+            // Each index in the array is either a R,G,B, or A value
+            // The data is supposed to be viewed in groups of 4, so that neighbouring indexes represent the same pixel
+            // So, by dividing the length of the data by 4, we can count the total pixels in the frame
             const totalPixels = videoFrame.data.length/4
 
-            for (let i = 0; i < totalPixels; i++) {
-                const red = videoFrame.data[i*4]
-                const green = videoFrame.data[i*4 + 1]
-                const blue = videoFrame.data[i*4 + 2]
-                // const alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
+            // For each pixel, perform visual changes
+            for (let i=0; i< totalPixels; i++){
+                const currentPixel = i*4
 
+                //First element in group is red, then green, blue, and finally alpha
+                let red = videoFrame.data[currentPixel + 0]
+                let green = videoFrame.data[currentPixel + 1]
+                let blue = videoFrame.data[currentPixel + 2]
+                // let alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
+
+                //Applies grayscale transformation
                 if (videoProperties.videoCustomOptions.grayscale){
-
                     const grey = (red + green + blue) /3;
+                    red = green = blue = grey;
 
-                    videoFrame.data[i * 4 + 0] = grey;
-                    videoFrame.data[i * 4 + 1] = grey;
-                    videoFrame.data[i * 4 + 2] = grey;
-
-                    // videoFrame.data[i * 4 + 0] = 255 - red;
-                    // videoFrame.data[i * 4 + 1] = 255 - green;
-                    // videoFrame.data[i * 4 + 2] = 255 - blue;
                 }
-            }
-            videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
 
-
-            //rn this is just copy paste code, but ima make this a for-loop later 
-            videoFrame = videoContext.getImageData(
-                0,
-                0, 
-                videoProperties.refCollection.canvasRef.current.width, 
-                videoProperties.refCollection.canvasRef.current.height 
-            );
-
-
-            for (let i = 0; i < totalPixels; i++) {
-                const red = videoFrame.data[i*4]
-                const green = videoFrame.data[i*4 + 1]
-                const blue = videoFrame.data[i*4 + 2]
-                // const alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
-
+                //Applies inverse colour transformation
                 if (videoProperties.videoCustomOptions.inverseColour){
-
-                    videoFrame.data[i * 4 + 0] = 255 - red;
-                    videoFrame.data[i * 4 + 1] = 255 - green;
-                    videoFrame.data[i * 4 + 2] = 255 - blue;
+                    red = 255 - red;
+                    green = 255 - green;
+                    blue = 255 - blue;
                 }
+
+                //Apply transformed pixel values to frame
+                videoFrame.data[currentPixel + 0] = red;
+                videoFrame.data[currentPixel + 1] = green;
+                videoFrame.data[currentPixel + 2] = blue;
             }
-            videoProperties.refCollection.canvasRef.current.getContext("2d")!.putImageData(videoFrame, 0, 0);
+
+            //Apply transformed video frame to canvas
+            canvasContext.putImageData(videoFrame, 0, 0);
         }
     }
 
