@@ -10,12 +10,25 @@ type VideoMediaProps = AppRunningID & {
 
 }
 
+type RGBAValue = {
+    red: number ,
+    green: number,
+    blue: number,
+    alpha: number
+}
+
+type ColourSwapValue = {
+    from: RGBAValue,
+    to: RGBAValue,
+    range: number
+}
 
 type VideoCustomOptions = {
     playbackRate: number,
     preservesPitch: boolean,
     grayscale: boolean,
     inverseColour: boolean
+    colourSwapList: ColourSwapValue[]
 }
 
 type RefCollection = {
@@ -34,6 +47,8 @@ type VideoProperties = {
     refCollection: RefCollection,
     videoCustomOptions: VideoCustomOptions
 }
+
+
 
 export type VideoUpdatableOptions = VideoCustomOptions & {
     playing:boolean,
@@ -58,6 +73,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             preservesPitch: true,
             grayscale: false,
             inverseColour: false,
+            colourSwapList: []
         }
     }
 
@@ -178,6 +194,24 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 let green = videoFrame.data[currentPixel + 1]
                 let blue = videoFrame.data[currentPixel + 2]
                 // let alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
+
+
+                for (const colourSwap of videoProperties.videoCustomOptions.colourSwapList){
+                    const redDiff = Math.abs(colourSwap.from.red - red)
+                    const greenDiff = Math.abs(colourSwap.from.green - green)
+                    const blueDiff = Math.abs(colourSwap.from.blue - blue)
+
+                    const redCheck = redDiff >=0 && redDiff <= colourSwap.range
+                    const greenCheck = greenDiff >=0 && greenDiff <= colourSwap.range
+                    const blueCheck = blueDiff >=0 && blueDiff <= colourSwap.range
+
+                    if (redCheck && greenCheck && blueCheck){
+                        red = colourSwap.to.red
+                        green = colourSwap.to.green
+                        blue = colourSwap.to.blue
+                    }
+   
+                }
 
                 //Applies grayscale transformation
                 if (videoProperties.videoCustomOptions.grayscale){

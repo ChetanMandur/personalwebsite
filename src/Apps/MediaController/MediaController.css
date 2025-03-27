@@ -31,6 +31,50 @@
             } 
         }
 
+        .color-swap-title{
+            display: flex;
+            flex-direction: row;
+            column-gap: 0.5vh;
+            align-items: center;
+
+            .colour-swap-add{
+                width: 2vh;
+                text-align: center;
+            }
+
+        }
+        
+        .color-swap-section{
+            display: flex;
+            flex-direction: column;
+            .colour-swap-value{
+                display:flex;
+                /* justify-content: center; */
+                column-gap: 0.3vh;
+                align-items: center;
+                flex-direction: row;
+                flex-wrap: wrap;
+
+    
+                input[type="color"]{
+                    width: 3vh;
+                    background-color: var(--bar-default-colour);
+                    /* .common-border */
+                    border:none
+    
+                }
+                input[type="number"]{
+                    width: 3vh
+                }
+                .colour-swap-delete{
+                    width:2vh;
+                    text-align: center;
+                }
+            }
+        }
+
+        
+
         input[type="range"]{
             padding-top: 1vh;
 
