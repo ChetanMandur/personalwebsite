@@ -100,36 +100,42 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                             (value, index)=>{
                                 
                                 return(
-                                    <div className="colour-swap-value">
-                                        FROM:
-                                        <input type="color" name="from-color-swap" id="from-color-swap"
-                                            onChange={(event)=>{
-                                                [values.colourSwapList[index].from.red, values.colourSwapList[index].from.green, values.colourSwapList[index].from.blue] = hexToRGB(event.target.value)
-                                            }}
-                                        />
+                                    <div className="colour-swap-section-value">
+                                        <div className="colour-swap-section-value-option">
+                                            FROM:
+                                            <input type="color" name="from-color-swap" id="from-color-swap"
+                                                onChange={(event)=>{
+                                                    [values.colourSwapList[index].from.red, values.colourSwapList[index].from.green, values.colourSwapList[index].from.blue] = hexToRGB(event.target.value)
+                                                }}
+                                            />
+                                        </div>
 
-                                        TO:
-                                        <input type="color" name="to-color-swap" id="to-color-swap"
-                                            onChange={(event)=>{
-                                                [values.colourSwapList[index].to.red, values.colourSwapList[index].to.green, values.colourSwapList[index].to.blue] = hexToRGB(event.target.value)
-                                            }}
-                                        />
+                                        <div className="colour-swap-section-value-option">
+                                            TO:
+                                            <input type="color" name="to-color-swap" id="to-color-swap"
+                                                onChange={(event)=>{
+                                                    [values.colourSwapList[index].to.red, values.colourSwapList[index].to.green, values.colourSwapList[index].to.blue] = hexToRGB(event.target.value)
+                                                }}
+                                            />
+                                        </div>
                                         
-                                        RANGE:
-                                        <input type="number" value={value.range}
-                                            onChange={(event)=>{
-                                                values.colourSwapList[index].range = Number(event.target.value)
-                                                changeValue("colourSwapList", [...values.colourSwapList])
+                                        <div className="colour-swap-section-value-option" >
+                                            RANGE:
+                                            <input type="number" value={value.range} min={0} max={255}
+                                                onChange={(event)=>{
+                                                    values.colourSwapList[index].range = Number(event.target.value)
+                                                    changeValue("colourSwapList", [...values.colourSwapList])
 
-                                            }}
-                                        />
+                                                }}
+                                            />
+                                        </div>
 
                                         <div className="colour-swap-delete common-border" onClick={()=>{
                                             values.colourSwapList.splice(index, 1)
                                             changeValue("colourSwapList",
                                                 [...values.colourSwapList]
                                             )
-                                        }}>-</div>
+                                        }}>Remove</div>
                                     </div>
                                 )
                             }

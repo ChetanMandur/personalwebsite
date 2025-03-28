@@ -47,29 +47,55 @@
         .color-swap-section{
             display: flex;
             flex-direction: column;
-            .colour-swap-value{
+
+            .colour-swap-section-value{
                 display:flex;
                 /* justify-content: center; */
                 column-gap: 0.3vh;
                 align-items: center;
                 flex-direction: row;
                 flex-wrap: wrap;
+                padding-top: 0.5vh;
 
-    
-                input[type="color"]{
-                    width: 3vh;
-                    background-color: var(--bar-default-colour);
-                    /* .common-border */
-                    border:none
-    
+
+                .colour-swap-section-value-option{
+                    display:flex;
+                    flex-direction: column;
+                    text-align: center;
+                    align-items: center;
+
+                    input[type="color"]{
+
+                        width: 3vh;
+                        background-color: var(--bar-default-colour);
+                        height: 3vh;
+                        
+
+                        border:none;
+                        padding:0;
+                        
+                    }
+                    input[type="number"]{
+                        /* block-size: 1vh; */
+                        background-color: var(--bar-default-colour);
+
+
+                        width: 5vh;
+                        border: none;
+                        padding: 0;
+                        height: 3vh;
+
+                    }
+
                 }
-                input[type="number"]{
-                    width: 3vh
-                }
+
                 .colour-swap-delete{
-                    width:2vh;
+                    /* width:2vh; */
                     text-align: center;
                 }
+    
+                
+                
             }
         }
 
