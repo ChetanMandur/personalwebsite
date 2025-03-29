@@ -130,8 +130,15 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                                                     }
                                                 }}
                                                 onKeyDown={(event)=>{
-                                                    if (event.key == "-"){
-                                                        event.preventDefault()
+                                                    switch (event.key) {
+                                                        case "-":
+                                                            event.preventDefault()
+                                                            break;
+                                                        case "Enter":
+                                                            event.currentTarget.blur()
+                                                            break;
+                                                        default:
+                                                            break;
                                                     }
                                                 }}
                                             />
