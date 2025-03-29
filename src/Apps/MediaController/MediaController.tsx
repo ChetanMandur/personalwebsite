@@ -50,6 +50,17 @@ export function MediaController({app_running_id,startingValues, videoRef, update
         return [ r, g, b ];
     }
 
+    function rgbToHex(red:number, green:number, blue:number):string{
+        const redHex = red.toString(16)
+        const greenHex = green.toString(16)
+        const blueHex = blue.toString(16)
+
+        return "#"
+            +(redHex.length == 1 ? "0" + redHex : redHex)
+            +(greenHex.length == 1 ? "0" + greenHex : greenHex)
+            +(blueHex.length == 1 ? "0" + blueHex : blueHex)
+    }
+
 
     return (
         <div className="media-controller">
@@ -103,7 +114,8 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                                     <div className="colour-swap-section-value">
                                         <div className="colour-swap-section-value-option">
                                             FROM:
-                                            <input type="color" name="from-color-swap" id="from-color-swap"
+                                            <input type="color" value={rgbToHex(value.from.red, value.from.green, value.from.blue)} name="from-color-swap" id="from-color-swap"
+                                                
                                                 onChange={(event)=>{
                                                     [value.from.red, value.from.green, value.from.blue] = hexToRGB(event.target.value)
                                                     values.colourSwapList[index] = value
@@ -114,7 +126,7 @@ export function MediaController({app_running_id,startingValues, videoRef, update
 
                                         <div className="colour-swap-section-value-option">
                                             TO:
-                                            <input type="color" name="to-color-swap" id="to-color-swap"
+                                            <input type="color" value={rgbToHex(value.to.red, value.to.green, value.to.blue)} name="to-color-swap" id="to-color-swap"
                                                 onChange={(event)=>{
                                                     [value.to.red, value.to.green, value.to.blue] = hexToRGB(event.target.value)
                                                     values.colourSwapList[index] = value
