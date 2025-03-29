@@ -105,7 +105,9 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                                             FROM:
                                             <input type="color" name="from-color-swap" id="from-color-swap"
                                                 onChange={(event)=>{
-                                                    [values.colourSwapList[index].from.red, values.colourSwapList[index].from.green, values.colourSwapList[index].from.blue] = hexToRGB(event.target.value)
+                                                    [value.from.red, value.from.green, value.from.blue] = hexToRGB(event.target.value)
+                                                    values.colourSwapList[index] = value
+                                                    changeValue("colourSwapList", values.colourSwapList)
                                                 }}
                                             />
                                         </div>
@@ -114,7 +116,9 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                                             TO:
                                             <input type="color" name="to-color-swap" id="to-color-swap"
                                                 onChange={(event)=>{
-                                                    [values.colourSwapList[index].to.red, values.colourSwapList[index].to.green, values.colourSwapList[index].to.blue] = hexToRGB(event.target.value)
+                                                    [value.to.red, value.to.green, value.to.blue] = hexToRGB(event.target.value)
+                                                    values.colourSwapList[index] = value
+                                                    changeValue("colourSwapList", values.colourSwapList)
                                                 }}
                                             />
                                         </div>
@@ -125,8 +129,9 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                                                 onChange={(event)=>{
                                                     const targetValue = Number(event.target.value)
                                                     if (targetValue >= 0 && targetValue <= 255){
-                                                        values.colourSwapList[index].range = targetValue
-                                                        changeValue("colourSwapList", [...values.colourSwapList])
+                                                        value.range = targetValue
+                                                        values.colourSwapList[index] = value
+                                                        changeValue("colourSwapList", values.colourSwapList)
                                                     }
                                                 }}
                                                 onKeyDown={(event)=>{
