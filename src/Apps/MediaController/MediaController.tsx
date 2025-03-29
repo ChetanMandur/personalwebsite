@@ -121,11 +121,18 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                                         
                                         <div className="colour-swap-section-value-option" >
                                             RANGE:
-                                            <input type="number" value={value.range} min={0} max={255}
+                                            <input type="number" placeholder="0" value={value.range || ''} min={0} max={255}
                                                 onChange={(event)=>{
-                                                    values.colourSwapList[index].range = Number(event.target.value)
-                                                    changeValue("colourSwapList", [...values.colourSwapList])
-
+                                                    const targetValue = Number(event.target.value)
+                                                    if (targetValue >= 0 && targetValue <= 255){
+                                                        values.colourSwapList[index].range = targetValue
+                                                        changeValue("colourSwapList", [...values.colourSwapList])
+                                                    }
+                                                }}
+                                                onKeyDown={(event)=>{
+                                                    if (event.key == "-"){
+                                                        event.preventDefault()
+                                                    }
                                                 }}
                                             />
                                         </div>
