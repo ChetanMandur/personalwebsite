@@ -38,8 +38,10 @@
             align-items: center;
 
             .colour-swap-add{
-                width: 2vh;
+                /* width: 2vh; */
+                padding: 0.5vh;
                 text-align: center;
+                user-select: none;
             }
 
         }
@@ -109,6 +111,7 @@
                 .colour-swap-delete{
                     /* width:2vh; */
                     text-align: center;
+                    user-select: none;
                 }
     
                 

@@ -336,6 +336,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                         props:{
                             startingValues: {...videoProperties.videoCustomOptions,playing:videoProperties.playing, currentTime:videoProperties.currentTime},
                             videoRef: videoProperties.refCollection.videoRef,
+                            canvasRef: videoProperties.refCollection.canvasRef,
                             updateVideoCustomOptions: updateVideoCustomOptions,
                             connectToMediaViewer: connectToMediaViewer
                         } as MediaControllerProps

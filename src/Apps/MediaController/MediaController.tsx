@@ -6,13 +6,14 @@ import { VideoUpdatableOptions } from "../MediaViewer/VideoMedia/VideoMedia"
 export type MediaControllerProps = AppRunningID & {
     startingValues: VideoUpdatableOptions,
     videoRef: React.MutableRefObject<HTMLVideoElement | null>,
+    canvasRef:React.MutableRefObject<HTMLCanvasElement | null>,
     updateVideoCustomOptions: <T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]) => void,
     connectToMediaViewer: (newControllerAppID:string) => void
 }
 
 
 
-export function MediaController({app_running_id,startingValues, videoRef, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
+export function MediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
     const [values, setValues] = useState<VideoUpdatableOptions>(startingValues)
 
     useEffect(()=>{
@@ -104,6 +105,79 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                             range:0
                         }])
                     }}>+</div>
+                    <div className="colour-swap-add common-border" onClick={()=>{
+                        const canvasContext = canvasRef.current!.getContext("2d")! 
+                        const videoFrame = canvasContext.getImageData(
+                            0,
+                            0,
+                            canvasRef.current!.width, 
+                            canvasRef.current!.height
+                        )
+                        const frameData = videoFrame.data
+                        const totalPixels = frameData.length/4
+
+                        const seenSet = new Set<number>()
+
+                        //Grab RGB value from canvas frame
+                        //Check if RGB value is same as any 'to' value in colour swaps
+                        // if RGB value is not the same (ie is a new value) we add it and swap it
+                        // keep track of all pixels that have been picked, dont test pixels that already been tested
+
+                        while (seenSet.size != totalPixels ){
+                            //Grab random pixel
+                            let randomPixel = (Math.floor(Math.random() * (frameData.length/4)))
+
+                            //If random pixel has been checked, keep selecting new one until one hasnt been checked
+                            while (randomPixel in seenSet){ 
+                                randomPixel = (Math.floor(Math.random() * (frameData.length/4)))
+                            }
+                            
+                            //Add pixel to seen set
+                            seenSet.add(randomPixel)
+                            
+                            //Find RGB value of random pixel
+                            const fromRed = frameData[randomPixel*4 + 0]
+                            const fromGreen = frameData[randomPixel*4 + 1]
+                            const fromBlue = frameData[randomPixel*4 + 2]
+
+                            //Check if RGB value is the same as any 'to' value in the colour swap
+                            // We do this so that we arent swapping values that are not from the original source
+                            // ie. we don't want to create a chain of swap, where Source -> B and B -> C
+                            //// I know this is expensive and I will probs fix this in the future.... maybe next commit... but maybe not
+                            //// ^^^ Instead of creating a new set of 'unseen pixels' each time button is pressed
+                            //// ^ In renderFrame() keep track of which pixels have been swapped (ie build seenSet in renderFrame())
+                            //// ^ Keep picking a random pixel until a pixel that has not been swapped is grabbed
+                            //// ^ Doing it this way, makes it so 1) dont need to rebuild seen pixel
+                            //// ^ 2) recheck every new seen pixel with each and every colour swap value
+
+                            let isUnique = true
+                            for (const currentValue of values.colourSwapList){
+                                if (currentValue.to.red == fromRed && currentValue.to.green == fromGreen && currentValue.to.blue == fromBlue){
+                                    isUnique = false
+                                    break;
+                                    
+                                }
+                            }
+
+                            if (isUnique){
+                                const toRed = Math.floor(Math.random() * (256))
+                                const toGreen = Math.floor(Math.random() * (256))
+                                const toBlue = Math.floor(Math.random() * (256))
+        
+        
+                                changeValue("colourSwapList", [...values.colourSwapList, {
+                                    from:{red:fromRed, green:fromGreen, blue:fromBlue, alpha:0},
+                                    to:{red:toRed, green:toGreen, blue:toBlue, alpha:0},
+                                    range:Math.floor(Math.random() * (100))
+                                }])
+                                break
+                            }
+                        }
+
+                        if (seenSet.size == totalPixels){
+                            console.log("no pixels in current frame to randomize")
+                        }
+                    }}>Random</div>
                 </div>
                 <div className="color-swap-section">
                     {
@@ -111,7 +185,7 @@ export function MediaController({app_running_id,startingValues, videoRef, update
                             (value, index)=>{
                                 
                                 return(
-                                    <div className="colour-swap-section-value">
+                                    <div className="colour-swap-section-value" key={"colour-swap-value"+index}>
                                         <div className="colour-swap-section-value-option">
                                             FROM:
                                             <input type="color" value={rgbToHex(value.from.red, value.from.green, value.from.blue)} name="from-color-swap" id="from-color-swap"
