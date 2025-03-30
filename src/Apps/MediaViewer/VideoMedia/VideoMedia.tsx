@@ -1,4 +1,4 @@
-import { createRef, useContext, useEffect, useState } from "react"
+import React, { createRef, useContext, useEffect, useState } from "react"
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../../Desktop/Contexts/ContextMenuContext"
 import { AppRunningID, RunningAppsContext } from "../../../Desktop/Contexts/RunningAppsContext"
 import { MediaControllerProps } from "../../MediaController/MediaController"
@@ -23,12 +23,17 @@ type ColourSwapValue = {
     range: number
 }
 
+type ColourSwapList = {
+    values: ColourSwapValue[],
+    changedPixels: React.MutableRefObject<Set<number> | null>
+}
+
 type VideoCustomOptions = {
     playbackRate: number,
     preservesPitch: boolean,
     grayscale: boolean,
     inverseColour: boolean
-    colourSwapList: ColourSwapValue[]
+    colourSwapList: ColourSwapList
 }
 
 type RefCollection = {
@@ -73,7 +78,10 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             preservesPitch: true,
             grayscale: false,
             inverseColour: false,
-            colourSwapList: []
+            colourSwapList: {
+                values: [],
+                changedPixels: createRef<Set<number>>()
+            }
         }
     }
 
@@ -84,7 +92,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
 
     useEffect(()=>{
-
+        videoProperties.videoCustomOptions.colourSwapList.changedPixels.current = new Set<number>()
         return () =>{
                 cancelAnimationFrame(videoProperties.refCollection.currentTimeUpdateRef.current!)
                 // console.log("returning", videoProperties.refCollection.animationID.current!)
@@ -156,7 +164,9 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     function renderFrame(){
         // console.log("renderFrame")
         //Check if videoRef and canvasRef are available
-        if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null){
+        if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null && videoProperties.videoCustomOptions.colourSwapList.changedPixels.current != null ){
+            videoProperties.videoCustomOptions.colourSwapList.changedPixels.current.clear()
+
             
             //Store context for canvas 
             const canvasContext = videoProperties.refCollection.canvasRef.current.getContext("2d")! 
@@ -186,17 +196,17 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             const totalPixels = videoFrame.data.length/4
 
             // For each pixel, perform visual changes
-            for (let i=0; i< totalPixels; i++){
-                const currentPixel = i*4
+            for (let currentPixel=0; currentPixel< totalPixels; currentPixel++){
+                const currentPixelGroup = currentPixel*4
 
                 //First element in group is red, then green, blue, and finally alpha
-                let red = videoFrame.data[currentPixel + 0]
-                let green = videoFrame.data[currentPixel + 1]
-                let blue = videoFrame.data[currentPixel + 2]
+                let red = videoFrame.data[currentPixelGroup + 0]
+                let green = videoFrame.data[currentPixelGroup + 1]
+                let blue = videoFrame.data[currentPixelGroup + 2]
                 // let alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
 
 
-                for (const colourSwap of videoProperties.videoCustomOptions.colourSwapList){
+                for (const colourSwap of videoProperties.videoCustomOptions.colourSwapList.values){
                     const redDiff = Math.abs(colourSwap.from.red - red)
                     const greenDiff = Math.abs(colourSwap.from.green - green)
                     const blueDiff = Math.abs(colourSwap.from.blue - blue)
@@ -206,6 +216,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                     const blueCheck = blueDiff >=0 && blueDiff <= colourSwap.range
 
                     if (redCheck && greenCheck && blueCheck){
+                        videoProperties.videoCustomOptions.colourSwapList.changedPixels.current.add(currentPixel)
                         red = colourSwap.to.red
                         green = colourSwap.to.green
                         blue = colourSwap.to.blue
@@ -228,13 +239,14 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 }
 
                 //Apply transformed pixel values to frame
-                videoFrame.data[currentPixel + 0] = red;
-                videoFrame.data[currentPixel + 1] = green;
-                videoFrame.data[currentPixel + 2] = blue;
+                videoFrame.data[currentPixelGroup + 0] = red;
+                videoFrame.data[currentPixelGroup + 1] = green;
+                videoFrame.data[currentPixelGroup + 2] = blue;
             }
 
             //Apply transformed video frame to canvas
             canvasContext.putImageData(videoFrame, 0, 0);
+            // console.log("renderFrame",videoProperties.videoCustomOptions.colourSwapList.changedPixels.current)
         }
     }
 

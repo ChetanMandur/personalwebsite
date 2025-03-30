@@ -14,7 +14,7 @@ export type MediaControllerProps = AppRunningID & {
 
 
 export function MediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
-    const [values, setValues] = useState<VideoUpdatableOptions>(startingValues)
+    const [currentOptions, setCurrentOptions] = useState<VideoUpdatableOptions>(startingValues)
 
     useEffect(()=>{
         connectToMediaViewer(app_running_id)
@@ -26,7 +26,7 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
     },[app_running_id, connectToMediaViewer])
 
     useEffect(()=>{
-        const intervalID = setInterval(()=>{setValues(pendingState=>({...pendingState, currentTime: videoRef.current!.currentTime, playing: !videoRef.current?.paused}))}, 0)
+        const intervalID = setInterval(()=>{setCurrentOptions(pendingState=>({...pendingState, currentTime: videoRef.current!.currentTime, playing: !videoRef.current?.paused}))}, 0)
 
         return ()=>{
             clearInterval(intervalID)
@@ -37,7 +37,7 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
 
     function changeValue<T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]){
         // console.log(newOptionKey, newOptionValue)
-        setValues(pendingState =>({...pendingState, [newOptionKey]:newOptionValue}))
+        setCurrentOptions(pendingState =>({...pendingState, [newOptionKey]:newOptionValue}))
         updateVideoCustomOptions(newOptionKey, newOptionValue)
     }
     
@@ -68,30 +68,30 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
             <div className="media-controller-section">
                 Progress Bar
                 <div className="media-controller-section-progressbar">
-                    <div className="media-controller-section-progressbar-playpause-button common-border" onClick={()=>{changeValue("playing", Boolean(!values.playing))}}><img src={values.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" /> </div>
-                    <input type="range"  tabIndex={-1} value={values.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
+                    <div className="media-controller-section-progressbar-playpause-button common-border" onClick={()=>{changeValue("playing", Boolean(!currentOptions.playing))}}><img src={currentOptions.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" /> </div>
+                    <input type="range"  tabIndex={-1} value={currentOptions.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
 
                 </div>
-                {values.currentTime.toFixed(6)}
+                {currentOptions.currentTime.toFixed(6)}
             </div>
             <div className="media-controller-section">
                 Preserve Pitch
-                <input type="checkbox" tabIndex={-1} checked={values.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!values.preservesPitch))}} name="perservePitch" id="perservePitch" />
+                <input type="checkbox" tabIndex={-1} checked={currentOptions.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!currentOptions.preservesPitch))}} name="perservePitch" id="perservePitch" />
             </div>
 
             <div className="media-controller-section">
                 Playback Rate
-                <input type="range" tabIndex={-1} value={values.playbackRate} min={0} max={2} step={0.1} onChange={(event)=>{changeValue("playbackRate", Number(event.target.value))}} name="playbackRate" id="playbackRate" />
-                {values.playbackRate}
+                <input type="range" tabIndex={-1} value={currentOptions.playbackRate} min={0} max={2} step={0.1} onChange={(event)=>{changeValue("playbackRate", Number(event.target.value))}} name="playbackRate" id="playbackRate" />
+                {currentOptions.playbackRate}
             </div>
             <div className="media-controller-section-holder">
                 <div className="media-controller-section">
                     Grayscale
-                    <input type="checkbox" tabIndex={-1} checked={values.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!values.grayscale))}} name="grayscale" id="grayscale" />
+                    <input type="checkbox" tabIndex={-1} checked={currentOptions.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!currentOptions.grayscale))}} name="grayscale" id="grayscale" />
                 </div>
                 <div className="media-controller-section">
                     Inverse
-                    <input type="checkbox" tabIndex={-1} checked={values.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!values.inverseColour))}} name="inverseColour" id="inverseColour" />
+                    <input type="checkbox" tabIndex={-1} checked={currentOptions.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!currentOptions.inverseColour))}} name="inverseColour" id="inverseColour" />
                 </div>
             </div>
 
@@ -99,11 +99,14 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                 <div className="color-swap-title">
                     Colour Swap
                     <div className="colour-swap-add common-border" onClick={()=>{
-                        changeValue("colourSwapList", [...values.colourSwapList, {
-                            from:{red:0, green:0, blue:0, alpha:0},
-                            to:{red:0, green:0, blue:0, alpha:0},
-                            range:0
-                        }])
+                        changeValue("colourSwapList", {
+                            values:[...currentOptions.colourSwapList.values, {
+                                from:{red:0, green:0, blue:0, alpha:0},
+                                to:{red:0, green:0, blue:0, alpha:0},
+                                range:0
+                            }],
+                            changedPixels: currentOptions.colourSwapList.changedPixels
+                        })
                     }}>+</div>
                     <div className="colour-swap-add common-border" onClick={()=>{
                         const canvasContext = canvasRef.current!.getContext("2d")! 
@@ -116,72 +119,47 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                         const frameData = videoFrame.data
                         const totalPixels = frameData.length/4
 
-                        const seenSet = new Set<number>()
-
-                        //Grab RGB value from canvas frame
-                        //Check if RGB value is same as any 'to' value in colour swaps
-                        // if RGB value is not the same (ie is a new value) we add it and swap it
-                        // keep track of all pixels that have been picked, dont test pixels that already been tested
-
-                        while (seenSet.size != totalPixels ){
+                        // If all the pixels have not been changed
+                        if (currentOptions.colourSwapList.changedPixels.current!.size != totalPixels ){
                             //Grab random pixel
                             let randomPixel = (Math.floor(Math.random() * (frameData.length/4)))
 
-                            //If random pixel has been checked, keep selecting new one until one hasnt been checked
-                            while (randomPixel in seenSet){ 
+                            //If random pixel has been changed, keep selecting new one until we find one that hasnt been changed
+                            while (currentOptions.colourSwapList.changedPixels.current!.has(randomPixel)){ 
                                 randomPixel = (Math.floor(Math.random() * (frameData.length/4)))
                             }
                             
-                            //Add pixel to seen set
-                            seenSet.add(randomPixel)
-                            
                             //Find RGB value of random pixel
-                            const fromRed = frameData[randomPixel*4 + 0]
-                            const fromGreen = frameData[randomPixel*4 + 1]
-                            const fromBlue = frameData[randomPixel*4 + 2]
+                            const randomPixelGroup = randomPixel * 4
 
-                            //Check if RGB value is the same as any 'to' value in the colour swap
-                            // We do this so that we arent swapping values that are not from the original source
-                            // ie. we don't want to create a chain of swap, where Source -> B and B -> C
-                            //// I know this is expensive and I will probs fix this in the future.... maybe next commit... but maybe not
-                            //// ^^^ Instead of creating a new set of 'unseen pixels' each time button is pressed
-                            //// ^ In renderFrame() keep track of which pixels have been swapped (ie build seenSet in renderFrame())
-                            //// ^ Keep picking a random pixel until a pixel that has not been swapped is grabbed
-                            //// ^ Doing it this way, makes it so 1) dont need to rebuild seen pixel
-                            //// ^ 2) recheck every new seen pixel with each and every colour swap value
+                            const fromRed = frameData[randomPixelGroup + 0]
+                            const fromGreen = frameData[randomPixelGroup + 1]
+                            const fromBlue = frameData[randomPixelGroup + 2]
 
-                            let isUnique = true
-                            for (const currentValue of values.colourSwapList){
-                                if (currentValue.to.red == fromRed && currentValue.to.green == fromGreen && currentValue.to.blue == fromBlue){
-                                    isUnique = false
-                                    break;
-                                    
-                                }
-                            }
-
-                            if (isUnique){
-                                const toRed = Math.floor(Math.random() * (256))
-                                const toGreen = Math.floor(Math.random() * (256))
-                                const toBlue = Math.floor(Math.random() * (256))
+                            // Generate new RGB value
+                            const toRed = Math.floor(Math.random() * (256))
+                            const toGreen = Math.floor(Math.random() * (256))
+                            const toBlue = Math.floor(Math.random() * (256))
         
         
-                                changeValue("colourSwapList", [...values.colourSwapList, {
-                                    from:{red:fromRed, green:fromGreen, blue:fromBlue, alpha:0},
-                                    to:{red:toRed, green:toGreen, blue:toBlue, alpha:0},
-                                    range:Math.floor(Math.random() * (100))
-                                }])
-                                break
-                            }
+                                changeValue("colourSwapList", {
+                                    values: [...currentOptions.colourSwapList.values, {
+                                        from:{red:fromRed, green:fromGreen, blue:fromBlue, alpha:0},
+                                        to:{red:toRed, green:toGreen, blue:toBlue, alpha:0},
+                                        range:Math.floor(Math.random() * (100))
+                                    }],
+                                    changedPixels: currentOptions.colourSwapList.changedPixels
+                                })
                         }
 
-                        if (seenSet.size == totalPixels){
+                        if (currentOptions.colourSwapList.changedPixels.current!.size == totalPixels){
                             console.log("no pixels in current frame to randomize")
                         }
                     }}>Random</div>
                 </div>
                 <div className="color-swap-section">
                     {
-                        values.colourSwapList.map(
+                        currentOptions.colourSwapList.values.map(
                             (value, index)=>{
                                 
                                 return(
@@ -192,8 +170,11 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                                                 
                                                 onChange={(event)=>{
                                                     [value.from.red, value.from.green, value.from.blue] = hexToRGB(event.target.value)
-                                                    values.colourSwapList[index] = value
-                                                    changeValue("colourSwapList", values.colourSwapList)
+                                                    currentOptions.colourSwapList.values[index] = value
+                                                    changeValue("colourSwapList", {
+                                                        values: currentOptions.colourSwapList.values,
+                                                        changedPixels: currentOptions.colourSwapList.changedPixels
+                                                    })
                                                 }}
                                             />
                                         </div>
@@ -203,8 +184,11 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                                             <input type="color" value={rgbToHex(value.to.red, value.to.green, value.to.blue)} name="to-color-swap" id="to-color-swap"
                                                 onChange={(event)=>{
                                                     [value.to.red, value.to.green, value.to.blue] = hexToRGB(event.target.value)
-                                                    values.colourSwapList[index] = value
-                                                    changeValue("colourSwapList", values.colourSwapList)
+                                                    currentOptions.colourSwapList.values[index] = value
+                                                    changeValue("colourSwapList", {
+                                                        values: currentOptions.colourSwapList.values,
+                                                        changedPixels: currentOptions.colourSwapList.changedPixels
+                                                    })
                                                 }}
                                             />
                                         </div>
@@ -216,8 +200,11 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                                                     const targetValue = Number(event.target.value)
                                                     if (targetValue >= 0 && targetValue <= 255){
                                                         value.range = targetValue
-                                                        values.colourSwapList[index] = value
-                                                        changeValue("colourSwapList", values.colourSwapList)
+                                                        currentOptions.colourSwapList.values[index] = value
+                                                        changeValue("colourSwapList", {
+                                                            values: currentOptions.colourSwapList.values,
+                                                            changedPixels: currentOptions.colourSwapList.changedPixels
+                                                        })
                                                     }
                                                 }}
                                                 onKeyDown={(event)=>{
@@ -236,10 +223,11 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                                         </div>
 
                                         <div className="colour-swap-delete common-border" onClick={()=>{
-                                            values.colourSwapList.splice(index, 1)
-                                            changeValue("colourSwapList",
-                                                [...values.colourSwapList]
-                                            )
+                                            currentOptions.colourSwapList.values.splice(index, 1)
+                                            changeValue("colourSwapList", {
+                                                values: currentOptions.colourSwapList.values,
+                                                changedPixels: currentOptions.colourSwapList.changedPixels
+                                            })
                                         }}>Remove</div>
                                     </div>
                                 )
