@@ -31,19 +31,40 @@
             } 
         }
 
-        .color-swap-title{
+        .media-controller-section-titlebar{
             display: flex;
             flex-direction: row;
             column-gap: 0.5vh;
             align-items: center;
 
-            .colour-swap-add{
+            .media-controller-section-titlebar-button{
                 /* width: 2vh; */
                 padding: 0.5vh;
                 text-align: center;
                 user-select: none;
             }
 
+        }
+
+        .beat-pad-section{
+            display:flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            row-gap: 1vh;
+            column-gap: 1vh;
+            justify-content: center;
+            .beat-pad-section-value{
+                display: flex;
+                flex-direction: row;
+                width: 5rem;
+                height: 5rem;
+                user-select: none;
+                text-align: center;
+                font-size: 0.8em;
+                justify-content: center;
+                align-items: center;
+                
+            }
         }
         
         .color-swap-section{

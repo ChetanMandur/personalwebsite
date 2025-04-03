@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { AppRunningID } from "../../Desktop/Contexts/RunningAppsContext"
 import "./MediaController.css"
 import { VideoUpdatableOptions } from "../MediaViewer/VideoMedia/VideoMedia"
+import { ContextMenuContext, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext"
 
 export type MediaControllerProps = AppRunningID & {
     startingValues: VideoUpdatableOptions,
@@ -11,10 +12,18 @@ export type MediaControllerProps = AppRunningID & {
     connectToMediaViewer: (newControllerAppID:string) => void
 }
 
-
+type BeatPadValue = {
+    keycode: React.KeyboardEvent["key"] | null
+    timeStamp: number,
+    playbackRate: number,
+    preservesPitch: boolean
+}
 
 export function MediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
     const [currentOptions, setCurrentOptions] = useState<VideoUpdatableOptions>(startingValues)
+    const [beatPadValues, setBeatPadValues] = useState<BeatPadValue[]>([])
+
+    const {contextMenuDispatch} = useContext(ContextMenuContext)
 
     useEffect(()=>{
         connectToMediaViewer(app_running_id)
@@ -39,6 +48,12 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
         // console.log(newOptionKey, newOptionValue)
         setCurrentOptions(pendingState =>({...pendingState, [newOptionKey]:newOptionValue}))
         updateVideoCustomOptions(newOptionKey, newOptionValue)
+    }
+
+    function applyBeatPadValue(beatPadValue: BeatPadValue){
+        changeValue("currentTime", beatPadValue.timeStamp)
+        changeValue("playbackRate", beatPadValue.playbackRate)
+        changeValue("preservesPitch", beatPadValue.preservesPitch)
     }
     
 
@@ -96,9 +111,92 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
             </div>
 
             <div className="media-controller-section">
-                <div className="color-swap-title">
+                <div className="media-controller-section-titlebar">
+                    Beat Pad
+                    <div className="media-controller-section-titlebar-button common-border"
+                        onClick={()=>{
+                            beatPadValues.push()
+                            setBeatPadValues([...beatPadValues, {
+                                keycode: null,
+                                timeStamp: currentOptions.currentTime,
+                                playbackRate: currentOptions.playbackRate,
+                                preservesPitch: currentOptions.preservesPitch
+                            }])
+                        }}
+                    >
+                        +
+                    </div>
+                </div>
+                <div className="beat-pad-section">
+                    {
+                        beatPadValues.map((value, index)=>{
+                            return(
+                                <div className="beat-pad-section-value common-border" 
+                                    onClick={()=>{applyBeatPadValue(value)}}
+                                    onContextMenu={(event)=>{
+                                        contextMenuPropagation(event)
+                                        contextMenuDispatch({
+                                            type:"SET",
+                                            event: event,
+                                            newOptions:{
+                                                "Delete pad": ()=>{
+                                                    beatPadValues.splice(index, 1)
+                                                    setBeatPadValues(beatPadValues)
+                                                },
+                                                "Update pad with current": ()=>{
+                                                    beatPadValues[index] = {
+                                                        keycode: value.keycode,
+                                                        timeStamp: currentOptions.currentTime,
+                                                        playbackRate: currentOptions.playbackRate,
+                                                        preservesPitch: currentOptions.preservesPitch
+                                                    }
+                                                    setBeatPadValues(beatPadValues)
+                                                },
+                                                "Update pad timestamp": ()=>{
+                                                    beatPadValues[index] = {
+                                                        ...value,
+                                                        timeStamp: currentOptions.currentTime,
+                                                        
+                                                    }
+                                                    setBeatPadValues(beatPadValues)
+                                                },
+                                                "Update pad playbackrate": ()=>{
+                                                    beatPadValues[index] = {
+                                                        ...value,
+                                                        playbackRate: currentOptions.playbackRate,
+                                                        
+                                                    }
+                                                    setBeatPadValues(beatPadValues)
+                                                },
+                                                "Swap pad preserve pitch": ()=>{
+                                                    beatPadValues[index] = {
+                                                        ...value,
+                                                        preservesPitch: !value.preservesPitch,
+                                                        
+                                                    }
+                                                    setBeatPadValues(beatPadValues)
+                                                },
+                                            }
+                                        })
+                                    }}
+                                
+                                >
+                                    {index} <br/>
+                                    {value.keycode != null ? <>{value.keycode} <br/></>: <></>}
+                                    {value.preservesPitch ? <>True</> : <>False</>} <br/>
+                                    {value.playbackRate} <br/>
+                                    {value.timeStamp} <br/>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </div>
+
+            <div className="media-controller-section">
+                <div className="media-controller-section-titlebar">
                     Colour Swap
-                    <div className="colour-swap-add common-border" onClick={()=>{
+                    <div className="media-controller-section-titlebar-button common-border" onClick={()=>{
                         changeValue("colourSwapList", {
                             values:[...currentOptions.colourSwapList.values, {
                                 from:{red:0, green:0, blue:0, alpha:0},
