@@ -199,7 +199,7 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                     {
                         beatPadValues.map((value, index)=>{
                             return(
-                                <div className="beat-pad-section-value common-border" 
+                                <div className="beat-pad-section-value common-border" key={"beat-pad-value"+index}
                                     onClick={()=>{applyBeatPadValue(value)}}
                                     onContextMenu={(event)=>{
                                         contextMenuPropagation(event)
