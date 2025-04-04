@@ -208,6 +208,11 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                                             event: event,
                                             newOptions:{
                                                 "Delete pad": ()=>{
+                                                    if (value.keycode){
+                                                        delete beatPadMappings.list[value.keycode]
+                                                        setBeatPadMappings(beatPadMappings)
+                                                    }
+
                                                     beatPadValues.splice(index, 1)
                                                     setBeatPadValues(beatPadValues)
                                                 },
