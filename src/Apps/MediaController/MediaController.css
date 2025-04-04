@@ -5,6 +5,7 @@
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
+    user-select: none;
 
     .media-controller-section-holder{
         display:flex;
