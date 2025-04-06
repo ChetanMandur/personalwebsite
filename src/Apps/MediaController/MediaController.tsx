@@ -30,6 +30,7 @@ type BeatPadMapping ={
 
 export function MediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
     const [currentOptions, setCurrentOptions] = useState<VideoUpdatableOptions>(startingValues)
+    const [currentTimeForm, setCurrentTimeForm] = useState<number>(startingValues.currentTime)
     const [beatPadValues, setBeatPadValues] = useState<BeatPadValue[]>([])
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
@@ -40,38 +41,38 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
     const hasFocus = runningAppsData[app_running_id].zIndex == 999
 
 
-  useEffect(()=>{
-    function keyDownHandler(event:KeyboardEvent){
-      if (hasFocus){
-        if (beatPadMappings.toMap == -1){
-            if (beatPadMappings.list[event.key]){
-                console.log("value",beatPadMappings.list[event.key])
-                applyBeatPadValue(beatPadMappings.list[event.key])
+    useEffect(()=>{
+        function keyDownHandler(event:KeyboardEvent){
+            if (hasFocus){
+                if (beatPadMappings.toMap == -1){
+                    if (beatPadMappings.list[event.key]){
+                        // console.log("value",beatPadMappings.list[event.key])
+                        applyBeatPadValue(beatPadMappings.list[event.key])
 
-            }
-            else{
-                console.log("key not assigned to pad")
-            }
-        }
-        else{
-            console.log("to map", beatPadMappings.toMap)
+                    }
+                    else{
+                        // console.log("key not assigned to pad")
+                    }
+                }
+                else{
+                    // console.log("to map", beatPadMappings.toMap)
+                    
+                    if (!beatPadMappings.list[event.key]){
+                        beatPadValues[beatPadMappings.toMap].keycode = event.key
+                        setBeatPadValues(beatPadValues)
             
-            if (!beatPadMappings.list[event.key]){
-                beatPadValues[beatPadMappings.toMap].keycode = event.key
-                setBeatPadValues(beatPadValues)
-    
-                beatPadMappings.list[event.key] = beatPadValues[beatPadMappings.toMap]
-                beatPadMappings.toMap = -1
-                setBeatPadMappings(beatPadMappings)
+                        beatPadMappings.list[event.key] = beatPadValues[beatPadMappings.toMap]
+                        beatPadMappings.toMap = -1
+                        setBeatPadMappings(beatPadMappings)
+                    }
+                }
             }
         }
-      }
-    }
-  
-    document.addEventListener("keydown", keyDownHandler)
+    
+        document.addEventListener("keydown", keyDownHandler)
 
-    return () => document.removeEventListener("keydown", keyDownHandler)
-  },[hasFocus, app_running_id, beatPadMappings])
+        return () => document.removeEventListener("keydown", keyDownHandler)
+    },[hasFocus, app_running_id, beatPadMappings])
 
 
     useEffect(()=>{
@@ -84,7 +85,15 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
     },[app_running_id, connectToMediaViewer])
 
     useEffect(()=>{
-        const intervalID = setInterval(()=>{setCurrentOptions(pendingState=>({...pendingState, currentTime: videoRef.current!.currentTime, playing: !videoRef.current?.paused}))}, 0)
+        const intervalID = setInterval(()=>{setCurrentOptions(pendingState=>{
+            if (!videoRef.current?.paused){
+                setCurrentTimeForm(videoRef.current!.currentTime)
+            }
+            return {...pendingState, currentTime: videoRef.current!.currentTime, playing: !videoRef.current?.paused}
+        })
+        
+        
+        }, 0)
 
         return ()=>{
             clearInterval(intervalID)
@@ -155,7 +164,32 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                     <input type="range"  tabIndex={-1} value={currentOptions.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
 
                 </div>
-                {currentOptions.currentTime.toFixed(6)}
+                <input type="number" placeholder="0"  value={currentTimeForm || ''} min={0} max={videoRef.current!.duration}
+                    step={0.000001}
+                    onChange={(event)=>{
+                        const targetValue = Number(Number(event.target.value).toFixed(6))
+
+                        if (targetValue >= 0 && targetValue <= videoRef.current!.duration){
+                            setCurrentTimeForm(targetValue)
+                        }
+                    }}
+                    onKeyDown={(event)=>{
+                        switch (event.key) {
+                            case "-":
+                                event.preventDefault()
+                                break;
+                            case "Enter":
+                                event.currentTarget.blur()
+                                break;
+                            default:
+                                break;
+                        }
+                    }}
+                    onBlur={()=>{
+                        changeValue("currentTime", currentTimeForm)
+                    }}
+                />
+
             </div>
             <div className="media-controller-section">
                 Preserve Pitch
@@ -373,7 +407,7 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                                         
                                         <div className="colour-swap-section-value-option" >
                                             RANGE:
-                                            <input type="number" placeholder="0" value={value.range || ''} min={0} max={255}
+                                            <input type="number" className="colour-swap-section-value-option-number" placeholder="0" value={value.range || ''} min={0} max={255}
                                                 onChange={(event)=>{
                                                     const targetValue = Number(event.target.value)
                                                     if (targetValue >= 0 && targetValue <= 255){

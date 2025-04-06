@@ -155,7 +155,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     },[videoProperties.currentTime])
 
     useEffect(()=>{
-        console.log("update custom options",videoProperties)
+        // console.log("update custom options",videoProperties)
         if (!videoProperties.playing){
             requestAnimationFrame(renderFrame)
         }

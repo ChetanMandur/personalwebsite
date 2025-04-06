@@ -99,33 +99,11 @@
                         padding:0;
                         
                     }
-                    input[type="number"]{
-                        /* block-size: 1vh; */
-                        background-color: var(--bar-default-colour);
-                        text-align: center;
 
+                    .colour-swap-section-value-option-number{
                         width: 2.5vh;
-                        border: none;
                         padding: 0;
                         height: 3vh;
-
-                    }
-
-                    input[type="number"]:focus{
-                        outline: none
-                    }
-                    input[type="number"]:focus::placeholder{
-                        color: transparent
-                    }
-                    input[type="number"]::placeholder{
-                        color: rgb(0, 0, 0);
-                    }
-
-                    input[type="number"]::-webkit-outer-spin-button,
-                    input[type="number"]::-webkit-inner-spin-button{
-                        -webkit-appearance: none;
-                        margin: 0;
-
                     }
 
                 }
@@ -177,6 +155,31 @@
             border: var(--bar-border-outline);
             border-right-color: black;
             border-bottom-color: black;
+        }
+
+        input[type="number"]{
+            /* block-size: 1vh; */
+            background-color: var(--bar-default-colour);
+            text-align: center;
+            border: none;
+
+        }
+
+        input[type="number"]:focus{
+            outline: none
+        }
+        input[type="number"]:focus::placeholder{
+            color: transparent
+        }
+        input[type="number"]::placeholder{
+            color: rgb(0, 0, 0);
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button{
+            -webkit-appearance: none;
+            margin: 0;
+
         }
     }
 }
