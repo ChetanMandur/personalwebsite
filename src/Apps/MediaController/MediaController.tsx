@@ -28,9 +28,15 @@ type BeatPadMapping ={
     list: BeatPadMappingList
 }
 
+type FormValues = {
+    currentTime: number,
+    playbackRate: number,
+}
+
 export function MediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
     const [currentOptions, setCurrentOptions] = useState<VideoUpdatableOptions>(startingValues)
-    const [currentTimeForm, setCurrentTimeForm] = useState<number>(startingValues.currentTime)
+    const [currentFormOptions, setCurrentFormOptions] = useState<FormValues>({currentTime:startingValues.currentTime, playbackRate: startingValues.playbackRate})
+    
     const [beatPadValues, setBeatPadValues] = useState<BeatPadValue[]>([])
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
@@ -87,7 +93,7 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
     useEffect(()=>{
         const intervalID = setInterval(()=>{setCurrentOptions(pendingState=>{
             if (!videoRef.current?.paused){
-                setCurrentTimeForm(videoRef.current!.currentTime)
+                setCurrentFormOptions(pendingState=>({currentTime:videoRef.current!.currentTime, playbackRate: pendingState.playbackRate}))
             }
             return {...pendingState, currentTime: videoRef.current!.currentTime, playing: !videoRef.current?.paused}
         })
@@ -164,13 +170,12 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                     <input type="range"  tabIndex={-1} value={currentOptions.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
 
                 </div>
-                <input type="number" placeholder="0"  value={currentTimeForm || ''} min={0} max={videoRef.current!.duration}
+                <input type="number" placeholder="0"  value={currentFormOptions.currentTime || ''} min={0} max={videoRef.current!.duration}
                     step={0.000001}
                     onChange={(event)=>{
                         const targetValue = Number(Number(event.target.value).toFixed(6))
-
                         if (targetValue >= 0 && targetValue <= videoRef.current!.duration){
-                            setCurrentTimeForm(targetValue)
+                            setCurrentFormOptions(pendingState=>({currentTime:targetValue, playbackRate: pendingState.playbackRate}))
                         }
                     }}
                     onKeyDown={(event)=>{
@@ -186,7 +191,7 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                         }
                     }}
                     onBlur={()=>{
-                        changeValue("currentTime", currentTimeForm)
+                        changeValue("currentTime", currentFormOptions.currentTime)
                     }}
                 />
 
@@ -199,7 +204,29 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
             <div className="media-controller-section">
                 Playback Rate
                 <input type="range" tabIndex={-1} value={currentOptions.playbackRate} min={0} max={2} step={0.1} onChange={(event)=>{changeValue("playbackRate", Number(event.target.value))}} name="playbackRate" id="playbackRate" />
-                {currentOptions.playbackRate}
+                <input type="number" placeholder="0"  value={currentFormOptions.playbackRate || ''} min={0} max={2} step={0.1}
+                    onChange={(event)=>{
+                        const targetValue = Number(Number(event.target.value).toFixed(1))
+                        if (targetValue >= 0 && targetValue <= 2){
+                            setCurrentFormOptions(pendingState=>({playbackRate:targetValue, currentTime: pendingState.currentTime}))
+                        }
+                    }}
+                    onKeyDown={(event)=>{
+                        switch (event.key) {
+                            case "-":
+                                event.preventDefault()
+                                break;
+                            case "Enter":
+                                event.currentTarget.blur()
+                                break;
+                            default:
+                                break;
+                        }
+                    }}
+                    onBlur={()=>{
+                        changeValue("playbackRate", currentFormOptions.playbackRate)
+                    }}
+                />
             </div>
             <div className="media-controller-section-holder">
                 <div className="media-controller-section">
