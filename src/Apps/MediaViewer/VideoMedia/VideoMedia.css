@@ -1,4 +1,4 @@
-@keyframes show-overlay {
+@keyframes show-bottom-bar {
     from{
         transform: translateY(20vh);
     }
@@ -8,13 +8,36 @@
     }
 }
 
-@keyframes hide-overlay {
+@keyframes hide-bottom-bar {
     from{
         transform: translateY(0vh);
 
     }
     to{
         transform: translateY(20vh);
+
+
+        
+    }
+}
+
+@keyframes show-top-bar {
+    from{
+        transform: translateY(-20vh);
+    }
+    to{
+        transform: translateY(0vh);
+
+    }
+}
+
+@keyframes hide-top-bar {
+    from{
+        transform: translateY(0vh);
+
+    }
+    to{
+        transform: translateY(-20vh);
 
 
         
@@ -80,6 +103,21 @@
 
             
         }
+        .show-top-bar{
+            animation-name: show-top-bar;
+            animation-duration: 50ms;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+    
+    
+        }
+    
+        .hide-top-bar{
+            animation-name: hide-top-bar;
+            animation-duration: 50ms;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+        }
 
         .bottom-bar{
             pointer-events: all;
@@ -116,26 +154,25 @@
                 }
             }
         }
+        .show-bottom-bar{
+            animation-name: show-bottom-bar;
+            animation-duration: 50ms;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+    
+    
+        }
+    
+        .hide-bottom-bar{
+            animation-name: hide-bottom-bar;
+            animation-duration: 50ms;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+        }
     }
 
 
-    .show-overlay{
-        animation-name: show-overlay;
-        animation-duration: 50ms;
-        animation-fill-mode: forwards;
-        animation-timing-function: linear;
-
-
-    }
-
-    .hide-overlay{
-        animation-name: hide-overlay;
-        animation-duration: 50ms;
-        animation-fill-mode: forwards;
-        animation-timing-function: linear;
-
-
-    }
+    
 
     canvas{
         object-fit: fill;

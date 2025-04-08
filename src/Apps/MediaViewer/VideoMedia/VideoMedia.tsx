@@ -416,8 +416,8 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 style={{objectFit:(videoProperties.videoFill ? "fill" : "contain")}}
                 
             />            
-            <div className={"video-overlay "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-overlay" : "hide-overlay")}>
-                <div className="top-bar">
+            <div className="video-overlay">
+                <div className={"top-bar "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-top-bar" : "hide-top-bar")}>
                     
                     <div className="common-border video-overlay-top-bar-button media-controller-button"
                         onClick={()=>{
@@ -457,7 +457,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
 
                 </div>
                 
-                <div className="bottom-bar">
+                <div className={"bottom-bar "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-bottom-bar" : "hide-bottom-bar")}>
                     <div className="playback-button common-border"
                         onClick={(event)=>{
                             event.stopPropagation()
