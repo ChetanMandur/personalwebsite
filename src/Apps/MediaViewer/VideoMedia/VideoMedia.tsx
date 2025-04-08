@@ -417,6 +417,46 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 
             />            
             <div className={"video-overlay "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-overlay" : "hide-overlay")}>
+                <div className="top-bar">
+                    
+                    <div className="common-border video-overlay-top-bar-button media-controller-button"
+                        onClick={()=>{
+                            if (controllerAppRunningID == ""){
+                                runningAppsDispatch(
+                                    {
+                                        type:"ADD",
+                                        app_name: "MediaController",
+                                        props:{
+                                            startingValues: {...videoProperties.videoCustomOptions,playing:videoProperties.playing, currentTime:videoProperties.currentTime},
+                                            videoRef: videoProperties.refCollection.videoRef,
+                                            canvasRef: videoProperties.refCollection.canvasRef,
+                                            updateVideoCustomOptions: updateVideoCustomOptions,
+                                            connectToMediaViewer: connectToMediaViewer
+                                        } as MediaControllerProps
+                                    }
+                                )
+                            }
+                            else{
+                                runningAppsDispatch(
+                                    {
+                                        type:"UPDATE-APP-FOCUS",
+                                        app_running_id: controllerAppRunningID
+                                        
+                                    }
+                                ) 
+                            }
+                        }}
+                    >
+                        <img src="https://www.svgrepo.com/show/480630/controller-3.svg" alt="" />
+                    </div>
+                    <div className="common-border video-overlay-top-bar-button video-fill-button"
+                        onClick={()=>{setVideoProperties(pendingState=>({...pendingState, videoFill: !pendingState.videoFill}))}}
+                    >
+                        <img src={videoProperties.videoFill ? "https://www.svgrepo.com/show/509227/size-actual.svg" : "https://www.svgrepo.com/show/509229/size-fullscreen.svg"} alt="" />
+                    </div>
+
+                </div>
+                
                 <div className="bottom-bar">
                     <div className="playback-button common-border"
                         onClick={(event)=>{
