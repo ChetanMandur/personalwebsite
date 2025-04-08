@@ -403,7 +403,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             />            
             <div className="video-overlay">
                 <div className="bottom-bar">
-                    <div className="playback-button"
+                    <div className="playback-button common-border"
                         onClick={(event)=>{
                             event.stopPropagation()
                             playPauseHandler()
@@ -411,7 +411,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                     >
                         <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
                     </div> 
-                    <div className="seek-bar"  ref={videoProperties.refCollection.seekBarRef}
+                    <div className="seek-bar common-border"  ref={videoProperties.refCollection.seekBarRef}
                         onMouseDown={(event)=>{
                             setVideoProperties(pendingState => ({...pendingState, seekBarClicked: true}))
                             videoScrubbing(event)

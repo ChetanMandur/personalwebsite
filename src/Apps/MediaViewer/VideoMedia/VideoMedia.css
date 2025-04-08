@@ -25,7 +25,6 @@
             bottom:0;
             width: 100%;
             height: 2.4vh;
-            background-color: green;
             display: flex;
             flex-direction: row;
             user-select: none;
@@ -33,7 +32,7 @@
             .playback-button{
                 flex: 0 1 2.4vh;
                 width:2.4vh;
-                background-color: brown;
+                background-color: var(--bar-default-colour);
                 pointer-events: all;
                 img{
                     height:100%;
@@ -43,13 +42,15 @@
 
             .seek-bar{
                 flex: 1 1 auto;
-                background-color: blue;
+                background-color: var(--bar-unfocus-colour);
+
                 pointer-events: all;
                 .seek-bar-progress{
                     pointer-events: none;
                     width:0%;
                     height:100%;
-                    background-color: aquamarine;
+                    background-color: var(--bar-default-colour);
+
                 }
             }
         }
