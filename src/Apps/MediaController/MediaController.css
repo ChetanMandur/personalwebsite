@@ -71,6 +71,9 @@
         .color-swap-section{
             display: flex;
             flex-direction: column;
+            min-height: 5.5vh;
+            overflow-x: auto ;
+            resize: vertical;
 
             .colour-swap-section-value{
                 display:flex;
