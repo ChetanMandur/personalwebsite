@@ -416,7 +416,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 style={{objectFit:(videoProperties.videoFill ? "fill" : "contain")}}
                 
             />            
-            {showOverlay.display ? <div className="video-overlay">
+            <div className={"video-overlay "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-overlay" : "hide-overlay")}>
                 <div className="bottom-bar">
                     <div className="playback-button common-border"
                         onClick={(event)=>{
@@ -441,7 +441,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                         </div>
                     </div>
                 </div>
-            </div> : <></>}
+            </div>
             <video ref={videoProperties.refCollection.videoRef} 
             src={currentData} 
             crossOrigin="anonymous"
