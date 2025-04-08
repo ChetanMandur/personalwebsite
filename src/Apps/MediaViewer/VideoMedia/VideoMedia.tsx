@@ -60,6 +60,11 @@ export type VideoUpdatableOptions = VideoCustomOptions & {
     currentTime: number
 }
 
+type OverlayProperties = {
+    display: boolean,
+    timeoutID: React.MutableRefObject<number | null>
+}
+
 export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
     const defaultVideoProperties : VideoProperties = {
         playing: true,
@@ -87,6 +92,8 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
 
     const [videoProperties, setVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
     const [controllerAppRunningID, setControllerAppRunningID] = useState<string>("")
+
+    const [showOverlay, setShowOverlay] = useState<OverlayProperties>({display:false, timeoutID: createRef<number|null>()})
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
@@ -377,7 +384,15 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
         return output
     }
     return (
-        <div className="video-media" key={"video-media"+app_running_id}>
+        <div className="video-media" key={"video-media"+app_running_id}
+            onMouseMove={()=>{
+                if (showOverlay.timeoutID.current){
+                    clearTimeout(showOverlay.timeoutID.current)
+                }
+                setShowOverlay({...showOverlay, display:true})
+                showOverlay.timeoutID.current = setTimeout(()=>{setShowOverlay({...showOverlay, display:false})}, 3000)
+            }}
+        >
             <canvas ref={videoProperties.refCollection.canvasRef} 
                 onDoubleClick={(event)=>{
                     event.stopPropagation();
@@ -401,7 +416,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 style={{objectFit:(videoProperties.videoFill ? "fill" : "contain")}}
                 
             />            
-            <div className="video-overlay">
+            {showOverlay.display ? <div className="video-overlay">
                 <div className="bottom-bar">
                     <div className="playback-button common-border"
                         onClick={(event)=>{
@@ -426,7 +441,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> : <></>}
             <video ref={videoProperties.refCollection.videoRef} 
             src={currentData} 
             crossOrigin="anonymous"
