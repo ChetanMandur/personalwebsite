@@ -136,6 +136,7 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
         changeValue("currentTime", beatPadValue.timeStamp)
         changeValue("playbackRate", beatPadValue.playbackRate)
         changeValue("preservesPitch", beatPadValue.preservesPitch)
+        setCurrentFormOptions({currentTime: beatPadValue.timeStamp, playbackRate: beatPadValue.playbackRate})
     }
     
     
@@ -203,7 +204,12 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
 
             <div className="media-controller-section">
                 Playback Rate
-                <input type="range" tabIndex={-1} value={currentOptions.playbackRate} min={0} max={2} step={0.1} onChange={(event)=>{changeValue("playbackRate", Number(event.target.value))}} name="playbackRate" id="playbackRate" />
+                <input type="range" tabIndex={-1} value={currentOptions.playbackRate} min={0} max={2} step={0.1} 
+                onChange={(event)=>{
+                    changeValue("playbackRate", Number(event.target.value)); 
+                    setCurrentFormOptions((pendingState)=>({...pendingState, playbackRate: Number(event.target.value)}))
+                }} 
+                name="playbackRate" id="playbackRate" />
                 <input type="number" placeholder="0"  value={currentFormOptions.playbackRate || ''} min={0} max={2} step={0.1}
                     onChange={(event)=>{
                         const targetValue = Number(Number(event.target.value).toFixed(1))
