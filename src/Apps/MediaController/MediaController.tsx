@@ -284,32 +284,40 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
                                                     setBeatPadValues(beatPadValues)
                                                 },
                                                 "Update pad with current": ()=>{
-                                                    updateBeatPadValue(index, {
-                                                        keycode: value.keycode,
-                                                        timeStamp: currentOptions.currentTime,
-                                                        playbackRate: currentOptions.playbackRate,
-                                                        preservesPitch: currentOptions.preservesPitch
+                                                    setCurrentOptions(pendingState =>{
+                                                        updateBeatPadValue(index, {
+                                                            keycode: value.keycode,
+                                                            timeStamp: pendingState.currentTime,
+                                                            playbackRate: pendingState.playbackRate,
+                                                            preservesPitch: pendingState.preservesPitch
+                                                        })
+                                                        return pendingState
                                                     })
                                                     
                                                 },
                                                 "Update pad timestamp": ()=>{
-                                                    updateBeatPadValue(index,{
-                                                        ...value,
-                                                        timeStamp: currentOptions.currentTime,
+                                                    setCurrentOptions(pendingState =>{
+                                                        updateBeatPadValue(index,{
+                                                            ...value,
+                                                            timeStamp: pendingState.currentTime,
+                                                        })
+                                                        return pendingState
                                                     })
                                                 },
                                                 "Update pad playbackrate": ()=>{
-                                                    updateBeatPadValue(index, {
-                                                        ...value,
-                                                        playbackRate: currentOptions.playbackRate,
-                                                        
+                                                    setCurrentOptions(pendingState =>{
+                                                        updateBeatPadValue(index, {
+                                                            ...value,
+                                                            playbackRate: pendingState.playbackRate,
+                                                            
+                                                        })
+                                                        return pendingState
                                                     })
                                                 },
                                                 "Swap pad preserve pitch": ()=>{
                                                     updateBeatPadValue(index, {
                                                         ...value,
                                                         preservesPitch: !value.preservesPitch,
-                                                        
                                                     })
                                                 },
                                                 "Set key value": ()=>{
