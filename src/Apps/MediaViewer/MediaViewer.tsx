@@ -6,16 +6,15 @@ import { VideoMedia } from "./VideoMedia/VideoMedia"
 
 export type MediaViewerProps = AppRunningID & {
     name: string,
-    data: string,
-    type: MyFileSystemFile["type"],
+    fileData: MyFileSystemFile
 }
 
 
 
-export function MediaViewer({data, type, app_running_id, name}:MediaViewerProps){
+export function MediaViewer({fileData, app_running_id, name}:MediaViewerProps){
     
-    const [currentData] = useState<string>(data ?? "")
-    const [currentType] = useState<MyFileSystemFile["type"] | null>(type ?? null)
+    const [currentData] = useState<string>(fileData.data ?? "")
+    const [currentType] = useState<MyFileSystemFile["type"] | null>(fileData.type ?? null)
 
     const {runningAppsDispatch} = useContext(RunningAppsContext)
     
