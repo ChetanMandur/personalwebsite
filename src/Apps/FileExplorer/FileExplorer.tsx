@@ -139,7 +139,11 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                         if (typeof currentPathSuggestions != "string"){
                             event.preventDefault()
                             pathEnter(currentPathSuggestions![highlightPathSuggestion][0])
-                            setHighlightPathSuggestion(0)
+                            if (currentPathSuggestions![highlightPathSuggestion][1] == "FILE"){
+                                event.currentTarget.blur()
+                            } else{
+                                setHighlightPathSuggestion(0)
+                            }
                         } else {
                             if (currentPathSuggestions != "ERROR"){
                                 event.currentTarget.blur()
