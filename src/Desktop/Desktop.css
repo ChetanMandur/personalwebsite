@@ -36,6 +36,15 @@
     background-color: var(--scroll-bar-colour);
   }
 
+  ::-webkit-resizer{
+    background-image: url(https://www.svgrepo.com/show/532207/resize-handle.svg);
+    background-size: contain;
+  }
+
+  ::-webkit-scrollbar-corner{
+    background-color: transparent;
+  }
+
   input{
     font-size: 1rem;
   }
