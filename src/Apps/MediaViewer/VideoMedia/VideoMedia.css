@@ -179,4 +179,13 @@
         width: 100%;
         height: 100%;
     }
-}
+
+    .canvas-fill{
+        object-fit: fill;
+    }
+
+    .canvas-contain{
+        object-fit: contain;
+    }
+
+}   

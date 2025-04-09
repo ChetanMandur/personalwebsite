@@ -393,7 +393,8 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                 showOverlay.timeoutID.current = setTimeout(()=>{setShowOverlay({...showOverlay, display:false})}, 3000)
             }}
         >
-            <canvas ref={videoProperties.refCollection.canvasRef} 
+            <canvas ref={videoProperties.refCollection.canvasRef}  
+                className={videoProperties.videoFill ? "canvas-fill" : "canvas-contain"}
                 onDoubleClick={(event)=>{
                     event.stopPropagation();
                     runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
@@ -413,8 +414,6 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
                     )
 
                 }}
-                style={{objectFit:(videoProperties.videoFill ? "fill" : "contain")}}
-                
             />            
             <div className="video-overlay">
                 <div className={"top-bar "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-top-bar" : "hide-top-bar")}>
