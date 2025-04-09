@@ -483,7 +483,7 @@ export function VideoMedia ({app_running_id, currentData}:VideoMediaProps) {
             </div>
             <video ref={videoProperties.refCollection.videoRef} 
             src={currentData} 
-            // crossOrigin="anonymous"
+            crossOrigin="use-credentials"
             onPlay={()=>{
                 setVideoProperties(pendingProperties =>({
                     ...pendingProperties,
