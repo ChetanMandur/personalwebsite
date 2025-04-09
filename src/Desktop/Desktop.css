@@ -35,6 +35,10 @@
     
     background-color: var(--scroll-bar-colour);
   }
+
+  input{
+    font-size: 1rem;
+  }
   
   .common-border {
 
