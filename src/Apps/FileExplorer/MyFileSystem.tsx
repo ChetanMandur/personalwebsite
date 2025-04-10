@@ -19,6 +19,16 @@ export const MyFileSystem : MyFileSystemFolder = {
             data: "https://upload.wikimedia.org/wikipedia/commons/0/02/Carved_wooden_bench_furniture_and_crafts_at_Heuan_Chan_heritage_house_in_Luang_Prabang_Laos.jpg",
             hidden: false
         },
+        "tybg":{
+            type: "IMAGE",
+            data:"https://c.tenor.com/4kpF986JjZkAAAAd/tenor.gif",
+            hidden: false
+        },
+        "cat fell":{
+            type:"IMAGE",
+            data:"https://media1.tenor.com/m/nAYI--YdBzIAAAAd/fell.gif",
+            hidden:false
+        },
         imageSubFolder:{
             hidden:false
         }
