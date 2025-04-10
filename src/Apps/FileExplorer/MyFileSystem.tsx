@@ -42,7 +42,7 @@ export const MyFileSystem : MyFileSystemFolder = {
         },
         "i know live":{
             type:"VIDEO",
-            data: "./iknow.mp4",
+            data: "https://dl.dropboxusercontent.com/scl/fi/38slbwzsjhjrtbu4foq4q/iknow.mp4?rlkey=9dbb68bgfl5v2i1el6i46520z&st=hhwqe6l6&dl=0",
             hidden:false,
         },
         "2016xxlcypher":{
