@@ -27,7 +27,11 @@ export function MediaViewer({fileData, app_running_id, name}:MediaViewerProps){
     function MediaGenerator():JSX.Element{
         switch (currentType) {
             case "IMAGE":
-                return <div className="image-container" style={{backgroundImage:`url(${currentData})`}}></div>
+                return (
+                    <div className="image-media">
+                        <img src={currentData}/>
+                    </div>
+                )
 
             
             case "VIDEO":
