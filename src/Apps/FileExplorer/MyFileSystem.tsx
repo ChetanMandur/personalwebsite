@@ -47,17 +47,17 @@ export const MyFileSystem : MyFileSystemFolder = {
         },
         "2016xxlcypher":{
             type: "VIDEO",
-            data:"./2016xxlcypher.mp4",
+            data:"https://dl.dropboxusercontent.com/scl/fi/ypj2w4480tnz2cdwawmuk/2016xxlcypher.mp4?rlkey=u64ygq5crrlr38s4h5l37ez1k&st=j7upd3rl&dl=0",
             hidden:false
         },
         "60fps":{
             type: "VIDEO",
-            data:"./60fps.mp4",
+            data:"https://dl.dropboxusercontent.com/scl/fi/12j6sdk3879inkijzd4dt/60fps.mp4?rlkey=04scwwrb73oxfsqk09myyb08b&st=dpsxdg7f&dl=0",
             hidden:false
         },
         "30fps":{
             type: "VIDEO",
-            data:"./30fps.mp4",
+            data:"https://dl.dropboxusercontent.com/scl/fi/d0yy66y0oe2l82mkdf6be/30fps.mp4?rlkey=nwa117hx2zjkpnekkb1q8hw8u&st=sfafnxv3&dl=0",
             hidden:false
         }
     },
