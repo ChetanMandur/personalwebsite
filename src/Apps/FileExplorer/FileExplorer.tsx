@@ -13,10 +13,14 @@ export type FileExplorerProps = AppRunningID & {
 
 type FolderEntry = [string, MyFileSystemFolder | MyFileSystemFile | boolean]
 
+type CurrentFolder = {
+    path: string,
+    content: FolderEntry[]
+}
+
 export default function FileExplorer({path, app_running_id}:FileExplorerProps){
-    const [currentPath, setCurrentPath] = useState<string>("")
     const [addressBoxPath, setAddressBoxPath] = useState<string>("")
-    const [currentFolder, setCurrentFolder] = useState<FolderEntry[]>([])
+    const [currentFolder, setCurrentFolder] = useState<CurrentFolder>({path:"", content:[]})
 
     const [selected, setSelected] = useState<string>("")
     const [showHidden, setShowHidden] = useState<boolean>(false)
@@ -38,9 +42,8 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
             if (pathObject != null){
                 if (pathResponse == "FOLDER"){
-                    setCurrentPath(pathCleaned)
+                    setCurrentFolder({path: pathCleaned, content: Object.entries(pathObject as MyFileSystemFolder)})
                     setAddressBoxPath(pathCleaned)
-                    setCurrentFolder(Object.entries(pathObject as MyFileSystemFolder))
                     runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id, appAdditionalTitle: pathToArray(pathCleaned).pop()!})
 
                 } else{
@@ -50,14 +53,12 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 }
             }
             else{
-                setCurrentPath("/")
                 setAddressBoxPath("/")
-                setCurrentFolder(Object.entries(MyFileSystem))
+                setCurrentFolder({path: "/", content: Object.entries(MyFileSystem)})
             }
         } else{
-            setCurrentPath("/")
             setAddressBoxPath("/")
-            setCurrentFolder(Object.entries(MyFileSystem))
+            setCurrentFolder({path: "/", content: Object.entries(MyFileSystem)})
         }
     },[])
 
@@ -69,7 +70,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
         if (pathObject == null){
             alert(`The path ${path} does not exist.` )
-            setAddressBoxPath(currentPath)
+            setAddressBoxPath(currentFolder.path)
         } 
         else{
             if (pathResponse == "FILE"){
@@ -78,9 +79,8 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 setShowPathSuggestions(false)
             } 
             else if (pathResponse == "FOLDER"){
-                setCurrentPath(path)
                 setAddressBoxPath(path)
-                setCurrentFolder(Object.entries(pathObject))
+                setCurrentFolder({path: path, content: Object.entries(pathObject)})
                 runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: pathToArray(path).pop()!})
 
                 RenderPathSuggestions(path)
@@ -103,7 +103,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                     if (-1 < highlightPathSuggestion && highlightPathSuggestion <= currentPathSuggestions!.length){
                         setHighlightPathSuggestion(highlightPathSuggestion-1)
                         if (highlightPathSuggestion -1 == -1){
-                            setAddressBoxPath(currentPath)
+                            setAddressBoxPath(currentFolder.path)
                         } else{
                             setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion-1][0])
                         }
@@ -126,7 +126,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                         setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion+1][0])
                     } else if (highlightPathSuggestion == currentPathSuggestions!.length-1){
                         setHighlightPathSuggestion(-1)
-                        setAddressBoxPath(currentPath)
+                        setAddressBoxPath(currentFolder.path)
                     }
                 }else{
                     setHighlightPathSuggestion( (highlightPathSuggestion != -1 ? (-1):(0)) )
@@ -156,7 +156,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             case "ArrowLeft":
                 if (highlightPathSuggestion != -1){
                     event.preventDefault()
-                    pathEnter(getParentPath(currentPath))
+                    pathEnter(getParentPath(currentFolder.path))
                     setHighlightPathSuggestion(0)
                 }
                 break;
@@ -172,7 +172,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
     //Handler for when back button is pressed
     function backButtonPressed(){
-        const pathArray = pathToArray(currentPath)
+        const pathArray = pathToArray(currentFolder.path)
         if (pathArray.length != 0){
             pathArray.pop()
             const newPath = arrayToPath(pathArray)
@@ -195,13 +195,13 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         event.stopPropagation();
         switch(folderItemType(item[1])){
             case "FOLDER":{
-                pathEnter(currentPath + "/" +item[0])
+                pathEnter(currentFolder.path + "/" +item[0])
                 break;
 
             }
             case "FILE":{
                 // runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{data:(item[1] as MyFileSystemFile).data, type:(item[1] as MyFileSystemFile).type} as MediaViewerProps})
-                pathEnter(currentPath + "/" +item[0])
+                pathEnter(currentFolder.path + "/" +item[0])
                 setSelected("")
                 break;
             }
@@ -365,7 +365,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                         className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} 
                                         onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} 
                                         onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBoxPath(item[0])}} 
-                                        onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBoxPath(currentPath)}}>
+                                        onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBoxPath(currentFolder.path)}}>
                                             {item[0]} 
                                             <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div>
                                     </div>
@@ -387,7 +387,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             }}
         >
             {
-                currentFolder.map ( (item) =>{
+                currentFolder.content.map ( (item) =>{
                     const itemType = folderItemType(item[1])
 
                     if (itemType == "BOOLEAN"){
@@ -414,7 +414,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                                     type:"ADD",
                                                     app_name:"FileExplorer",
                                                     props: {
-                                                        path: currentPath + "/" + item[0]
+                                                        path: currentFolder.path + "/" + item[0]
                                                     } as FileExplorerProps
                                                 });
                                                 runningAppsDispatch({
@@ -427,7 +427,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                                     type:"ADD",
                                                     app_name:"FileExplorer",
                                                     props: {
-                                                        path: currentPath + "/" + item[0]
+                                                        path: currentFolder.path + "/" + item[0]
                                                     } as FileExplorerProps
                                                 });
                                             },
