@@ -19,7 +19,7 @@ type CurrentFolder = {
 }
 
 export default function FileExplorer({path, app_running_id}:FileExplorerProps){
-    const [addressBoxPath, setAddressBoxPath] = useState<string>("")
+    const [addressBox, setAddressBox] = useState<string>("")
     const [currentFolder, setCurrentFolder] = useState<CurrentFolder>({path:"", content:[]})
 
     const [selected, setSelected] = useState<string>("")
@@ -43,7 +43,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             if (pathObject != null){
                 if (pathResponse == "FOLDER"){
                     setCurrentFolder({path: pathCleaned, content: Object.entries(pathObject as MyFileSystemFolder)})
-                    setAddressBoxPath(pathCleaned)
+                    setAddressBox(pathCleaned)
                     runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id, appAdditionalTitle: pathToArray(pathCleaned).pop()!})
 
                 } else{
@@ -53,11 +53,11 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 }
             }
             else{
-                setAddressBoxPath("/")
+                setAddressBox("/")
                 setCurrentFolder({path: "/", content: Object.entries(MyFileSystem)})
             }
         } else{
-            setAddressBoxPath("/")
+            setAddressBox("/")
             setCurrentFolder({path: "/", content: Object.entries(MyFileSystem)})
         }
     },[])
@@ -70,7 +70,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
         if (pathObject == null){
             alert(`The path ${path} does not exist.` )
-            setAddressBoxPath(currentFolder.path)
+            setAddressBox(currentFolder.path)
         } 
         else{
             if (pathResponse == "FILE"){
@@ -79,7 +79,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 setShowPathSuggestions(false)
             } 
             else if (pathResponse == "FOLDER"){
-                setAddressBoxPath(path)
+                setAddressBox(path)
                 setCurrentFolder({path: path, content: Object.entries(pathObject)})
                 runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: pathToArray(path).pop()!})
 
@@ -93,7 +93,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     function addressKeyHandler(event: React.KeyboardEvent<HTMLInputElement>){
         switch (event.key) {
             case "Enter":
-                pathEnter(addressBoxPath)
+                pathEnter(addressBox)
                 event.currentTarget.blur()
                 break;
 
@@ -103,14 +103,14 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                     if (-1 < highlightPathSuggestion && highlightPathSuggestion <= currentPathSuggestions!.length){
                         setHighlightPathSuggestion(highlightPathSuggestion-1)
                         if (highlightPathSuggestion -1 == -1){
-                            setAddressBoxPath(currentFolder.path)
+                            setAddressBox(currentFolder.path)
                         } else{
-                            setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion-1][0])
+                            setAddressBox(currentPathSuggestions![highlightPathSuggestion-1][0])
                         }
                     } 
                     else if (highlightPathSuggestion == -1){
                         setHighlightPathSuggestion(currentPathSuggestions!.length-1)
-                        setAddressBoxPath(currentPathSuggestions![currentPathSuggestions!.length-1][0])
+                        setAddressBox(currentPathSuggestions![currentPathSuggestions!.length-1][0])
     
                     }
                 } else{
@@ -123,10 +123,10 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 if (typeof currentPathSuggestions != "string"){
                     if (-1 <= highlightPathSuggestion && highlightPathSuggestion < currentPathSuggestions!.length-1){
                         setHighlightPathSuggestion(highlightPathSuggestion+1)
-                        setAddressBoxPath(currentPathSuggestions![highlightPathSuggestion+1][0])
+                        setAddressBox(currentPathSuggestions![highlightPathSuggestion+1][0])
                     } else if (highlightPathSuggestion == currentPathSuggestions!.length-1){
                         setHighlightPathSuggestion(-1)
-                        setAddressBoxPath(currentFolder.path)
+                        setAddressBox(currentFolder.path)
                     }
                 }else{
                     setHighlightPathSuggestion( (highlightPathSuggestion != -1 ? (-1):(0)) )
@@ -224,7 +224,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     function RenderPathSuggestions(path?:string){
         //If a path is not given, use the path in addressBox
         if (path == undefined){
-            path = addressBoxPath
+            path = addressBox
         }
 
         //Clean path and find pathArray
@@ -345,7 +345,26 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             <div className="back-button" onMouseDown={(event)=>{event.preventDefault();backButtonPressed()}}>
                 <img src="https://www.svgrepo.com/show/500777/back.svg" />
             </div>
-            <input type="text" onFocus={()=>{setShowPathSuggestions(true); RenderPathSuggestions(); setHighlightPathSuggestion(-1)}} onBlur={()=>{setShowPathSuggestions(false)}} spellCheck="false"  autoComplete="off" value={addressBoxPath} onKeyDown={(event)=>{addressKeyHandler(event)}} onChange={(event)=>{setAddressBoxPath(event.target.value); RenderPathSuggestions(event.target.value)}} name="address-box" id="" />
+            <input type="text" 
+                onFocus={()=>{
+                    setShowPathSuggestions(true); 
+                    RenderPathSuggestions(); 
+                    setHighlightPathSuggestion(-1)
+                }} 
+                onBlur={()=>{setShowPathSuggestions(false)}} 
+                spellCheck="false"  
+                autoComplete="off" 
+                value={addressBox} 
+                onKeyDown={(event)=>{
+                    addressKeyHandler(event)
+                }} 
+                onChange={(event)=>{
+                    setAddressBox(event.target.value); 
+                    RenderPathSuggestions(event.target.value)
+                }} 
+                name="address-box" id="" 
+            />
+
             {showPathSuggestions ? 
                 <div className="path-suggestion">
                     {
@@ -364,8 +383,8 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                     <div key={item[0]+"pathSuggestionItem"} 
                                         className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} 
                                         onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} 
-                                        onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBoxPath(item[0])}} 
-                                        onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBoxPath(currentFolder.path)}}>
+                                        onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBox(item[0])}} 
+                                        onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBox(currentFolder.path)}}>
                                             {item[0]} 
                                             <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div>
                                     </div>
