@@ -18,6 +18,15 @@ type CurrentFolder = {
     content: FolderEntry[]
 }
 
+type PathSuggestion = {
+    display: boolean,
+    highlight: number,
+    content: [string, "FILE"|"FOLDER"][]| //For when path leads to a folder w/ items, an array of 
+            "EMPTY"| //For when path leads to a folder w/o items
+            "FILE"| //For when path leads to a file
+            "ERROR" //For when the path leads to no where, the unknown, or to nothingness.... the path given is such of one that does not exist: a fools journey. Only those fearless or unwise would dare to even attempt to wander
+}
+
 export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     const [addressBox, setAddressBox] = useState<string>("")
     const [currentFolder, setCurrentFolder] = useState<CurrentFolder>({path:"", content:[]})
@@ -25,9 +34,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     const [selected, setSelected] = useState<string>("")
     const [showHidden, setShowHidden] = useState<boolean>(false)
 
-    const [showPathSuggestions, setShowPathSuggestions] = useState<boolean>(false)
-    const [currentPathSuggestions, setCurrentPathSuggestions] = useState<[string, "FILE"|"FOLDER"][]|"EMPTY"|"FILE"|"ERROR">([])
-    const [highlightPathSuggestion, setHighlightPathSuggestion] = useState<number>(-1)
+    const [pathSuggestion, setPathSuggestion] = useState<PathSuggestion>({display:false, highlight: -1, content: []})
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsDispatch} = useContext(RunningAppsContext)
@@ -62,7 +69,6 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         }
     },[])
 
-
     //Given a path, try and enter
     function pathEnter(path:string){
         path = pathClean(path)
@@ -76,7 +82,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             if (pathResponse == "FILE"){
                 runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{fileData:(pathObject as MyFileSystemFile), name:pathToArray(path).pop()!} as MediaViewerProps})
                 pathEnter(getParentPath(path))
-                setShowPathSuggestions(false)
+                setPathSuggestion(pendingState=>({...pendingState, display: false}))
             } 
             else if (pathResponse == "FOLDER"){
                 setAddressBox(path)
@@ -99,53 +105,53 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
             case "ArrowUp":
                 event.preventDefault()
-                if (typeof currentPathSuggestions != "string"){
-                    if (-1 < highlightPathSuggestion && highlightPathSuggestion <= currentPathSuggestions!.length){
-                        setHighlightPathSuggestion(highlightPathSuggestion-1)
-                        if (highlightPathSuggestion -1 == -1){
+                if (typeof pathSuggestion.content != "string"){
+                    if (-1 < pathSuggestion.highlight && pathSuggestion.highlight <= pathSuggestion.content.length){
+                        setPathSuggestion(pendingState =>({...pendingState, highlight: pendingState.highlight - 1}))
+                        if (pathSuggestion.highlight -1 == -1){
                             setAddressBox(currentFolder.path)
                         } else{
-                            setAddressBox(currentPathSuggestions![highlightPathSuggestion-1][0])
+                            setAddressBox(pathSuggestion.content[pathSuggestion.highlight-1][0])
                         }
                     } 
-                    else if (highlightPathSuggestion == -1){
-                        setHighlightPathSuggestion(currentPathSuggestions!.length-1)
-                        setAddressBox(currentPathSuggestions![currentPathSuggestions!.length-1][0])
+                    else if (pathSuggestion.highlight == -1){
+                        setPathSuggestion(pendingState => ({...pendingState, highlight: pendingState.content.length - 1}))
+                        setAddressBox(pathSuggestion.content[pathSuggestion.content.length-1][0])
     
                     }
                 } else{
-                    setHighlightPathSuggestion( (highlightPathSuggestion != -1 ? (-1):(0)) )
+                    setPathSuggestion(pendingState => ({...pendingState, highlight: ((pendingState.highlight != -1) ? (-1) : (0))}))
                 }
                 break;
 
             case "ArrowDown":
                 event.preventDefault()
-                if (typeof currentPathSuggestions != "string"){
-                    if (-1 <= highlightPathSuggestion && highlightPathSuggestion < currentPathSuggestions!.length-1){
-                        setHighlightPathSuggestion(highlightPathSuggestion+1)
-                        setAddressBox(currentPathSuggestions![highlightPathSuggestion+1][0])
-                    } else if (highlightPathSuggestion == currentPathSuggestions!.length-1){
-                        setHighlightPathSuggestion(-1)
+                if (typeof pathSuggestion.content != "string"){
+                    if (-1 <= pathSuggestion.highlight && pathSuggestion.highlight < pathSuggestion.content.length-1){
+                        setPathSuggestion(pendingState => ({...pendingState, highlight: pendingState.highlight+1}))
+                        setAddressBox(pathSuggestion.content[pathSuggestion.highlight+1][0])
+                    } else if (pathSuggestion.highlight == pathSuggestion.content.length-1){
+                        setPathSuggestion(pendingState => ({...pendingState, highlight: -1}))
                         setAddressBox(currentFolder.path)
                     }
                 }else{
-                    setHighlightPathSuggestion( (highlightPathSuggestion != -1 ? (-1):(0)) )
+                    setPathSuggestion(pendingState => ({...pendingState, highlight: ((pendingState.highlight != -1) ? (-1) : (0))}))
                 }
                 break;
             
             case "ArrowRight":
                 
-                    if (highlightPathSuggestion != -1){
-                        if (typeof currentPathSuggestions != "string"){
+                    if (pathSuggestion.highlight != -1){
+                        if (typeof pathSuggestion.content != "string"){
                             event.preventDefault()
-                            pathEnter(currentPathSuggestions![highlightPathSuggestion][0])
-                            if (currentPathSuggestions![highlightPathSuggestion][1] == "FILE"){
+                            pathEnter(pathSuggestion.content[pathSuggestion.highlight][0])
+                            if (pathSuggestion.content[pathSuggestion.highlight][1] == "FILE"){
                                 event.currentTarget.blur()
                             } else{
-                                setHighlightPathSuggestion(0)
+                                setPathSuggestion(pendingState => ({...pendingState, highlight: 0}))
                             }
                         } else {
-                            if (currentPathSuggestions != "ERROR"){
+                            if (pathSuggestion.content != "ERROR"){
                                 event.currentTarget.blur()
                             }
                         }
@@ -154,16 +160,16 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 break;
 
             case "ArrowLeft":
-                if (highlightPathSuggestion != -1){
+                if (pathSuggestion.highlight != -1){
                     event.preventDefault()
                     pathEnter(getParentPath(currentFolder.path))
-                    setHighlightPathSuggestion(0)
+                    setPathSuggestion(pendingState =>({...pendingState, highlight: 0}))
                 }
                 break;
         
             default:
-                if (highlightPathSuggestion != -1){
-                    setHighlightPathSuggestion(-1)
+                if (pathSuggestion.highlight != -1){
+                    setPathSuggestion(pendingState => ({...pendingState, highlight: -1}))
                 }
                 break;
         }
@@ -251,30 +257,30 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
                 if (filesInPath.length != 0){
                     //Construct new path suggestions based on filtered content
-                    const newPathSuggestions:typeof currentPathSuggestions = []
+                    const newPathSuggestionContent:PathSuggestion["content"] = []
                     for (const i of filesInPath){
                         if (pathArray.length == 0){
                             //If pathArray is 0, that means path = "/"
                             if (folderItemType(i[1]) == "FOLDER"){
-                                newPathSuggestions.push([path + i[0], "FOLDER"])
+                                newPathSuggestionContent.push([path + i[0], "FOLDER"])
                             } else {
-                                newPathSuggestions.push([path + i[0], "FILE"])
+                                newPathSuggestionContent.push([path + i[0], "FILE"])
                             }
                         } else{
                             if (folderItemType(i[1]) == "FOLDER"){
-                                newPathSuggestions.push([path + "/" + i[0], "FOLDER"])
+                                newPathSuggestionContent.push([path + "/" + i[0], "FOLDER"])
                             } else {
-                                newPathSuggestions.push([path + "/" + i[0], "FILE"])
+                                newPathSuggestionContent.push([path + "/" + i[0], "FILE"])
                             }
                         }
                     }
-                    setCurrentPathSuggestions(newPathSuggestions)
+                    setPathSuggestion(pendingState => ({...pendingState, content: newPathSuggestionContent}))
                 } else{
-                    setCurrentPathSuggestions("EMPTY")
+                    setPathSuggestion(pendingState => ({...pendingState, content: "EMPTY"}))
                 }
             }
             else{
-                setCurrentPathSuggestions("FILE")
+                setPathSuggestion(pendingState => ({...pendingState, content: "FILE"}))
             }
 
         }
@@ -303,36 +309,36 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 )
 
                 //Construct new path suggestions based on filtered content
-                const newPathSuggestions:typeof currentPathSuggestions = []
+                const newPathSuggestionsContent:PathSuggestion["content"] = []
                 for (const i of filesInPath){
                     if (pathArray.length == 0){
                         //If pathArray is 0, that means path = "/"
                         if (folderItemType(i[1]) == "FOLDER"){
-                            newPathSuggestions.push([parentPath + i[0], "FOLDER"])
+                            newPathSuggestionsContent.push([parentPath + i[0], "FOLDER"])
                         }
                         else {
-                            newPathSuggestions.push([parentPath + i[0], "FILE"])
+                            newPathSuggestionsContent.push([parentPath + i[0], "FILE"])
                         }
                     } else{
                         if (folderItemType(i[1]) == "FOLDER"){
-                            newPathSuggestions.push([parentPath + "/" + i[0], "FOLDER"])
+                            newPathSuggestionsContent.push([parentPath + "/" + i[0], "FOLDER"])
                         }
                         else {
-                            newPathSuggestions.push([parentPath + "/" + i[0], "FILE"])
+                            newPathSuggestionsContent.push([parentPath + "/" + i[0], "FILE"])
                         }
                     }
                 }
-                if (newPathSuggestions.length == 0){
-                    setCurrentPathSuggestions("ERROR")
+                if (newPathSuggestionsContent.length == 0){
+                    setPathSuggestion(pendingState => ({...pendingState, content:"ERROR"}))
                 }else{
-                    setCurrentPathSuggestions(newPathSuggestions)
+                    setPathSuggestion(pendingState => ({...pendingState, content: newPathSuggestionsContent}))
 
                 }
 
             }
             //If parent doesnt exist, show no suggestions (not sure if this is really needed tbh, and i dont wanna test rn)
             else {
-                setCurrentPathSuggestions("ERROR")
+                setPathSuggestion(pendingState => ({...pendingState, content:"ERROR"}))
             }
         }
 
@@ -347,11 +353,12 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             </div>
             <input type="text" 
                 onFocus={()=>{
-                    setShowPathSuggestions(true); 
+                    setPathSuggestion(pendingState =>({...pendingState, display:true, highlight:-1}))
                     RenderPathSuggestions(); 
-                    setHighlightPathSuggestion(-1)
                 }} 
-                onBlur={()=>{setShowPathSuggestions(false)}} 
+                onBlur={()=>{
+                    setPathSuggestion(pendingState => ({...pendingState, display: false}))
+                }} 
                 spellCheck="false"  
                 autoComplete="off" 
                 value={addressBox} 
@@ -365,26 +372,36 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 name="address-box" id="" 
             />
 
-            {showPathSuggestions ? 
+            {pathSuggestion.display ? 
                 <div className="path-suggestion">
                     {
-                        typeof currentPathSuggestions == "string" ?
+                        typeof pathSuggestion.content == "string" ?
                         (
-                            <div className={"path-suggestion-message " + (highlightPathSuggestion==0 ? "path-suggestion-item-active": "")} 
-                            onMouseMove={()=>{setHighlightPathSuggestion(0)}} 
-                            onMouseLeave={()=>{setHighlightPathSuggestion(-1)}}>
-                                {currentPathSuggestions == "FILE" ? ("Path leads to a file") : (currentPathSuggestions == "EMPTY" ? ("This path is empty"):("Path error"))}
+                            <div className={"path-suggestion-message " + (pathSuggestion.highlight==0 ? "path-suggestion-item-active": "")} 
+                            onMouseMove={()=>{
+                                setPathSuggestion(pendingState => ({...pendingState, highlight:0}))
+                            }} 
+                            onMouseLeave={()=>{
+                                setPathSuggestion(pendingState => ({...pendingState, highlight:-1}))
+                            }}>
+                                {pathSuggestion.content == "FILE" ? ("Path leads to a file") : (pathSuggestion.content == "EMPTY" ? ("This path is empty"):("Path error"))}
                             </div>
                         )
                         :
                         (
-                            currentPathSuggestions.map( (item, index)=>{
+                            pathSuggestion.content.map( (item, index)=>{
                                 return (
                                     <div key={item[0]+"pathSuggestionItem"} 
-                                        className={"path-suggestion-item " + (highlightPathSuggestion==index ? "path-suggestion-item-active": "")} 
+                                        className={"path-suggestion-item " + (pathSuggestion.highlight==index ? "path-suggestion-item-active": "")} 
                                         onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} 
-                                        onMouseMove={()=>{setHighlightPathSuggestion(index);setAddressBox(item[0])}} 
-                                        onMouseLeave={()=>{setHighlightPathSuggestion(-1);setAddressBox(currentFolder.path)}}>
+                                        onMouseMove={()=>{
+                                            setPathSuggestion(pendingState => ({...pendingState, highlight:index}))
+                                            setAddressBox(item[0])
+                                        }} 
+                                        onMouseLeave={()=>{
+                                            setPathSuggestion(pendingState => ({...pendingState, highlight: -1}))
+                                            setAddressBox(currentFolder.path)
+                                        }}>
                                             {item[0]} 
                                             <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div>
                                     </div>
