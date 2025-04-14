@@ -44,8 +44,8 @@ type PathSuggestion = {
 }
 
 export default function FileExplorer({path, app_running_id}:FileExplorerProps){
-    const [addressBox, setAddressBox] = useState<string>("") //Address box text
-    const [currentFolder, setCurrentFolder] = useState<CurrentFolder>({path:"", content:[]}) //Current folder information
+    const [addressBox, setAddressBox] = useState<string>("/") //Address box text
+    const [currentFolder, setCurrentFolder] = useState<CurrentFolder>({path:"/", content:Object.entries(MyFileSystem)}) //Current folder information
 
     const [selected, setSelected] = useState<string>("") //Holds name of selected item 
     const [showHidden, setShowHidden] = useState<boolean>(false) //Property to determine if hidden files/folders are to be shown
@@ -67,45 +67,24 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     useEffect(()=>{
         // If a path is given
         if (path !=undefined){ 
-            const pathCleaned:string = pathClean(path) 
-            const [pathObject, pathResponse] = doesPathExist(pathCleaned)
-
-            // If pathObject isn't null, that means that the path leads to either a folder/file
-            if (pathObject != null){ 
-                //If pathObject represents a folder, set current folder/addressBar to the folder
-                if (pathResponse == "FOLDER"){ 
-                    setCurrentFolder({path: pathCleaned, content: Object.entries(pathObject as MyFileSystemFolder)})
-                    setAddressBox(pathCleaned)
-                    runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id, appAdditionalTitle: pathToArray(pathCleaned).pop()!})
-
-                } 
-                // If the pathObject represents a file, open the file and pathEnter the parent path
-                else{  
-                    runningAppsDispatch({type:"ADD", app_name:"MediaViewer", props:{fileData:(pathObject as MyFileSystemFile), name:pathToArray(path).pop()!} as MediaViewerProps})
-                    pathEnter(getParentPath(pathCleaned))
-                    setSelected("")
-                }
-            }
-            // Gets hit when given path doesn't lead to a folder/file
-            else{ 
-                setAddressBox("/")
-                setCurrentFolder({path: "/", content: Object.entries(MyFileSystem)})
-            }
+            pathEnter(path, true)
         } 
-        // When no path is given
-        else{ 
-            setAddressBox("/")
-            setCurrentFolder({path: "/", content: Object.entries(MyFileSystem)})
-        }
+
     },[])
 
-    //Given a path (as a string), try and enter
-    function pathEnter(path:string){
+    /**
+     * Given a path (as a string), try and enter the folder
+     * @param path - The path that is attempted to be entered
+     * @param suppressError - (Optional) Surpresses any error message when an invalid path is given. When not given, error message will not be surpressed
+     */
+    function pathEnter(path:string, suppressError?:boolean){
         path = pathClean(path)
         const [pathObject, pathResponse] =  doesPathExist(path)
 
         if (pathObject == null){
-            alert(`The path ${path} does not exist.` )
+            if (suppressError == undefined || suppressError == false){
+                alert(`The path ${path} does not exist.` )
+            } 
             setAddressBox(currentFolder.path)
         } 
         else{
