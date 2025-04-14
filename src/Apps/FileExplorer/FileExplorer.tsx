@@ -264,27 +264,11 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
      */
     function itemDoubleClickedHandler(item: FolderEntry, event: React.MouseEvent<HTMLDivElement, MouseEvent>){
         event.stopPropagation();
-        switch(folderItemType(item[1])){
-            case "FOLDER":{
-                pathEnter(currentFolder.path + "/" +item[0])
-                break;
-
-            }
-            case "FILE":{
-                // runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{data:(item[1] as MyFileSystemFile).data, type:(item[1] as MyFileSystemFile).type} as MediaViewerProps})
-                pathEnter(currentFolder.path + "/" +item[0])
-                setSelected("")
-                break;
-            }
-            default:{
-                break;
-            }
-        }
+        pathEnter(currentFolder.path + "/" +item[0])
+        setSelected("")
     }
 
     
-
-
     /**
      * Function for generating the suggestions/items used in the path suggestions panel
      * @param path - Optional parameter, if not given then `addressBox` state variable is used
