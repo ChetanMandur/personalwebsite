@@ -193,10 +193,20 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                 //Move highlight back to top of the list
                                 setPathSuggestion(pendingState => ({...pendingState, highlight: 0})) 
                             }
-                        } else { //When path suggestion is a message (doesn't have content)
-                            if (pathSuggestion.content != "ERROR"){ 
-                                event.currentTarget.blur()
+                        } 
+                        //When path suggestion is a message (doesn't have content)
+                        else { 
+                            //If message is an error, reset to current folder
+                            if (pathSuggestion.content == "ERROR"){
+                                setAddressBox(currentFolder.path)
                             }
+                            //If message for a valid path, enter path (whether it is a file/empty folder)
+                            else{
+                                pathEnter(addressBox)
+                            }
+                            // Will always need to unfocus from addressBox input
+                            event.currentTarget.blur()
+
                         }
                     }
                 
