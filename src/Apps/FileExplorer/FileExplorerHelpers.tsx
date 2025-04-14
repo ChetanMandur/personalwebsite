@@ -90,14 +90,21 @@ export function getParentPath(path:string):string{
 }
 
 
-
-export function folderItemType(item: MyFileSystemFolder | MyFileSystemFile | boolean, ):"FOLDER"|"FILE"|"BOOLEAN"{
+/**
+ * Given an item within a `MyFileSystemFolder` object, returns the type of item it is
+ * @param item - An item within `MyFileSystemFolder` (ie. `boolean`, `MyFileSystemFolder`, or `MyFileSystemFile` )
+ * @returns A string representation of the item's type (ie. `"FOLDER"`, `"FILE"`, or `"BOOLEAN"`)
+ */
+export function folderItemType(item: MyFileSystemFolder[""], ):"FOLDER"|"FILE"|"BOOLEAN"{
+    // Checks if the item is of primitive JavaScript data type 'boolean'  
     if (typeof(item) == "boolean"){
         return "BOOLEAN"
     }
+    // Only MyFileSystemFile has a 'type' property
     if (item.type == undefined){
         return "FOLDER"
-    } else{
+    } 
+    else{
         return "FILE"
     }
 }
