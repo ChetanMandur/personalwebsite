@@ -24,6 +24,11 @@ export const MyFileSystem : MyFileSystemFolder = {
             data:"https://c.tenor.com/4kpF986JjZkAAAAd/tenor.gif",
             hidden: false
         },
+        "tybg2":{
+            type: "IMAGE",
+            data:"https://dl.dropboxusercontent.com/scl/fi/2330xcgfclvmetfe670so/SnapTik-dot-Kim-275ba222f1df7d6d2ed5dccfd7d68861-ezgif.com-video-to-gif-converter.gif?rlkey=ommis3ex9lh6jxpjpoomjhfjf&st=v4nxgs1m&dl=0",
+            hidden:false
+        },
         "cat fell":{
             type:"IMAGE",
             data:"https://media1.tenor.com/m/nAYI--YdBzIAAAAd/fell.gif",

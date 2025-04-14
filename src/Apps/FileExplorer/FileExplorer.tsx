@@ -291,49 +291,42 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         if (pathObject != null){
             // If path leads to a folder
             if (pathResponse == "FOLDER"){ 
-                //Filter content to find only Files and Folders (while adhering to current showHidden state)
+                // Filter content to find only Files and Folders (while adhering to current showHidden state)
                 const filesInPath = Object.entries(pathObject).filter(
                     (item)=>{
-                        //Checks if file/folder is hidden and if we are showing hidden files/folders
-                        // if item is hidden and we aren't displaying hidden items, exclude item
+                        // Checks if file/folder is hidden and if we are showing hidden files/folders
+                        // If item is hidden and we aren't displaying hidden items, exclude item
                         if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
                             return false
                         }
                         const itemType = folderItemType(item[1])
-                        //Don't want to include boolean items (ie the hidden parameter)
+                        // Don't want to include boolean items (ie the hidden parameter)
                         return (( itemType == "FOLDER" || itemType=="FILE" ))
                     }
                 )
 
-                //If after filtering the length is above 0, this means that there is content in the folder
+                // If after filtering the length is above 0, this means that there is content in the folder
                 if (filesInPath.length != 0){
-                    //Construct new path suggestions based on filtered content
+                    // Construct new path suggestions based on filtered content
                     const newPathSuggestionContent:PathSuggestion["content"] = []
                     for (const i of filesInPath){
-                        //If pathArray is 0, that means path = "/"
-                        if (pathArray.length == 0){
-                            if (folderItemType(i[1]) == "FOLDER"){
-                                newPathSuggestionContent.push([path + i[0], "FOLDER"])
-                            } else {
-                                newPathSuggestionContent.push([path + i[0], "FILE"])
-                            }
-                        } else{
-                            if (folderItemType(i[1]) == "FOLDER"){
-                                newPathSuggestionContent.push([path + "/" + i[0], "FOLDER"])
-                            } else {
-                                newPathSuggestionContent.push([path + "/" + i[0], "FILE"])
-                            }
+                        const itemType = folderItemType(i[1])
+                        // Although we know itemType will never be "BOOLEAN" (due to the filter), typescript doesn't and it doesn't hurt
+                        if (itemType != "BOOLEAN"){
+                            // If pathArray is 0, that means path = "/", therefore the "/" is not needed
+                            newPathSuggestionContent.push([path + (pathArray.length == 0 ? "" : "/") + i[0], itemType])
+
                         }
                     }
                     setPathSuggestion(pendingState => ({...pendingState, content: newPathSuggestionContent}))
                 } 
                 
-                //If after filtering the length is 0, this means that there is no content in the folder, so set content as "EMPTY"
+                // If after filtering the length is 0, this means that there is no content in the folder, so set content as "EMPTY"
                 else{
                     setPathSuggestion(pendingState => ({...pendingState, content: "EMPTY"}))
                 }
             }
-            //If path leads to a file, set content as "FILE"
+            // If path leads to a file, set content as "FILE"
             else{
                 setPathSuggestion(pendingState => ({...pendingState, content: "FILE"}))
             }
@@ -348,59 +341,51 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             // Find parent path
             const parentPath = arrayToPath(pathArray) //parentPath = pathArray - last item
 
-            //Check to see if parent exists
+            // Check to see if parent exists
             const [parentObject, parentResponse] = doesPathExist(parentPath)
 
-            //If parent exists, show folders that are close to the incomplete child
+            // If parent exists, show folders that are close to the incomplete child
             if (parentObject != null && parentResponse == "FOLDER"){
+
+                // Filter content to find only Files and Folders that could be the incompleteChild (while adhering to current showHidden state)
                 const filesInPath = Object.entries(parentObject).filter(
                     (item)=>{
-                        //Checks if file/folder is hidden and if we are showing hidden files/folders
-                        // if item is hidden and we aren't displaying hidden items, exclude item
+                        // Checks if file/folder is hidden and if we are showing hidden files/folders
+                        // If item is hidden and we aren't displaying hidden items, exclude item
                         if ((item[1] as MyFileSystemFile|MyFileSystemFolder).hidden && !showHidden){
                             return false
                         }
                         const itemType = folderItemType(item[1])
-                        //Don't want to include boolean items (ie the hidden parameter)
-                        //Want to include items that could be the incompleteChild (items that are starting the same as the incompleteChild)
+                        // Don't want to include boolean items (ie the hidden parameter)
+                        // Want to include items that could be the incompleteChild (items that are starting the same as the incompleteChild)
                         //  example, if the incompleteChild == "Wiki", then display all items that start with "Wiki"
                         return ((itemType == "FOLDER" || itemType == "FILE") && (item[0].substring(0, incompleteChild?.length) == incompleteChild) )
                     }
                 )
 
-                //Construct new path suggestions based on filtered content
-                const newPathSuggestionsContent:PathSuggestion["content"] = []
-                for (const i of filesInPath){
-                    //If pathArray is 0, that means path = "/"
-                    if (pathArray.length == 0){
-                        if (folderItemType(i[1]) == "FOLDER"){
-                            newPathSuggestionsContent.push([parentPath + i[0], "FOLDER"])
-                        }
-                        else {
-                            newPathSuggestionsContent.push([parentPath + i[0], "FILE"])
-                        }
-                    } else{
-                        if (folderItemType(i[1]) == "FOLDER"){
-                            newPathSuggestionsContent.push([parentPath + "/" + i[0], "FOLDER"])
-                        }
-                        else {
-                            newPathSuggestionsContent.push([parentPath + "/" + i[0], "FILE"])
-                        }
+                // If after filtering the length is above 0, this means that there are items similar to the incomplete child
+                if (filesInPath.length != 0){
+                    // Construct new path suggestions based on filtered content
+                    const newPathSuggestionContent:PathSuggestion["content"] = []
+                    for (const i of filesInPath){
+                        const itemType = folderItemType(i[1])
+                            // Although we know itemType will never be "BOOLEAN" (due to the filter), typescript doesn't and it doesn't hurt
+                            if (itemType != "BOOLEAN"){
+                                // If pathArray is 0, that means path = "/", therefore the "/" is not needed
+                                newPathSuggestionContent.push([parentPath + (pathArray.length == 0 ? "" : "/") + i[0], itemType])
+                            }
                     }
+                    setPathSuggestion(pendingState => ({...pendingState, content: newPathSuggestionContent}))
                 }
 
-                //If newPathSuggestionsContent == 0, that means there are no items and there are no items similar to incompleteChild
-                if (newPathSuggestionsContent.length == 0){
-                    setPathSuggestion(pendingState => ({...pendingState, content:"ERROR"}))
-                }
-                //There are content similar to incompleteChild
+                // If the length is 0, that means that there aren't items similar to the incomplete child
                 else{
-                    setPathSuggestion(pendingState => ({...pendingState, content: newPathSuggestionsContent}))
-
+                    setPathSuggestion(pendingState => ({...pendingState, content:"ERROR"}))
                 }
 
             }
-            //If parent doesnt exist, show no suggestions (not sure if this is really needed tbh, and i dont wanna test rn)
+
+            // If parent doesnt exist, show no suggestions (not sure if this is really needed tbh, and i dont wanna test rn)
             else {
                 setPathSuggestion(pendingState => ({...pendingState, content:"ERROR"}))
             }
