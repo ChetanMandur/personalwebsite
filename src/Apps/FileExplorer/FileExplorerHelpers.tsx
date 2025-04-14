@@ -1,13 +1,13 @@
 import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSystem"
 
 /**
- * Given a path in string format, returns an array representing the equivalent path
+ * Given a path in `string` format, returns an `array` representing the equivalent path
  * 
- * Each element is a path starting from root, ie. /[0]/[1]/[2]
+ * Each folder in the `string` path is an element in the final `array`, ie. /[0]/[1]/[2]
  * 
- * @param path - The path (as a `string`) that will be converted to an array
+ * @param path - The path (as a `string`) that will be converted to an `array`
  * 
- * @returns An array of `string` values, with each element representing a folder, in order of traversal
+ * @returns A `string array`, with each element representing a folder, in order of traversal
  * - When output is `[]` (empty), that means the given path represents root
  * 
  */
@@ -27,13 +27,13 @@ export function pathToArray(path:string):string[]{
 }
 
 /**
- * Given a path in array format (with each element being a `string` value), return an equivalent path in `string` format
+ * Given a path in `string array` format, return an equivalent path in `string` format
  * 
  * Intended to work with array paths generated with the `pathToArray()`
- * @param array The path (as an array of `string` values) that will be converted back to a `string`
- * - The path array must be 'clean' (ie. the path must not have any empty string elements)
+ * @param array The path (as a `string array`) that will be converted back to a `string`
+ * - The path array must be 'clean' (ie. the path must not have any empty `string` elements)
  * @returns A path in `string` format
- * - Empty arrays will return `'/'` representing rooot
+ * - Empty `arrays` will return `'/'` representing rooot
  */
 export function arrayToPath(array:string[]):string{
         // An empty array represents root
