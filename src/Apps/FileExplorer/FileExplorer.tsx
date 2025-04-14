@@ -406,7 +406,6 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
         {/* MenuBar
         Contains back-button + address-box on single line
-        Also include path-suggestion w/ absolute position underneath back-button+address-box 
         */}
         <div className="menu-bar"> 
             <div className="back-button" onMouseDown={(event)=>{event.preventDefault();backButtonPressed()}}>
@@ -433,51 +432,54 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 name="address-box" id="" 
             />
 
-            {pathSuggestion.display ? 
-                // Main Container for Path Suggestion
-                <div className="path-suggestion">
-                    {
-                        typeof pathSuggestion.content == "string" ?
-                        (
-                            // If pathSuggestion.content is a string, display a path-suggestion-message
-                            <div className={"path-suggestion-message " + (pathSuggestion.highlight==0 ? "path-suggestion-item-active": "")} 
-                            onMouseMove={()=>{
-                                setPathSuggestion(pendingState => ({...pendingState, highlight:0}))
-                            }} 
-                            onMouseLeave={()=>{
-                                setPathSuggestion(pendingState => ({...pendingState, highlight:-1}))
-                            }}>
-                                {pathSuggestion.content == "FILE" ? ("Path leads to a file") : (pathSuggestion.content == "EMPTY" ? ("This path is empty"):("Path error"))}
-                            </div>
-                        )
-                        :
-                        (
-                            //If pathSuggestion.content has items, map each item into a path-suggestion-item
-                            pathSuggestion.content.map( (item, index)=>{
-                                return (
-                                    <div key={item[0]+"pathSuggestionItem"} 
-                                        className={"path-suggestion-item " + (pathSuggestion.highlight==index ? "path-suggestion-item-active": "")} 
-                                        onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} 
-                                        onMouseMove={()=>{
-                                            setPathSuggestion(pendingState => ({...pendingState, highlight:index}))
-                                            setAddressBox(item[0])
-                                        }} 
-                                        onMouseLeave={()=>{
-                                            setPathSuggestion(pendingState => ({...pendingState, highlight: -1}))
-                                            setAddressBox(currentFolder.path)
-                                        }}>
-                                            {item[0]} 
-                                            <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div>
-                                    </div>
-                                )
-                            })
-                        )
-                    }
-                </div> 
-                : 
-                <></>
-            }
         </div>
+        
+        
+        {/* Inline conditional for whether or not to display path suggestions */}
+        {pathSuggestion.display ? 
+            // Main Container for Path Suggestion
+            <div className="path-suggestion">
+                {
+                    typeof pathSuggestion.content == "string" ?
+                    (
+                        // If pathSuggestion.content is a string, display a path-suggestion-message
+                        <div className={"path-suggestion-message " + (pathSuggestion.highlight==0 ? "path-suggestion-item-active": "")} 
+                        onMouseMove={()=>{
+                            setPathSuggestion(pendingState => ({...pendingState, highlight:0}))
+                        }} 
+                        onMouseLeave={()=>{
+                            setPathSuggestion(pendingState => ({...pendingState, highlight:-1}))
+                        }}>
+                            {pathSuggestion.content == "FILE" ? ("Path leads to a file") : (pathSuggestion.content == "EMPTY" ? ("This path is empty"):("Path error"))}
+                        </div>
+                    )
+                    :
+                    (
+                        //If pathSuggestion.content has items, map each item into a path-suggestion-item
+                        pathSuggestion.content.map( (item, index)=>{
+                            return (
+                                <div key={item[0]+"pathSuggestionItem"} 
+                                    className={"path-suggestion-item " + (pathSuggestion.highlight==index ? "path-suggestion-item-active": "")} 
+                                    onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} 
+                                    onMouseMove={()=>{
+                                        setPathSuggestion(pendingState => ({...pendingState, highlight:index}))
+                                        setAddressBox(item[0])
+                                    }} 
+                                    onMouseLeave={()=>{
+                                        setPathSuggestion(pendingState => ({...pendingState, highlight: -1}))
+                                        setAddressBox(currentFolder.path)
+                                    }}>
+                                        {item[0]} 
+                                        <div className="path-suggestion-item-type">{(item[1] == "FOLDER" ? "(Folder)" : "(File)")}</div>
+                                </div>
+                            )
+                        })
+                    )
+                }
+            </div> 
+            : 
+            <></>
+        }
 
         {/* Main container for folder content
             This is where the UI displaying each item of the folder is made
