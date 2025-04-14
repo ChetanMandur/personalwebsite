@@ -8,11 +8,11 @@ import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSyst
  * @param path - The path (as a `string`) that will be converted to an array
  * 
  * @returns An array of `string` values, with each element representing a folder, in order of traversal
- * - When output is [] (empty), that means we are on root
+ * - When output is `[]` (empty), that means the given path represents root
  * 
  */
 export function pathToArray(path:string):string[]{
-    //Initalizing output array & splitting input string by '/' (path seperators)
+    // Initalizing output array & splitting input string by '/' (path seperators)
     const array:string[] = []
     const splitPath = path.split("/")
 
@@ -26,18 +26,27 @@ export function pathToArray(path:string):string[]{
 
 }
 
+/**
+ * Given a path in array format (with each element being a `string` value), return an equivalent path in `string` format
+ * 
+ * Intended to work with array paths generated with the `pathToArray()`
+ * @param array The path (as an array of `string` values) that will be converted back to a `string`
+ * - The path array must be 'clean' (ie. the path must not have any empty string elements)
+ * @returns A path in `string` format
+ * - Empty arrays will return `'/'` representing rooot
+ */
 export function arrayToPath(array:string[]):string{
+        // An empty array represents root
+        if (array.length == 0){
+            return "/"
+        }
+
+        // If array isn't empty, build path string
         let path = ""
 
         for (const i of array){
             path += "/" + i
         }
-
-        if (path == ""){
-            path = "/"
-        }
-
-        // console.log("arrayToPath", path)
         
         return path
 }
