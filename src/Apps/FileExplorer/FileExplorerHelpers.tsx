@@ -3,8 +3,9 @@ import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSyst
 /**
  * Given a path in `string` format, returns an `array` representing the equivalent path
  * 
- * Each folder in the `string` path is an element in the final `array`, ie. /[0]/[1]/[2]
+ * Each folder in the `string` path is an element in the final `array` (ie. /[0]/[1]/[2])
  * 
+ * @example "/Photos/folder" => ["Photos", "folder"]
  * @param path - The path (as a `string`) that will be converted to an `array`
  * 
  * @returns A `string array`, with each element representing a folder, in order of traversal
@@ -30,6 +31,7 @@ export function pathToArray(path:string):string[]{
  * Given a path in `string array` format, return an equivalent path in `string` format
  * 
  * Intended to work with array paths generated with the `pathToArray()`
+ * @example ["Photos", "folder"] => "Photos/folder"
  * @param array The path (as a `string array`) that will be converted back to a `string`
  * - The path array must be 'clean' (ie. the path must not have any empty `string` elements)
  * @returns A path in `string` format
@@ -54,11 +56,14 @@ export function arrayToPath(array:string[]):string{
 /**
  * Given a path in `string` format, return an equivalent path in `string` format that is cleaned
  * 
- * A 'clean' path is a path that has been reduced (eg. `"///Photos//folder" => "/Photos/folder"`)
+ * A 'clean' path is a path that has been reduced 
  * 
  * This function just calls `pathToArray(path)` into `arrayToPath()`
  * - `pathToArray()` handles excess `'/'` values, removing empty paths
  * - `arrayToPath()` converts the reduced `array` path back to a `string`
+ * 
+ * @example "///Photos//folder" => "/Photos/folder"
+ * 
  * @param path The path (as a `string`) that will be cleaned
  * @returns A `string` path that is cleaned
  */
@@ -78,7 +83,7 @@ export function pathClean(path:string):string{
 
 export function getParentPath(path:string):string{
     // Quick way to get parent path, convert path to an array, remove last element, and convert array back to string
-    
+
     const pathArray = pathToArray(path)
     pathArray.pop()
     return arrayToPath(pathArray)
