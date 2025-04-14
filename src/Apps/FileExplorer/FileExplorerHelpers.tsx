@@ -69,13 +69,21 @@ export function pathClean(path:string):string{
 
 }
 
+/**
+ * Given a path (in `string` format), return the direct parent 
+ * @example '/Photos/folder' ==> '/Photos/' 
+ * @param path - The child path (as a `string`) whos parent will be returned 
+ * @returns - A `string` path representing the parent 
+ */
+
 export function getParentPath(path:string):string{
-    path = pathClean(path)
+    // Quick way to get parent path, convert path to an array, remove last element, and convert array back to string
+    
     const pathArray = pathToArray(path)
     pathArray.pop()
-
     return arrayToPath(pathArray)
 }
+
 
 
 export function folderItemType(item: MyFileSystemFolder | MyFileSystemFile | boolean, ):"FOLDER"|"FILE"|"BOOLEAN"{
