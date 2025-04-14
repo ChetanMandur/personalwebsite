@@ -51,6 +51,18 @@ export function arrayToPath(array:string[]):string{
         return path
 }
 
+/**
+ * Given a path in `string` format, return an equivalent path in `string` format that is cleaned
+ * 
+ * A 'clean' path is a path that has been reduced (eg. `"///Photos//folder" => "/Photos/folder"`)
+ * 
+ * This function just calls `pathToArray(path)` into `arrayToPath()`
+ * - `pathToArray()` handles excess `'/'` values, removing empty paths
+ * - `arrayToPath()` converts the reduced `array` path back to a `string`
+ * @param path The path (as a `string`) that will be cleaned
+ * @returns A `string` path that is cleaned
+ */
+
 export function pathClean(path:string):string{
 
     return arrayToPath(pathToArray(path))
