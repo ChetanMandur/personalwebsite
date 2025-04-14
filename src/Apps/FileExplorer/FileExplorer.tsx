@@ -155,13 +155,15 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                 event.preventDefault()
                 //If pathSuggestion isn't a string, that means there are multiple items to parse thru
                 if (typeof pathSuggestion.content != "string"){ 
-                    //For when an item is highlighted (not including the last item)
+                    //For when an item (not including the last item) or the address bar is highlighted 
                     if (-1 <= pathSuggestion.highlight && pathSuggestion.highlight < pathSuggestion.content.length-1){ 
-                        setPathSuggestion(pendingState => ({...pendingState, highlight: pendingState.highlight+1}))
-                        setAddressBox(pathSuggestion.content[pathSuggestion.highlight+1][0])
+                        const newHighlight = pathSuggestion.highlight +1
+                        setPathSuggestion(pendingState => ({...pendingState, highlight: newHighlight}))
+                        setAddressBox(pathSuggestion.content[newHighlight][0])
                     } 
-                    //For when the last item is highlighted (loop back to addressBar)
+                    //For when the last item is highlighted 
                     else if (pathSuggestion.highlight == pathSuggestion.content.length-1){ 
+                        // Loop back to addressBar
                         setPathSuggestion(pendingState => ({...pendingState, highlight: -1}))
                         setAddressBox(currentFolder.path)
                     }
