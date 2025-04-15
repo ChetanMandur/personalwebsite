@@ -175,6 +175,14 @@ export function doesPathExist(path: string):([MyFileSystemFolder, "FOLDER"]|[MyF
     return [currentFolder, "FOLDER"]
 }
 
+
+/**
+ * When given a possible file type from `MyFileSystemFile`, returns a URL for a thumbnail based on the file type
+ * 
+ * Meant to be used when getting the thumbnail for a specific `MyFileSystemFile` object
+ * @param fileType - A file type from `MyFileSystemFile["type"]`
+ * @returns A URL for the file types thumbnail
+ */
 export function fileThumbnailGetter(fileType: MyFileSystemFile["type"]):string{
 
         switch (fileType){
