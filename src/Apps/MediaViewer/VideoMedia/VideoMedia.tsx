@@ -147,7 +147,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
     const [showOverlay, setShowOverlay] = useState<OverlayProperties>({display:false, timeoutID: createRef<number|null>()})
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
-    const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
+    const {runningAppsDispatch} = useContext(RunningAppsContext)
 
 
     // Used when component is first mounted and unmounted
@@ -174,21 +174,6 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
             }
         }
     },[controllerAppRunningID, runningAppsDispatch])
-
-
-    // Used when app window is resized horizontally
-    useEffect(()=>{
-        // Recalculates the seekBarProgressLength
-        // Since app is resized, previous seekBarProgressLength wont be valid
-        setVideoProperties(pendingProperties => (
-            {
-                ...pendingProperties,
-                seekBarProgressLength: calculateSeekBarProgress()
-            }
-        ))
-
-    }, [runningAppsData[app_running_id].width, runningAppsData[app_running_id].maximizeType ])
-
 
     
     // Used anytime the video's 'playing' property is changed
@@ -227,7 +212,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         // Render the current frame
         requestAnimationFrame(renderFrame)
         // Update the size of the seek bar progress
-        setVideoProperties(pendingProperties => ({...pendingProperties, seekBarProgressLength: calculateSeekBarProgress()}))
+        setVideoProperties(pendingProperties => ({...pendingProperties, seekBarProgressLength: calculateProgressPercentage()}))
     },[videoProperties.currentTime])
 
     // Used anytime the video's 'videoCustomOptions' property is changed
@@ -347,9 +332,13 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         }
     }
 
-    function calculateSeekBarProgress():number{
+    /**
+     * Function for calculating the percentage the video has elapsed
+     * @returns The percent value that the video has elapsed
+     */
+    function calculateProgressPercentage():number{
         if (videoProperties.refCollection.videoRef.current != null && !isNaN(videoProperties.refCollection.videoRef.current.duration) && videoProperties.refCollection.seekBarRef.current != null){
-            return ((videoProperties.refCollection.videoRef.current.currentTime /(videoProperties.refCollection.videoRef.current.duration))  * (videoProperties.refCollection.seekBarRef.current.getBoundingClientRect().width))
+            return ((videoProperties.refCollection.videoRef.current.currentTime /(videoProperties.refCollection.videoRef.current.duration))  * 100)
         } else {return 0}
     }
 
@@ -566,7 +555,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             document.addEventListener("mousemove", videoScrubbing)
                         }}
                     >
-                        <div className="seek-bar-progress" style={{width:videoProperties.seekBarProgressLength}}> 
+                        <div className="seek-bar-progress" style={{width:`${videoProperties.seekBarProgressLength}%`}}> 
                         </div>
                     </div>
                 </div>
