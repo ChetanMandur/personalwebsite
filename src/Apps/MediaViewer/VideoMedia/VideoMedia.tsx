@@ -227,7 +227,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
 
 
     /**
-     * Function that handles rendering the video from the <video> tag into the <canvas> tag
+     * Function that handles rendering the video from the `<video> `tag into the <canvas> tag
      * 
      * Also handles applying visual transformations to the video frame before rendering it into the canvas
      */
@@ -342,7 +342,31 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         } else {return 0}
     }
 
-    
+
+    /**
+     * Handler for when the seekbar is clicked or when the mouse is moved while the seekbar is clicked on
+     * 
+     * Based on the position of the mouse within the (or in relation to) the seekbar, update the `currentTime` of the `<video>` element
+     * 
+     * @example "If the mouse is click on (or dragged to) the middle of the progress bar, the video should jump to the middle of it's duration"
+     * 
+     * @param event `MouseEvent` from `onMouseDown` and `onMouseMove`
+     */
+    function videoScrubbing(event: React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent ){
+        // Grab location and sizing data of the seekbar
+        const seekBarBoundingClientRect:DOMRect = videoProperties.refCollection.seekBarRef.current!.getBoundingClientRect()!
+
+        // Calculate the horizontal distance from the mouse to the left of the seekbar (this describes a 'chunk' of the seekbar)
+        // Calculate how much of the chunk makes up the full width of the seekbar (this describes a percentage of where the mouse is within the seekbar) 
+        const seekBarClickedPercentage:number = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
+
+        // Apply the calculated percentage to the duration of the video (this computes the new time of the video)
+        const newTime:number = videoProperties.refCollection.videoRef.current!.duration * seekBarClickedPercentage
+
+        // Apply the new time to the video
+        videoProperties.refCollection.videoRef.current!.currentTime = newTime
+        setVideoProperties(pendingProperties => ({...pendingProperties, currentTime: newTime}))
+    }
 
     function updateVideoCustomOptions<T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]){
         switch (newOptionKey) {
@@ -398,14 +422,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         }
     }
 
-    function videoScrubbing(event: React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent ){
-        const seekBarBoundingClientRect:DOMRect = videoProperties.refCollection.seekBarRef.current!.getBoundingClientRect()!
-        const seekBarClickedRatio:number = (event.clientX - seekBarBoundingClientRect.x) / seekBarBoundingClientRect.width
-        const newTime:number = videoProperties.refCollection.videoRef.current!.duration * seekBarClickedRatio
-        videoProperties.refCollection.videoRef.current!.currentTime = newTime
-        setVideoProperties(pendingProperties => ({...pendingProperties, currentTime: newTime}))
-
-    }
+    
 
     function generateContextMenu() : ContextMenuOptions{
         const output: ContextMenuOptions = {}
