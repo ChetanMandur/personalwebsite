@@ -90,7 +90,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         else{
             // If path leads to a file, open the file in MediaViewer and pathEnter the parentPath
             if (pathResponse == "FILE"){ 
-                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{fileData:(pathObject as MyFileSystemFile), name:pathToArray(path).pop()!} as MediaViewerProps})
+                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{fileContent:(pathObject as MyFileSystemFile), fileName:pathToArray(path).pop()!} as MediaViewerProps})
                 pathEnter(getParentPath(path))
                 setPathSuggestion(pendingState=>({...pendingState, display: false}))
             } 
