@@ -49,7 +49,7 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
             
             case "VIDEO":
                 return (
-                    <VideoMedia currentData={fileContent.data} app_running_id={app_running_id}/>
+                    <VideoMedia fileContentData={fileContent.data} app_running_id={app_running_id}/>
                 )
 
             
