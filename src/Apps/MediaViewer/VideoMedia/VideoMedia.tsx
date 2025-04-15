@@ -112,8 +112,13 @@ type OverlayProperties = {
 }
 
 
+/**
+ * Main handler for "VIDEO" file types 
+ * @param props Requires the `data` property from `MyFileSystemFile`
+ * @returns Component
+ */
 export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
-    const defaultVideoProperties : VideoProperties = {
+    const [videoProperties, setVideoProperties] = useState<VideoProperties>({
         playing: true,
         currentTime: 0,
         videoFill: true,
@@ -135,9 +140,8 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 changedPixels: createRef<Set<number>>()
             }
         }
-    }
+    })
 
-    const [videoProperties, setVideoProperties] = useState<VideoProperties>(defaultVideoProperties)
     const [controllerAppRunningID, setControllerAppRunningID] = useState<string>("")
 
     const [showOverlay, setShowOverlay] = useState<OverlayProperties>({display:false, timeoutID: createRef<number|null>()})
@@ -145,28 +149,24 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
 
+
+    // Used when component is first mounted and unmounted
     useEffect(()=>{
+        // On mount, create the set used to hold all changed pixels
         videoProperties.videoCustomOptions.colourSwapList.changedPixels.current = new Set<number>()
+
+        // On dismount, cancel the loop that updates updates the 'currentTime' property
         return () =>{
                 cancelAnimationFrame(videoProperties.refCollection.currentTimeUpdateRef.current!)
-                // console.log("returning", videoProperties.refCollection.animationID.current!)
         }
     },[])
 
-    useEffect(()=>{
-        console.log("RESIZE")
-        setVideoProperties(pendingProperties => (
-            {
-                ...pendingProperties,
-                seekBarProgressLength: calculateSeekBarProgress()
-            }
-        ))
-
-    }, [runningAppsData[app_running_id].height, runningAppsData[app_running_id].width, runningAppsData[app_running_id].maximizeType ])
-
+    // Used on component unmount (ie. when video app is closed), handles the video's media controller
     useEffect(()=>{
         return () => {
+            // If there is currently a Media Controller open for the video
             if (controllerAppRunningID != ""){
+                // Close the Media Controller, so that there isn't a Media Controller open for a video that is closed
                 runningAppsDispatch({
                     type:"DELETE",
                     app_running_id: controllerAppRunningID
@@ -175,42 +175,67 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         }
     },[controllerAppRunningID, runningAppsDispatch])
 
-    useEffect(()=>{
-        // console.log("play/pause")
 
+    // Used when app window is resized horizontally
+    useEffect(()=>{
+        // Recalculates the seekBarProgressLength
+        // Since app is resized, previous seekBarProgressLength wont be valid
+        setVideoProperties(pendingProperties => (
+            {
+                ...pendingProperties,
+                seekBarProgressLength: calculateSeekBarProgress()
+            }
+        ))
+
+    }, [runningAppsData[app_running_id].width, runningAppsData[app_running_id].maximizeType ])
+
+
+    
+    // Used anytime the video's 'playing' property is changed
+    useEffect(()=>{
+
+        // The main loop that handles updating the 'currentTime' video property
+        // Loop updates the 'currentTime' property before restarting the loop (with the new loop ID being stored in 'currentTimeUpdateRef')
         const updateCurrentTimeLoop = () =>{
-            // console.log("updating current time",videoProperties.refCollection.animationID.current )
             setVideoProperties(pendingState =>({...pendingState, currentTime: pendingState.refCollection.videoRef.current!.currentTime}))
             videoProperties.refCollection.currentTimeUpdateRef.current = requestAnimationFrame(updateCurrentTimeLoop)
         }
 
+        // Handles what to do based on the video's current state
         if (videoProperties.refCollection.videoRef.current){
+            // If the video is currently playing
             if (videoProperties.playing){
-                console.log("play")
+
+                //Update the video's current time and start the loop to constantly update 'currentTime'
                 videoProperties.refCollection.videoRef.current.currentTime = videoProperties.currentTime
                 videoProperties.refCollection.currentTimeUpdateRef.current = requestAnimationFrame(updateCurrentTimeLoop)
 
             }
+            // If the video is currently paused
             else{
-                console.log("pause")
+                // Cancel the loop that updates the app's 'currentTime'
                 cancelAnimationFrame(videoProperties.refCollection.currentTimeUpdateRef.current!)
+                // Set the ID for the loop to 'null'
                 videoProperties.refCollection.currentTimeUpdateRef.current = null
             }
         }
-
-        
-        
     },[videoProperties.playing])
 
+
+    // Used anytime the video's 'currentTime' property is changed
     useEffect(()=>{
-        // console.log("currentTime updated",videoProperties.currentTime)
+        // Render the current frame
         requestAnimationFrame(renderFrame)
+        // Update the size of the seek bar progress
         setVideoProperties(pendingProperties => ({...pendingProperties, seekBarProgressLength: calculateSeekBarProgress()}))
     },[videoProperties.currentTime])
 
+    // Used anytime the video's 'videoCustomOptions' property is changed
     useEffect(()=>{
-        // console.log("update custom options",videoProperties)
+        // If the video isn't playing 
         if (!videoProperties.playing){
+            // Rerender the frame
+            // This is done because if the video isn't playing, then 'currentTime' isn't being updated, and thus 'renderFrame' isn't called
             requestAnimationFrame(renderFrame)
         }
     },[videoProperties.videoCustomOptions])
