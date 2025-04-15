@@ -109,33 +109,69 @@ export function folderItemType(item: MyFileSystemFolder[""], ):"FOLDER"|"FILE"|"
     }
 }
 
-export function doesPathExist(path: string):([MyFileSystemFolder|null|MyFileSystemFile, "FOLDER"|"FILE"|"BOOLEAN"|"ERROR"]){
-    const folderList: string[]= pathToArray(path)
-   //  console.log("FOLDERLIST ", folderList.length, folderList)
 
+/**
+ * When given a path, in `string` format, returns whether or not path exists within `MyFileSystem`
+ * 
+ * Check is done by walking the given path from root and returning its content
+ * @param path - The path (as a `string`) that is to be checked
+ * @returns  Content of the path + an identifier. Possible values are:
+ * - `[MyFileSystemFolder, "FOLDER"]`: If path leads to a folder, return folder content + identifier
+ * - `[MyFileSystemFile, "FILE"]`: If path leads to a file, return file content + identifier
+ * - `[null, "BOOLEAN"|"ERROR"]`: If path leads to neither a file or folder, return null + identifier
+ */
+export function doesPathExist(path: string):([MyFileSystemFolder, "FOLDER"]|[MyFileSystemFile, "FILE"]|[null, "BOOLEAN"|"ERROR"]){
+
+    // Convert string path to an array, allows us to walk the path from root
+    const folderList: string[]= pathToArray(path)
+
+    // Start at root, with counter starting at 1 (counter does not follow index numbering)
     let currentFolder: MyFileSystemFolder = MyFileSystem
     let counter = 1
-    for (const i of folderList){
+
+    // For each of the items in folderList
+    for (const currentItem of folderList){
        try {
-           switch (folderItemType(currentFolder[i])) {
-               case "BOOLEAN":
-                   return [null, "BOOLEAN"]
-               
-               case "FILE":
+            // Find the item's type
+           switch (folderItemType(currentFolder[currentItem])) {
+
+                // If item is a boolean, this means that path doesn't exist. Return null + identifier
+                case "BOOLEAN":
+                    return [null, "BOOLEAN"]
+                
+                // If item is a file
+                case "FILE":
+                    // And the item is the last item in the path (ie. `/item1/item2/file`)
                     if (counter == folderList.length){
-                        return [currentFolder[i] as MyFileSystemFile, "FILE"]
+                        // Return the file + identifier (as it is a valid path)
+                        return [currentFolder[currentItem] as MyFileSystemFile, "FILE"]
                     }
-                   return [null, "ERROR"]
 
-               case "FOLDER":
-                   currentFolder = currentFolder[i] as MyFileSystemFolder;
-           }
+                    // If item is not the last item in the path, path doesn't exist. Return null + identifier
+                    // This is because, if item is not last item, that means full path is trying to enter the file as if it is a folder
+                    // ie. `/item1/item2/file/item3/item4` is invalid as file cannot be entered as a folder
+                    return [null, "ERROR"]
+                
+                // If item is a folder
+                case "FOLDER":
+                    // Set item as new current folder
+                    currentFolder = currentFolder[currentItem] as MyFileSystemFolder;
+            }
 
-       } catch {
+       } 
+       
+       // If the switch statement errors, path is invalid. Return null + identifer
+       catch {
             return [null, "ERROR"]
        }
+
+       // If reached, it means that item was a folder
+       // Increase counter and continue loop
        counter++
     }
+
+    // If reached, it means that path was valid and led to a folder
+    // Return folder + identifer
     return [currentFolder, "FOLDER"]
 }
 
