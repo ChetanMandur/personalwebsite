@@ -240,8 +240,13 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         }
     },[videoProperties.videoCustomOptions])
 
+
+    /**
+     * Function that handles rendering the video from the <video> tag into the <canvas> tag
+     * 
+     * Also handles applying visual transformations to the video frame before rendering it into the canvas
+     */
     function renderFrame(){
-        // console.log("renderFrame")
         //Check if videoRef and canvasRef are available
         if (videoProperties.refCollection.videoRef.current != null && videoProperties.refCollection.canvasRef.current != null && videoProperties.videoCustomOptions.colourSwapList.changedPixels.current != null ){
             videoProperties.videoCustomOptions.colourSwapList.changedPixels.current.clear()
@@ -259,7 +264,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 videoProperties.refCollection.canvasRef.current.height 
             )
 
-            // Grab frame information from canvas
+            // Grab frame information from canvas (which now holds the unalted frame from the video player)
             const videoFrame = canvasContext.getImageData(
                 0,
                 0,
@@ -276,56 +281,69 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
 
             // For each pixel, perform visual changes
             for (let currentPixel=0; currentPixel< totalPixels; currentPixel++){
-                const currentPixelGroup = currentPixel*4
+                
+                // Since totalPixel represents the totalLength/4, currentPixel does not represent the index of the pixel in the array
+                // To find the index of the pixel in the array, we just take the currentPixel and multiply it by 4
+                // This leads us to the starting index for the current pixel
+                const currentPixelIndex = currentPixel*4
 
-                //First element in group is red, then green, blue, and finally alpha
-                let red = videoFrame.data[currentPixelGroup + 0]
-                let green = videoFrame.data[currentPixelGroup + 1]
-                let blue = videoFrame.data[currentPixelGroup + 2]
+                // The element at the currentPixelIndex represents red, then green, then blue, and then finally alpha
+                // Store the values as a non-constants so that we can apply manipulations before reinserting them back into the array
+
+                let red = videoFrame.data[currentPixelIndex + 0]
+                let green = videoFrame.data[currentPixelIndex + 1]
+                let blue = videoFrame.data[currentPixelIndex + 2]
                 // let alpha = videoFrame.data[i*4 + 3] commented out.... FOR NOW
 
+                //// Logic for colour swapping
+                // For each of the colour swap values
+                for (const colourSwapValue of videoProperties.videoCustomOptions.colourSwapList.values){
+                    // Calculate the differences between the R,G, and B values for the currentPixel and the current colourSwapValue
+                    const redDiff = Math.abs(colourSwapValue.from.red - red)
+                    const greenDiff = Math.abs(colourSwapValue.from.green - green)
+                    const blueDiff = Math.abs(colourSwapValue.from.blue - blue)
 
-                for (const colourSwap of videoProperties.videoCustomOptions.colourSwapList.values){
-                    const redDiff = Math.abs(colourSwap.from.red - red)
-                    const greenDiff = Math.abs(colourSwap.from.green - green)
-                    const blueDiff = Math.abs(colourSwap.from.blue - blue)
+                    // Check if the differences between the R,G, and B values fall within the range threshold of the current colourSwapValue
+                    const redCheck = redDiff >=0 && redDiff <= colourSwapValue.range
+                    const greenCheck = greenDiff >=0 && greenDiff <= colourSwapValue.range
+                    const blueCheck = blueDiff >=0 && blueDiff <= colourSwapValue.range
 
-                    const redCheck = redDiff >=0 && redDiff <= colourSwap.range
-                    const greenCheck = greenDiff >=0 && greenDiff <= colourSwap.range
-                    const blueCheck = blueDiff >=0 && blueDiff <= colourSwap.range
-
+                    // If all 3 differences fall within the range threshold, the current pixel is valid to be swapped
                     if (redCheck && greenCheck && blueCheck){
+                        // First add the current pixel (not the index of the current pixel) to the 'changedPixels' list
                         videoProperties.videoCustomOptions.colourSwapList.changedPixels.current.add(currentPixel)
-                        red = colourSwap.to.red
-                        green = colourSwap.to.green
-                        blue = colourSwap.to.blue
+                        // Update RGB values to the values in the current colourSwapValue
+                        red = colourSwapValue.to.red
+                        green = colourSwapValue.to.green
+                        blue = colourSwapValue.to.blue
                     }
    
                 }
 
-                //Applies grayscale transformation
+                // Applies grayscale transformation
                 if (videoProperties.videoCustomOptions.grayscale){
+                    // Computes the 'gray' for the pixel and applys it to the RGB variables
                     const grey = (red + green + blue) /3;
                     red = green = blue = grey;
 
                 }
 
-                //Applies inverse colour transformation
+                // Applies inverse colour transformation
                 if (videoProperties.videoCustomOptions.inverseColour){
+                    // Inverts the RGB values and applys it to the RGB variables
                     red = 255 - red;
                     green = 255 - green;
                     blue = 255 - blue;
                 }
 
-                //Apply transformed pixel values to frame
-                videoFrame.data[currentPixelGroup + 0] = red;
-                videoFrame.data[currentPixelGroup + 1] = green;
-                videoFrame.data[currentPixelGroup + 2] = blue;
+                // Reinsert RGB values back into the array, where the original values are stored
+                videoFrame.data[currentPixelIndex + 0] = red;
+                videoFrame.data[currentPixelIndex + 1] = green;
+                videoFrame.data[currentPixelIndex + 2] = blue;
             }
 
             //Apply transformed video frame to canvas
             canvasContext.putImageData(videoFrame, 0, 0);
-            // console.log("renderFrame",videoProperties.videoCustomOptions.colourSwapList.changedPixels.current)
         }
     }
 
