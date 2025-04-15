@@ -78,16 +78,16 @@ type RefCollection = {
 // Holds information for:
     // Whether the video is currently playing or not ('playing')
     // The current time elapsed by the video ('currentTime')
+    // The current percentage of the video that has elapsed ('currentTimePercentage')
     // Whether to stretch/fill the video into the full window width and height ('videoFill')
-    // The current length of the seek bar's progress ('seekBarProgressLength')
     // Whether or not the seekbar is currently being clicked on or not ('seekBarClicked')
     // The collection of all the refs used by the video ('refCollection')
     // The video's current custom option values ('VideoCustomOptions')
 type VideoProperties = {
     playing: boolean,
     currentTime: number,
+    currentTimePercentage: number,
     videoFill: boolean
-    seekBarProgressLength: number,
     seekBarClicked:boolean,
     refCollection: RefCollection,
     videoCustomOptions: VideoCustomOptions
@@ -121,8 +121,8 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
     const [videoProperties, setVideoProperties] = useState<VideoProperties>({
         playing: true,
         currentTime: 0,
+        currentTimePercentage: 0,
         videoFill: true,
-        seekBarProgressLength: 0,
         seekBarClicked: false,
         refCollection: {
             videoRef:createRef<HTMLVideoElement>(), 
@@ -212,7 +212,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         // Render the current frame
         requestAnimationFrame(renderFrame)
         // Update the size of the seek bar progress
-        setVideoProperties(pendingProperties => ({...pendingProperties, seekBarProgressLength: calculateProgressPercentage()}))
+        setVideoProperties(pendingProperties => ({...pendingProperties, currentTimePercentage: calculateProgressPercentage()}))
     },[videoProperties.currentTime])
 
     // Used anytime the video's 'videoCustomOptions' property is changed
@@ -338,7 +338,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
      */
     function calculateProgressPercentage():number{
         if (videoProperties.refCollection.videoRef.current != null && !isNaN(videoProperties.refCollection.videoRef.current.duration) && videoProperties.refCollection.seekBarRef.current != null){
-            return ((videoProperties.refCollection.videoRef.current.currentTime /(videoProperties.refCollection.videoRef.current.duration))  * 100)
+            return ((videoProperties.refCollection.videoRef.current.currentTime /(videoProperties.refCollection.videoRef.current.duration)))
         } else {return 0}
     }
 
@@ -572,7 +572,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             document.addEventListener("mousemove", videoScrubbing)
                         }}
                     >
-                        <div className="seek-bar-progress" style={{width:`${videoProperties.seekBarProgressLength}%`}}> 
+                        <div className="seek-bar-progress" style={{width:`${videoProperties.currentTimePercentage * 100}%`}}> 
                         </div>
                     </div>
                 </div>
