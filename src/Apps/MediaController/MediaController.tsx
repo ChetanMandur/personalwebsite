@@ -9,7 +9,7 @@ export type MediaControllerProps = AppRunningID & {
     videoRef: React.MutableRefObject<HTMLVideoElement | null>,
     canvasRef:React.MutableRefObject<HTMLCanvasElement | null>,
     updateVideoCustomOptions: <T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]) => void,
-    connectToMediaViewer: (newControllerAppID:string) => void
+    setControllerAppRunningID: React.Dispatch<React.SetStateAction<string>>
 }
 
 type BeatPadValue = {
@@ -33,7 +33,7 @@ type FormValues = {
     playbackRate: number,
 }
 
-export function MediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, connectToMediaViewer}:MediaControllerProps){
+export function MediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, setControllerAppRunningID}:MediaControllerProps){
     const [currentOptions, setCurrentOptions] = useState<VideoUpdatableOptions>(startingValues)
     const [currentFormOptions, setCurrentFormOptions] = useState<FormValues>({currentTime:startingValues.currentTime, playbackRate: startingValues.playbackRate})
     
@@ -82,13 +82,13 @@ export function MediaController({app_running_id,startingValues, videoRef,canvasR
 
 
     useEffect(()=>{
-        connectToMediaViewer(app_running_id)
+        setControllerAppRunningID(app_running_id)
 
         return ()=>{
-            connectToMediaViewer("")
+            setControllerAppRunningID("")
 
         }
-    },[app_running_id, connectToMediaViewer])
+    },[app_running_id, setControllerAppRunningID])
 
     useEffect(()=>{
         const intervalID = setInterval(()=>{setCurrentOptions(pendingState=>{

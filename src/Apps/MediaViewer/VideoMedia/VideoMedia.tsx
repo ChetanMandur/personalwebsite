@@ -423,10 +423,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
        }
 
     }
-
-    function connectToMediaViewer(newControllerAppID: string){
-        setControllerAppRunningID(newControllerAppID)
-    }
+    
 
     function playPauseHandler(){
         if (videoProperties.refCollection.videoRef.current){
@@ -470,7 +467,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             videoRef: videoProperties.refCollection.videoRef,
                             canvasRef: videoProperties.refCollection.canvasRef,
                             updateVideoCustomOptions: updateVideoCustomOptions,
-                            connectToMediaViewer: connectToMediaViewer
+                            setControllerAppRunningID: setControllerAppRunningID
                         } as MediaControllerProps
                     }
                 )
@@ -543,7 +540,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                                             videoRef: videoProperties.refCollection.videoRef,
                                             canvasRef: videoProperties.refCollection.canvasRef,
                                             updateVideoCustomOptions: updateVideoCustomOptions,
-                                            connectToMediaViewer: connectToMediaViewer
+                                            setControllerAppRunningID: setControllerAppRunningID
                                         } as MediaControllerProps
                                     }
                                 )
