@@ -424,7 +424,13 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
 
     }
     
-
+    /**
+     * Handler for both playing/pausing the media content, based on its current state
+     * 
+     * Used as click handler for making an element play/pause the video (used on play/pause `<div>` on bottom bar, and on `<canvas>` element)
+     * @example "If video is playing, pause the video."
+     * @example "If video is paused, play the video"
+     */
     function playPauseHandler(){
         if (videoProperties.refCollection.videoRef.current){
             if (videoProperties.refCollection.videoRef.current.paused){
