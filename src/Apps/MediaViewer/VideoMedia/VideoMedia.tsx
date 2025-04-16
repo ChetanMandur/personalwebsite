@@ -443,10 +443,19 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
     }
 
     
-
+    /**
+     * Dynamically generates the options for the context menu 
+     * 
+     * Options are chosen based on the current state of the Video
+     * 
+     * @example "If no MediaController is open, have option to open a MediaController"
+     * @example "If a MediaController is open, have options to either close or focus the MediaController"
+     * @returns A list of options to be used by the context menu
+     */
     function generateContextMenu() : ContextMenuOptions{
         const output: ContextMenuOptions = {}
         
+        // If the video is currently filling/stretching into the full canvas
         if(videoProperties.videoFill){
             output["Fit Video Into View"] = ()=>{
                 setVideoProperties(pendingState => ({
@@ -454,7 +463,8 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 }) )
             }
             
-        } else{
+        } 
+        else{
             output["Fill Video Into View"] = ()=>{
                 setVideoProperties(pendingState => ({
                     ...pendingState, videoFill:true
@@ -462,6 +472,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
             }
         }
 
+        // If there is no MediaController open for the video
         if (controllerAppRunningID == ""){
             output["Open Controller"] = ()=>{
                 runningAppsDispatch(
@@ -478,7 +489,8 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     }
                 )
             }
-        } else{
+        } 
+        else{
             output["Focus Controller"] = ()=>{
                 runningAppsDispatch(
                     {
@@ -499,6 +511,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         }
         return output
     }
+    
     return (
         <div className="video-media" key={"video-media"+app_running_id}
             onMouseMove={()=>{
