@@ -511,8 +511,10 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         }
         return output
     }
-    
+
+
     return (
+        // Main container for the VideoMedia
         <div className="video-media" key={"video-media"+app_running_id}
             onMouseMove={()=>{
                 if (showOverlay.timeoutID.current){
@@ -522,6 +524,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 showOverlay.timeoutID.current = setTimeout(()=>{setShowOverlay({...showOverlay, display:false})}, 3000)
             }}
         >
+            {/* Canvas element which video is rendered into */}
             <canvas ref={videoProperties.refCollection.canvasRef}  
                 className={videoProperties.videoFill ? "canvas-fill" : "canvas-contain"}
                 onDoubleClick={(event)=>{
@@ -543,10 +546,34 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     )
 
                 }}
-            />            
+            />    
+
+            {/* Video element which plays the video, but does not render the video */}
+            <video ref={videoProperties.refCollection.videoRef} 
+            src={fileContentData} 
+            crossOrigin="anonymous"
+            onPlay={()=>{
+                setVideoProperties(pendingProperties =>({
+                    ...pendingProperties,
+                    playing: true
+                }))
+            }}
+
+            onPause={()=>{
+                setVideoProperties(pendingProperties =>({
+                    ...pendingProperties,
+                    playing: false
+                }))
+            }}
+            hidden={true} autoPlay />
+
+            {/* Overlay that displays over the canvas */}
             <div className="video-overlay">
+
+                {/* Top bar of the overlay, className updates based on display state (changes animation) */}
                 <div className={"top-bar "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-top-bar" : "hide-top-bar")}>
                     
+                    {/* Button for opening/focusing MediaController */}
                     <div className="common-border video-overlay-top-bar-button media-controller-button"
                         onClick={()=>{
                             if (controllerAppRunningID == ""){
@@ -577,6 +604,8 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     >
                         <img src="https://www.svgrepo.com/show/480630/controller-3.svg" alt="" />
                     </div>
+                    
+                    {/* Button for changing video fitment */}
                     <div className="common-border video-overlay-top-bar-button video-fill-button"
                         onClick={()=>{setVideoProperties(pendingState=>({...pendingState, videoFill: !pendingState.videoFill}))}}
                     >
@@ -585,7 +614,11 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
 
                 </div>
                 
+
+                {/* Bottom bar of the overlay, className updates based on display state (changes animation) */}
                 <div className={"bottom-bar "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-bottom-bar" : "hide-bottom-bar")}>
+
+                    {/* Button for playing/pausing the video */}
                     <div className="playback-button common-border"
                         onClick={(event)=>{
                             event.stopPropagation()
@@ -594,6 +627,8 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     >
                         <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
                     </div> 
+
+                    {/* Main container for the seekbar */}
                     <div className="seek-bar common-border"  ref={videoProperties.refCollection.seekBarRef}
                         onMouseDown={(event)=>{
                             setVideoProperties(pendingState => ({...pendingState, seekBarClicked: true}))
@@ -605,28 +640,13 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             document.addEventListener("mousemove", videoScrubbing)
                         }}
                     >
+                        {/* The progress of the seekbar (ie the elapsed time of the video) */}
                         <div className="seek-bar-progress" style={{width:`${videoProperties.currentTimePercentage * 100}%`}}> 
                         </div>
                     </div>
                 </div>
             </div>
-            <video ref={videoProperties.refCollection.videoRef} 
-            src={fileContentData} 
-            crossOrigin="anonymous"
-            onPlay={()=>{
-                setVideoProperties(pendingProperties =>({
-                    ...pendingProperties,
-                    playing: true
-                }))
-            }}
-
-            onPause={()=>{
-                setVideoProperties(pendingProperties =>({
-                    ...pendingProperties,
-                    playing: false
-                }))
-            }}
-            hidden={true} autoPlay controls />
+            
         </div>
     )
 }
