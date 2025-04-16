@@ -368,7 +368,16 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         setVideoProperties(pendingProperties => ({...pendingProperties, currentTime: newTime}))
     }
 
+    /**
+     * Function that handles changes to any properties defined in `VideoUpdatableOptions`
+     * 
+     * This function is intended to be used by MediaController, so that it can sync property updates with `videoProperties`
+     * - When a control option is used in MediaController, this function is to be called so that the change can be applied to `videoProperties`
+     * @param newOptionKey The 'key'/property name that is to be updated
+     * @param newOptionValue The new value for the property
+     */
     function updateVideoCustomOptions<T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]){
+        // Non-visual properties need changes applied directly to the videoRef
         switch (newOptionKey) {
             case "playbackRate":
                 videoProperties.refCollection.videoRef.current!.playbackRate = newOptionValue as number
@@ -385,7 +394,9 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 break;
             
             case "playing":
-                //playing == True
+                // By playing/pausing the videoRef, the property in videoProperties will update
+
+                // For when playing == True
                 if (newOptionValue){
                     videoProperties.refCollection.videoRef.current?.play()
 
@@ -398,9 +409,15 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 break;
         }
         
+        // Applies property updates to the 'videoCustomOptions' property
+            // Since both the 'currentTime' and 'playing' properties are not within the 'videoCustomOptions' property, they cannot be used within this loop
+                // Both of these properties are applied within their switch case
        if (newOptionKey != "currentTime" || newOptionKey != "playing"){
             setVideoProperties((pendingState) =>{
+                // Create new VideoCustomOptions object with updated values
                 const newOptions:VideoCustomOptions = {...pendingState.videoCustomOptions, [newOptionKey]:newOptionValue}
+
+                // Apply new object to videoCustomOptions property
                 return {...pendingState, videoCustomOptions:newOptions}
             })
        }
