@@ -480,6 +480,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                         type:"ADD",
                         app_name: "MediaController",
                         props:{
+                            mediaType:"VIDEO",
                             startingValues: {...videoProperties.videoCustomOptions,playing:videoProperties.playing, currentTime:videoProperties.currentTime},
                             videoRef: videoProperties.refCollection.videoRef,
                             canvasRef: videoProperties.refCollection.canvasRef,
@@ -582,6 +583,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                                         type:"ADD",
                                         app_name: "MediaController",
                                         props:{
+                                            mediaType:"VIDEO",
                                             startingValues: {...videoProperties.videoCustomOptions,playing:videoProperties.playing, currentTime:videoProperties.currentTime},
                                             videoRef: videoProperties.refCollection.videoRef,
                                             canvasRef: videoProperties.refCollection.canvasRef,

@@ -58,7 +58,7 @@ export const AppList : AppListType = {
     name: "Media Controller",
     icon:"https://www.svgrepo.com/show/480630/controller-3.svg",
     app: MediaController,
-    props: {} as MediaControllerProps,
+    props: {mediaType:"NONE"} as MediaControllerProps,
 
   },
   "Default App Properties Test": {

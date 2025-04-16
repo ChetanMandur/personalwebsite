@@ -1,0 +1,82 @@
+.media-controller-section > .media-controller-section-progressbar{
+    display: flex;
+    flex-direction: row;
+    .media-controller-section-progressbar-playpause-button{
+        flex: 0 1 2.4vh;
+        img{
+            height: 100%;
+            width: 100%;
+        }
+    } 
+}
+
+.media-controller-section > .beat-pad-section{
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 1vh;
+    column-gap: 1vh;
+    justify-content: center;
+    .beat-pad-section-value{
+        display: flex;
+        flex-direction: row;
+        width: 5rem;
+        height: 5rem;
+        user-select: none;
+        text-align: center;
+        font-size: 0.8em;
+        justify-content: center;
+        align-items: center;
+        
+    }
+}
+
+.media-controller-section > .color-swap-section{
+    display: flex;
+    flex-direction: column;
+    min-height: 5.5vh;
+    overflow-x: auto ;
+    resize: vertical;
+
+    .colour-swap-section-value{
+        display:flex;
+        column-gap: 0.3vh;
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding-top: 0.5vh;
+        
+
+        .colour-swap-section-value-option{
+            display:flex;
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+
+            input[type="color"]{
+
+                width: 3vh;
+                background-color: var(--bar-default-colour);
+                height: 3vh;
+                
+
+                border:none;
+                padding:0;
+                
+            }
+
+            .colour-swap-section-value-option-number{
+                width: 2.5vh;
+                padding: 0;
+                height: 3vh;
+            }
+
+        }
+
+        .colour-swap-delete{
+            text-align: center;
+            user-select: none;
+        }
+       
+    }
+}
