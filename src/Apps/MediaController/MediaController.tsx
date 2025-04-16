@@ -12,7 +12,7 @@ import { VideoMediaController } from "./VideoMediaController/VideoMediaControlle
     //// (mediaType) An identifier for which type of media the controller is for
     //// (app_running_id) The app running id for the controller
 
-// Typing used for controller for Video Media
+// Typing used for the controller for Video Media
 // The information contains:
     // The values currently used by the video BEFORE the MediaController was launched (startingValues)
         // Autofills the starting position/value of the controller inputs
@@ -29,15 +29,33 @@ export type VideoMediaControllerProps = AppRunningID & {
     setControllerAppRunningID: React.Dispatch<React.SetStateAction<string>>
 }
 
+// Typing used when no media type is given
+    // Used as a default state
 type EmptyMediaControllerProps = AppRunningID &  {
     mediaType: "NONE"
 }
 
+// Union typing, encompasses all possible controller prop types
 export type MediaControllerProps = VideoMediaControllerProps|EmptyMediaControllerProps
 
 
+/**
+ * Main handler for opening a controller for a specific `MediaViewer` instance
+ * 
+ * @param props The props required by the controller
+ * - Since props can have many shapes, we just keep it as a whole object
+ * - This allows us to not only access common information (ie. `mediaType`), but also pass all unique props to the proper controller component
+ * @returns The controller used for the specified media type
+ */
 export function MediaController(props:MediaControllerProps){
 
+    
+    /**
+     * Each type of media requires a different UI to properly display its controller options
+     * 
+     * This function returns the proper UI for the media based on its type
+     * @returns Proper display for item based on `mediaType` property
+     */
     function mediaControllerSelector(){
         switch (props.mediaType) {
             case "VIDEO":
