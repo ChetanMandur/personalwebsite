@@ -21,7 +21,7 @@ type BeatPadValue = {
 
 // Typing used to represent a list of `BeatPadValue`
 type BeatPadMappingList = {
-    [key:React.KeyboardEvent["key"]]: BeatPadValue
+    [key:string]: BeatPadValue
 }
 
 // Typing used to represent the complete state of the beat pad
@@ -32,7 +32,7 @@ type BeatPadMappingList = {
         // When `toMap` >= 0, means that there is a `BeatPadValue` that is looking to be mapped
     // The list of `BeatPadValue` that is currently being used (list)
 type BeatPadMapping ={
-    toMap: number,
+    toMap: string | null,
     list: BeatPadMappingList
 }
 
@@ -52,7 +52,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsData} = useContext(RunningAppsContext)
 
-    const [beatPadMappings, setBeatPadMappings] = useState<BeatPadMapping>({toMap: -1, list: {}})
+    const [beatPadMappings, setBeatPadMappings] = useState<BeatPadMapping>({toMap: null, list: {}})
 
     const hasFocus = runningAppsData[app_running_id].zIndex == 999
 
@@ -60,7 +60,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
     useEffect(()=>{
         function keyDownHandler(event:KeyboardEvent){
             if (hasFocus){
-                if (beatPadMappings.toMap == -1){
+                if (beatPadMappings.toMap == null){
                     if (beatPadMappings.list[event.key]){
                         // console.log("value",beatPadMappings.list[event.key])
                         applyBeatPadValue(beatPadMappings.list[event.key])
@@ -72,19 +72,25 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 }
                 else{
                     // console.log("to map", beatPadMappings.toMap)
-                    const beatPadMappingsListArray = Object.entries(beatPadMappings.list)
-                    const beatPadValueToMap = beatPadMappingsListArray[beatPadMappings.toMap]
                     
                     if (!beatPadMappings.list[event.key]){
-                        beatPadValueToMap[0] = beatPadValueToMap[1].keycode = event.key
+                        const beatPadMappingsListArray = Object.entries(beatPadMappings.list)
+                        for (let index=0; index< beatPadMappingsListArray.length; index++){
+                            const currentBeatPadValue = beatPadMappingsListArray[index]
 
-                        beatPadMappingsListArray[beatPadMappings.toMap] = beatPadValueToMap
+                            if (currentBeatPadValue[0] == beatPadMappings.toMap){
+                                
+                                currentBeatPadValue[0] = currentBeatPadValue[1].keycode = event.key;
 
-                        setBeatPadMappings({toMap:-1, list: Object.fromEntries(beatPadMappingsListArray)})
-
+                                beatPadMappingsListArray[index] = currentBeatPadValue;
+        
+                                setBeatPadMappings({toMap:null, list: Object.fromEntries(beatPadMappingsListArray)});
+                                break;
+                            }
+                        }
                     }
-                    else if(event.key == beatPadValueToMap[0]){
-                        setBeatPadMappings({toMap:-1, list: beatPadMappings.list})
+                    else if(event.key == beatPadMappings.toMap){
+                        setBeatPadMappings({toMap:null, list: beatPadMappings.list})
 
                     }
                 }
@@ -336,7 +342,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                                     setBeatPadMappings(beatPadMappings)
                                                 },
                                                 "Set key value": ()=>{
-                                                    setBeatPadMappings({toMap: index, list: beatPadMappings.list})
+                                                    setBeatPadMappings({toMap: currentKeyCode, list: beatPadMappings.list})
                                                 }
                                             }
                                         })
@@ -347,7 +353,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                     {/* {currentBeatPadValue.keycode != null ? <>{currentBeatPadValue.keycode} <br/></>: (
                                         beatPadMappings.toMap == index ? <>Press a key<br/></> : <>Unassigned<br/></>
                                     )} */}
-                                    {beatPadMappings.toMap == index ? <>Press a key <br/></>: (
+                                    {beatPadMappings.toMap == currentKeyCode ? <>Press a key <br/></>: (
                                         currentBeatPadValue.keycode != null ? <>{currentBeatPadValue.keycode} <br/></> : <>Unassigned<br/></>
                                     )}
                                     {currentBeatPadValue.preservesPitch ? <>True</> : <>False</>} <br/>
