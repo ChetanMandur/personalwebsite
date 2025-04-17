@@ -118,6 +118,7 @@ type OverlayProperties = {
  * @returns Component
  */
 export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
+    // State for the current video properties
     const [videoProperties, setVideoProperties] = useState<VideoProperties>({
         playing: true,
         currentTime: 0,
@@ -142,11 +143,18 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         }
     })
 
+    // State for holding the app running ID for its relatead media controller
     const [controllerAppRunningID, setControllerAppRunningID] = useState<string>("")
 
+    // State data for the overlay and its properties
     const [showOverlay, setShowOverlay] = useState<OverlayProperties>({display:false, timeoutID: createRef<number|null>()})
 
+    // Used to create a context menu when right clicking the canvas
     const {contextMenuDispatch} = useContext(ContextMenuContext)
+
+    // Used for two main purposes
+        // Used to handle the related media controller (open/create, close/delete, and focus)
+        // Used to maximize the VideoMedia window when double clicking the canvas
     const {runningAppsDispatch} = useContext(RunningAppsContext)
 
 
