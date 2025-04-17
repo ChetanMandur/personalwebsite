@@ -44,17 +44,24 @@ type FormValues = {
 }
 
 export function VideoMediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, setControllerAppRunningID}:VideoMediaControllerProps){
+    // State for storing all current values for the video/controller
     const [currentOptions, setCurrentOptions] = useState<VideoUpdatableOptions>(startingValues)
+
+    // State for storing all current form (ie. number inputs) values 
     const [currentFormOptions, setCurrentFormOptions] = useState<FormValues>({currentTime:startingValues.currentTime, playbackRate: startingValues.playbackRate})
-
-    const {contextMenuDispatch} = useContext(ContextMenuContext)
-    const {runningAppsData} = useContext(RunningAppsContext)
-
+    
+    // State for storing all beatpad properties
     const [beatPadMappings, setBeatPadMappings] = useState<BeatPadMapping>({toMap: null, list: {}})
+
+    // Used to provide a context menu for each individual beatpad
+    const {contextMenuDispatch} = useContext(ContextMenuContext)
+
+    // Used to check if the controller is currently being focused by the user
+    const {runningAppsData} = useContext(RunningAppsContext)
 
     const hasFocus = runningAppsData[app_running_id].zIndex == 999
 
-
+    
     useEffect(()=>{
         function keyDownHandler(event:KeyboardEvent){
             if (hasFocus){
