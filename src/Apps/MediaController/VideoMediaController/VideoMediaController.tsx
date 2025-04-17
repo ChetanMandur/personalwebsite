@@ -5,6 +5,13 @@ import { VideoUpdatableOptions } from "../../MediaViewer/VideoMedia/VideoMedia"
 import { ContextMenuContext, contextMenuPropagation } from "../../../Desktop/Contexts/ContextMenuContext"
 import "./VideoMediaController.css"
 
+// Typing used to represent a single beat pad
+// Supposed to be akin to a beat pad/square on a sampler/drum machine
+// The information contains:
+    // The keyboard key (if any) that activates the beat pad (keycode)
+    // The timestamp of the video that the beat pad jumps to (timeStamp)
+    // The playback rate/speed used by the beat pad (playbackRate)
+    // Whether or not the video perserves the original pitch (preservesPitch)
 type BeatPadValue = {
     keycode: React.KeyboardEvent["key"] | null
     timeStamp: number,
@@ -12,15 +19,27 @@ type BeatPadValue = {
     preservesPitch: boolean
 }
 
+// Typing used to represent a list of `BeatPadValue`
 type BeatPadMappingList = {
     [key:React.KeyboardEvent["key"]]: BeatPadValue
 }
 
+// Typing used to represent the complete state of the beat pad
+// Holds a list of `BeatPadValue`s and also whether or not there is a BeatPadValue looking to be mapped
+// The information contains:
+    // The index of the `BeatPadValue` (from the `BeatPadMappingList`) that is looking to be mapped to a keyboard value (toMap)
+        // When `toMap` == -1, means no `BeatPadValue` is looking to be mapped
+        // When `toMap` >= 0, means that there is a `BeatPadValue` that is looking to be mapped
+    // The list of `BeatPadValue` that is currently being used (list)
 type BeatPadMapping ={
     toMap: number,
     list: BeatPadMappingList
 }
 
+// Typing used to represent the form values used by any number inputs (ie. input[number])
+// The information contains:
+    // The value for the number input representing the elapsed time, found underneath the seekbar (currentNumber)
+    // The value for the number input representing the current playback rate, found unerneath the playbackRate slider (playbackRate)
 type FormValues = {
     currentTime: number,
     playbackRate: number,
