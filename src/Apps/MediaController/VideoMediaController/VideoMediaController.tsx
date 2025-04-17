@@ -48,8 +48,6 @@ type FormValues = {
 export function VideoMediaController({app_running_id,startingValues, videoRef,canvasRef, updateVideoCustomOptions, setControllerAppRunningID}:VideoMediaControllerProps){
     const [currentOptions, setCurrentOptions] = useState<VideoUpdatableOptions>(startingValues)
     const [currentFormOptions, setCurrentFormOptions] = useState<FormValues>({currentTime:startingValues.currentTime, playbackRate: startingValues.playbackRate})
-    
-    const [beatPadValues, setBeatPadValues] = useState<BeatPadValue[]>([])
 
     const {contextMenuDispatch} = useContext(ContextMenuContext)
     const {runningAppsData} = useContext(RunningAppsContext)
@@ -74,14 +72,20 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 }
                 else{
                     // console.log("to map", beatPadMappings.toMap)
+                    const beatPadMappingsListArray = Object.entries(beatPadMappings.list)
+                    const beatPadValueToMap = beatPadMappingsListArray[beatPadMappings.toMap]
                     
                     if (!beatPadMappings.list[event.key]){
-                        beatPadValues[beatPadMappings.toMap].keycode = event.key
-                        setBeatPadValues(beatPadValues)
-            
-                        beatPadMappings.list[event.key] = beatPadValues[beatPadMappings.toMap]
-                        beatPadMappings.toMap = -1
-                        setBeatPadMappings(beatPadMappings)
+                        beatPadValueToMap[0] = beatPadValueToMap[1].keycode = event.key
+
+                        beatPadMappingsListArray[beatPadMappings.toMap] = beatPadValueToMap
+
+                        setBeatPadMappings({toMap:-1, list: Object.fromEntries(beatPadMappingsListArray)})
+
+                    }
+                    else if(event.key == beatPadValueToMap[0]){
+                        setBeatPadMappings({toMap:-1, list: beatPadMappings.list})
+
                     }
                 }
             }
@@ -126,23 +130,6 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
         updateVideoCustomOptions(newOptionKey, newOptionValue)
     }
 
-    function updateBeatPadValue(index: number, newBeatPadValue: BeatPadValue){
-        const currentBeatPadValue = beatPadValues[index]
-
-        //Second part isnt really needed
-        if (currentBeatPadValue.keycode && currentBeatPadValue.keycode != newBeatPadValue.keycode){
-            delete beatPadMappings.list[currentBeatPadValue.keycode]
-        }
-
-        if (newBeatPadValue.keycode){
-            beatPadMappings.list[newBeatPadValue.keycode] = newBeatPadValue
-        }
-
-        beatPadValues[index] = newBeatPadValue
-        setBeatPadValues(beatPadValues)
-        setBeatPadMappings(beatPadMappings)
-        
-    }
 
     function applyBeatPadValue(beatPadValue: BeatPadValue){
         changeValue("currentTime", beatPadValue.timeStamp)
@@ -272,13 +259,18 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                     Beat Pad
                     <div className="media-controller-section-titlebar-button common-border"
                         onClick={()=>{
-                            beatPadValues.push()
-                            setBeatPadValues([...beatPadValues, {
+                            let randomKey: string = "NO_KEY" + Math.random().toString()
+                            while (beatPadMappings.list[randomKey]){
+                                randomKey = "NO_KEY" + Math.random().toString()
+                            }
+                            beatPadMappings.list[randomKey] = {
                                 keycode: null,
                                 timeStamp: currentOptions.currentTime,
                                 playbackRate: currentOptions.playbackRate,
                                 preservesPitch: currentOptions.preservesPitch
-                            }])
+                                
+                            }
+                            setBeatPadMappings(beatPadMappings)
                         }}
                     >
                         +
@@ -286,10 +278,12 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 </div>
                 <div className="beat-pad-section">
                     {
-                        beatPadValues.map((value, index)=>{
+                        Object.entries(beatPadMappings.list).map((item, index)=>{
+                            const [currentKeyCode, currentBeatPadValue] = item
+                            
                             return(
                                 <div className="beat-pad-section-value common-border" key={"beat-pad-value"+index}
-                                    onClick={()=>{applyBeatPadValue(value)}}
+                                    onClick={()=>{applyBeatPadValue(currentBeatPadValue)}}
                                     onContextMenu={(event)=>{
                                         contextMenuPropagation(event)
                                         contextMenuDispatch({
@@ -297,58 +291,51 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                             event: event,
                                             newOptions:{
                                                 "Delete pad": ()=>{
-                                                    if (value.keycode){
-                                                        delete beatPadMappings.list[value.keycode]
-                                                        setBeatPadMappings(beatPadMappings)
-                                                    }
+                                                    delete beatPadMappings.list[currentKeyCode]
+                                                    setBeatPadMappings(beatPadMappings)
 
-                                                    beatPadValues.splice(index, 1)
-                                                    setBeatPadValues(beatPadValues)
                                                 },
                                                 "Update pad with current": ()=>{
                                                     setCurrentOptions(pendingState =>{
-                                                        updateBeatPadValue(index, {
-                                                            keycode: value.keycode,
+                                                        beatPadMappings.list[currentKeyCode] = {
+                                                            ...currentBeatPadValue, 
                                                             timeStamp: pendingState.currentTime,
                                                             playbackRate: pendingState.playbackRate,
                                                             preservesPitch: pendingState.preservesPitch
-                                                        })
+                                                        }
+                                                        setBeatPadMappings(beatPadMappings)
                                                         return pendingState
                                                     })
                                                     
                                                 },
                                                 "Update pad timestamp": ()=>{
                                                     setCurrentOptions(pendingState =>{
-                                                        updateBeatPadValue(index,{
-                                                            ...value,
+                                                        beatPadMappings.list[currentKeyCode] = {
+                                                            ...currentBeatPadValue, 
                                                             timeStamp: pendingState.currentTime,
-                                                        })
+                                                        }
+                                                        setBeatPadMappings(beatPadMappings)
                                                         return pendingState
                                                     })
                                                 },
                                                 "Update pad playbackrate": ()=>{
                                                     setCurrentOptions(pendingState =>{
-                                                        updateBeatPadValue(index, {
-                                                            ...value,
+                                                        beatPadMappings.list[currentKeyCode] = {
+                                                            ...currentBeatPadValue, 
                                                             playbackRate: pendingState.playbackRate,
-                                                            
-                                                        })
+                                                        }
+                                                        setBeatPadMappings(beatPadMappings)
                                                         return pendingState
                                                     })
                                                 },
                                                 "Swap pad preserve pitch": ()=>{
-                                                    updateBeatPadValue(index, {
-                                                        ...value,
-                                                        preservesPitch: !value.preservesPitch,
-                                                    })
+                                                    beatPadMappings.list[currentKeyCode] = {
+                                                        ...currentBeatPadValue, 
+                                                        preservesPitch: !currentBeatPadValue.preservesPitch
+                                                    }
+                                                    setBeatPadMappings(beatPadMappings)
                                                 },
                                                 "Set key value": ()=>{
-                                                    if (value.keycode){
-                                                        delete beatPadMappings.list[value.keycode]
-                                                        value.keycode = null
-                                                        beatPadValues[index] = value
-                                                        setBeatPadValues(beatPadValues)
-                                                    }
                                                     setBeatPadMappings({toMap: index, list: beatPadMappings.list})
                                                 }
                                             }
@@ -357,12 +344,15 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                 
                                 >
                                     {index} <br/>
-                                    {value.keycode != null ? <>{value.keycode} <br/></>: (
+                                    {/* {currentBeatPadValue.keycode != null ? <>{currentBeatPadValue.keycode} <br/></>: (
                                         beatPadMappings.toMap == index ? <>Press a key<br/></> : <>Unassigned<br/></>
+                                    )} */}
+                                    {beatPadMappings.toMap == index ? <>Press a key <br/></>: (
+                                        currentBeatPadValue.keycode != null ? <>{currentBeatPadValue.keycode} <br/></> : <>Unassigned<br/></>
                                     )}
-                                    {value.preservesPitch ? <>True</> : <>False</>} <br/>
-                                    {value.playbackRate} <br/>
-                                    {value.timeStamp} <br/>
+                                    {currentBeatPadValue.preservesPitch ? <>True</> : <>False</>} <br/>
+                                    {currentBeatPadValue.playbackRate} <br/>
+                                    {currentBeatPadValue.timeStamp} <br/>
                                 </div>
                             )
                         })
