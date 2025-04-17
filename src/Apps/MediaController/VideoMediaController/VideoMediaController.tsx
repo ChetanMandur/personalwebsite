@@ -27,9 +27,7 @@ type BeatPadMappingList = {
 // Typing used to represent the complete state of the beat pad
 // Holds a list of `BeatPadValue`s and also whether or not there is a BeatPadValue looking to be mapped
 // The information contains:
-    // The index of the `BeatPadValue` (from the `BeatPadMappingList`) that is looking to be mapped to a keyboard value (toMap)
-        // When `toMap` == -1, means no `BeatPadValue` is looking to be mapped
-        // When `toMap` >= 0, means that there is a `BeatPadValue` that is looking to be mapped
+    // The key for the `BeatPadValue` (from `BeatPadMappingList`) that is looking to be mapped to a keyboard key (toMap)
     // The list of `BeatPadValue` that is currently being used (list)
 type BeatPadMapping ={
     toMap: string | null,
