@@ -131,6 +131,12 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
     },[hasFocus, app_running_id, beatPadMappings])
 
 
+    // Purpose of useEffect is to send its app running id back to the original video media
+    // Purpose is to allow the video media to close the controller when the video media is closed
+    // When the controller is closed (and not the video media), the controller unlinks itself from the video media
+        // This is done by setting the video media's controller app running id back to empty/nothing
+    // Is run at launch of the video media (and also if either the setting function or the controller's app running id is ever changed)
+        // (Although the latter would never happen (as of writing this message (and hopefully forever)))
     useEffect(()=>{
         setControllerAppRunningID(app_running_id)
 
