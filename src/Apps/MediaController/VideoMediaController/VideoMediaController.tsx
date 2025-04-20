@@ -8,18 +8,18 @@ import "./VideoMediaController.css"
 // Typing used to represent a single beat pad
 // Supposed to be akin to a beat pad/square on a sampler/drum machine
 // The information contains:
-    // The keyboard key (if any) that activates the beat pad (keycode)
     // The timestamp of the video that the beat pad jumps to (timeStamp)
     // The playback rate/speed used by the beat pad (playbackRate)
     // Whether or not the video perserves the original pitch (preservesPitch)
 type BeatPadValue = {
-    keycode: React.KeyboardEvent["key"] | null
     timeStamp: number,
     playbackRate: number,
     preservesPitch: boolean
 }
 
 // Typing used to represent a list of `BeatPadValue`
+// The key is used to represent the keyboard key assigned to the BeatPadValue
+// If no keyboard key is assigned, then the key is assigned a "NO_KEY" + {random number}  
 type BeatPadMappingList = {
     [key:string]: BeatPadValue
 }
@@ -102,7 +102,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                             if (currentBeatPadValue[0] == beatPadMappings.toMap){
                                 
                                 // Update the copy with the new keyboard key
-                                currentBeatPadValue[0] = currentBeatPadValue[1].keycode = event.key;
+                                currentBeatPadValue[0] = event.key;
 
                                 // Update the value @ index with the new copy
                                 beatPadMappingsListArray[index] = currentBeatPadValue;
@@ -298,7 +298,6 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                 randomKey = "NO_KEY" + Math.random().toString()
                             }
                             beatPadMappings.list[randomKey] = {
-                                keycode: null,
                                 timeStamp: currentOptions.currentTime,
                                 playbackRate: currentOptions.playbackRate,
                                 preservesPitch: currentOptions.preservesPitch
@@ -382,7 +381,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                         beatPadMappings.toMap == index ? <>Press a key<br/></> : <>Unassigned<br/></>
                                     )} */}
                                     {beatPadMappings.toMap == currentKeyCode ? <>Press a key <br/></>: (
-                                        currentBeatPadValue.keycode != null ? <>{currentBeatPadValue.keycode} <br/></> : <>Unassigned<br/></>
+                                        currentKeyCode.substring(0,6) != "NO_KEY" ? <>{currentKeyCode} <br/></> : <>Unassigned<br/></>
                                     )}
                                     {currentBeatPadValue.preservesPitch ? <>True</> : <>False</>} <br/>
                                     {currentBeatPadValue.playbackRate} <br/>
