@@ -61,39 +61,60 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
 
     const hasFocus = runningAppsData[app_running_id].zIndex == 999
 
-    
+
+    // Used to set/update the key handler used for using the beatpad
+    // Updates each time the controller gets focus from the user OR when beatPadMappings is updated
     useEffect(()=>{
+
+        // Main keydown handler function
         function keyDownHandler(event:KeyboardEvent){
+            // User must have focus with the controller for beat pad to be functional
             if (hasFocus){
+
+                // If the beatpad is currently not looking to map a pad
                 if (beatPadMappings.toMap == null){
+
+                    // If the key pressed is mapped to a pad
                     if (beatPadMappings.list[event.key]){
-                        // console.log("value",beatPadMappings.list[event.key])
+                        // Apply the beat pad
                         applyBeatPadValue(beatPadMappings.list[event.key])
 
                     }
-                    else{
-                        // console.log("key not assigned to pad")
-                    }
+
                 }
+
+                // If the beatpad is currently looking to map a pad
                 else{
-                    // console.log("to map", beatPadMappings.toMap)
                     
+                    // If the key pressed is currently NOT mapped to a pad
                     if (!beatPadMappings.list[event.key]){
+                        // Convert the list of BeatPadValues into an array
+                            // This is done so that the order of the pads stays the same
+                            // If object is directly updated with delete/inserts, the pad is moved to the bottom of the list
                         const beatPadMappingsListArray = Object.entries(beatPadMappings.list)
+
+                        // Parse thru the entire array
                         for (let index=0; index< beatPadMappingsListArray.length; index++){
+                            // Create a copy of the pad at the index
                             const currentBeatPadValue = beatPadMappingsListArray[index]
 
+                            // If the current pad has the key that is to be mapped
                             if (currentBeatPadValue[0] == beatPadMappings.toMap){
                                 
+                                // Update the copy with the new keyboard key
                                 currentBeatPadValue[0] = currentBeatPadValue[1].keycode = event.key;
 
+                                // Update the value @ index with the new copy
                                 beatPadMappingsListArray[index] = currentBeatPadValue;
-        
+                                
+                                // Apply the new list to BeatPadMappings
                                 setBeatPadMappings({toMap:null, list: Object.fromEntries(beatPadMappingsListArray)});
                                 break;
                             }
                         }
                     }
+                    // If the key pressed is the same as the one currently mapped to the pad looking to be remapped...
+                    // ... keep the list the same, and stop looking to map a pad
                     else if(event.key == beatPadMappings.toMap){
                         setBeatPadMappings({toMap:null, list: beatPadMappings.list})
 
@@ -101,9 +122,11 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 }
             }
         }
-    
+        
+        // Adds the key handler function to the whole website's 'keydown' event listener
         document.addEventListener("keydown", keyDownHandler)
 
+        // Before updating/dismounting, remove the event listener currently set
         return () => document.removeEventListener("keydown", keyDownHandler)
     },[hasFocus, app_running_id, beatPadMappings])
 
