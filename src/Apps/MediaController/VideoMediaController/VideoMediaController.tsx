@@ -146,17 +146,25 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
         }
     },[app_running_id, setControllerAppRunningID])
 
+    // Purpose of the useEffect is to create/restart the loop used to update the current time used for the controller
+    // Without this loop, the controller's number input for the duration would not update 
     useEffect(()=>{
-        const intervalID = setInterval(()=>{setCurrentOptions(pendingState=>{
-            if (!videoRef.current?.paused){
-                setCurrentFormOptions(pendingState=>({currentTime:videoRef.current!.currentTime, playbackRate: pendingState.playbackRate}))
-            }
-            return {...pendingState, currentTime: videoRef.current!.currentTime, playing: !videoRef.current?.paused}
-        })
-        
-        
+        // Creates the interval (which is run ASAP, denoted by timeout=0) and stores its ID
+        const intervalID = setInterval(()=>{
+            // Updates pending state to ensure that no other state changes are ignored
+            setCurrentOptions(pendingState=>{
+
+                // Only updates current time state value (used by the number input form) when the video is playing
+                if (!videoRef.current?.paused){
+                    setCurrentFormOptions(pendingState=>({currentTime:videoRef.current!.currentTime, playbackRate: pendingState.playbackRate}))
+                }
+                
+                // Updates the current time state value (used by the range input form AND to denote the current elapsed time of the video) 
+                return {...pendingState, currentTime: videoRef.current!.currentTime, playing: !videoRef.current?.paused}
+            })
         }, 0)
 
+        // Removes/clears the interval @ unmount or during reset
         return ()=>{
             clearInterval(intervalID)
         }
