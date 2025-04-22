@@ -3,6 +3,7 @@ import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "
 import { AppRunningID, RunningAppsContext } from "../../../Desktop/Contexts/RunningAppsContext"
 import { MediaControllerProps } from "../../MediaController/MediaController"
 import "./VideoMedia.css"
+import { TooltipContext } from "../../../Desktop/Contexts/TooltipContext"
 
 
 // Typing for VideoMedia Props
@@ -156,6 +157,9 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         // Used to handle the related media controller (open/create, close/delete, and focus)
         // Used to maximize the VideoMedia window when double clicking the canvas
     const {runningAppsDispatch} = useContext(RunningAppsContext)
+
+    // Used to create tooltips on overlay buttons
+    const {tooltipDispatch} = useContext(TooltipContext)
 
 
     // Used when component is first mounted and unmounted
@@ -530,7 +534,10 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     clearTimeout(showOverlay.timeoutID.current)
                 }
                 setShowOverlay({...showOverlay, display:true})
-                showOverlay.timeoutID.current = setTimeout(()=>{setShowOverlay({...showOverlay, display:false})}, 3000)
+                showOverlay.timeoutID.current = setTimeout(()=>{
+                    setShowOverlay({...showOverlay, display:false});
+                    tooltipDispatch({type:"HIDE"})
+                }, 3000)
             }}
         >
             {/* Canvas element which video is rendered into */}
@@ -588,6 +595,10 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             event.stopPropagation()
                             playPauseHandler()
                         }}
+                        onMouseMove={(event)=>{
+                            tooltipDispatch({type:"SET", event:event, newDataType:"TEXT", newData:(videoProperties.playing == false ? "Play" : "Pause")})
+                        }}
+                        onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
                     </div> 
@@ -638,6 +649,10 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                                 ) 
                             }
                         }}
+                        onMouseMove={(event)=>{
+                            tooltipDispatch({type:"SET", event:event, newDataType:"TEXT", newData:(controllerAppRunningID == "" ? "Open Media Controller" : "Focus Media Controller")})
+                        }}
+                        onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         <img src="https://www.svgrepo.com/show/480630/controller-3.svg" alt="" />
                     </div> 
@@ -645,6 +660,10 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     {/* Button for changing video fill mode */}
                     <div className="video-overlay-button common-border"
                         onClick={()=>{setVideoProperties(pendingState=>({...pendingState, videoFill: !pendingState.videoFill}))}}
+                        onMouseMove={(event)=>{
+                            tooltipDispatch({type:"SET", event:event, newDataType:"TEXT", newData:(videoProperties.videoFill ? "Fit video into window" : "Fill video into window")})
+                        }}
+                        onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         <img src={videoProperties.videoFill ? "https://www.svgrepo.com/show/509227/size-actual.svg" : "https://www.svgrepo.com/show/509229/size-fullscreen.svg"} alt="" />
                     </div> 
