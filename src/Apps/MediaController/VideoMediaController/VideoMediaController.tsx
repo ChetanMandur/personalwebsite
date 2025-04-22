@@ -172,13 +172,25 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
     },[])
 
 
+    /**
+     * The purpose of this function is to update the current video options for both the controller and the source video media 
+     * 
+     * Goal is to unify both updates into one function so that both states stay synced with each other
+     * @param newOptionKey The key used to indicate which option is being changed
+     * @param newOptionValue The new value for the option being changed
+     */
     function changeValue<T extends keyof VideoUpdatableOptions>(newOptionKey: T, newOptionValue: VideoUpdatableOptions[T]){
-        // console.log(newOptionKey, newOptionValue)
         setCurrentOptions(pendingState =>({...pendingState, [newOptionKey]:newOptionValue}))
         updateVideoCustomOptions(newOptionKey, newOptionValue)
     }
 
 
+    /**
+     * The purpose of this function is to apply a beat pad (ie. apply the values it stores) to the video
+     * 
+     * This is done by using the `changeValue()` function for each of the beat pad's values
+     * @param beatPadValue The `BeatPadValue` that is to be applied
+     */
     function applyBeatPadValue(beatPadValue: BeatPadValue){
         changeValue("currentTime", beatPadValue.timeStamp)
         changeValue("playbackRate", beatPadValue.playbackRate)
@@ -187,21 +199,47 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
     }
     
     
-
+    /**
+     * The purpose of this function is to return the RGB colour value of a hex colour value
+     * 
+     * The goal of this function is to read the colour input's value in RGB format (as it is in hex format originally).
+     * 
+     * This is needed as the values stored in `currentOptions.colourSwapList.values` are in RGB format (since reading canvas data returns RGB pixel values)
+     * @param hex The colour value (in hex `string` format) to be converted to RGB `string` format
+     * @returns The equivalent value in RGB `string` format
+     */
     function hexToRGB(hex:string):[red:number, green:number, blue:number]{
+        // Hex colour values are given in #RRGGBB format
+            // RR, GG, and BB are numbers in base 16
+        // Split the original hex string such that RR, GG, and BB are placed in seperate variables
+            // Before setting into the variable, convert the number from base 16 to base 10 (what RGB uses)
         const r = parseInt(hex.slice(1, 3), 16);
         const g = parseInt(hex.slice(3, 5), 16);
         const b = parseInt(hex.slice(5, 7), 16);
         
-        // return {red:r, green:g, blue:b} 
+        // Return the RGB values as seperate variables
         return [ r, g, b ];
     }
 
+    /**
+     * The purpose of this function is to return the hex colour value of a RGB colour value
+     * 
+     * The goal of this function is to apply the RGB values stored in `currentOptions.colourSwapList.values` to a colour input 
+     * 
+     * This is needed since colour inputs only take hex values for their value
+     * @param red Represents the amount of red within the colour as a number in `string` format
+     * @param green Represents the amount of green within the colour as a number in `string` format
+     * @param blue Represents the amount of blue within the colour as a number in `string` format
+     * @returns The equivalent value in hex `string` format
+     */
     function rgbToHex(red:number, green:number, blue:number):string{
+        // Since the R,G and B values are in base 10, we need to convert each value into base 16
         const redHex = red.toString(16)
         const greenHex = green.toString(16)
         const blueHex = blue.toString(16)
 
+        // For hex colour values in format #RRGGBB, all numbers (RR,GG, and BB) must be two digits long
+        // If a value is only one digit long, it needs an extra 0 at the start so that it will be two digits long in hex format
         return "#"
             +(redHex.length == 1 ? "0" + redHex : redHex)
             +(greenHex.length == 1 ? "0" + greenHex : greenHex)
