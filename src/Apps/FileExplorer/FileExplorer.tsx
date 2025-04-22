@@ -559,7 +559,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                             onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
                         >
                             {/* goated  */}
-                            <div className="icon">{(itemType == "FILE") ? <img src={fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"])}/> : <img src="https://www.svgrepo.com/show/535397/folder-open.svg"/>}</div>
+                            <div className="icon"><img src={itemType == "FILE" ? fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"]) :"https://www.svgrepo.com/show/535397/folder-open.svg"} alt="" /></div>
                             <div className="name">{(item[0])}</div>
                         </div>
                     )
