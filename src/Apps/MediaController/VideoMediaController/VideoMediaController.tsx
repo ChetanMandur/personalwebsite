@@ -248,71 +248,114 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
 
 
     return (
+        // Since this is rendered within `MediaController.tsx`, the parent class of `.media-controller` is within that component
+        // So, for this component, the main encapsulating parent is a fragment 
         <>
+            {/* Section dedicated for play/pause button + progress bar (with elapsed time text) */}
             <div className="media-controller-section">
+                {/* Title for section */}
                 <div className="media-controller-section-titlebar">
                     Progress Bar
                 </div>
+                {/* Section for play/pause button + progress bar  */}
                 <div className="media-controller-section-progressbar">
-                    <div className="media-controller-section-progressbar-playpause-button common-border" onClick={()=>{changeValue("playing", Boolean(!currentOptions.playing))}}><img src={currentOptions.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" /> </div>
+                    {/* Play/pause button */}
+                    <div className="media-controller-section-progressbar-playpause-button common-border" onClick={()=>{changeValue("playing", Boolean(!currentOptions.playing))}}>
+                            <img src={currentOptions.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" /> 
+                    </div>
+                    {/* Progress bar as a range input */}
                     <input type="range"  tabIndex={-1} value={currentOptions.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
 
                 </div>
+
+                {/* Number input representing the elapsed time/duration text 
+                    Used as a number input so that it is interactable/able to be edited
+                */}
                 <input type="number" placeholder="0"  value={currentFormOptions.currentTime || ''} min={0} max={videoRef.current!.duration}
                     step={0.000001}
+                    // Handles changes to the text
                     onChange={(event)=>{
+                        // Round to sixth decimal place
                         const targetValue = Number(Number(event.target.value).toFixed(6))
+                        // Only apply if value would be in range
                         if (targetValue >= 0 && targetValue <= videoRef.current!.duration){
                             setCurrentFormOptions(pendingState=>({currentTime:targetValue, playbackRate: pendingState.playbackRate}))
                         }
                     }}
+
+                    // Some keys are to have unique effects
                     onKeyDown={(event)=>{
                         switch (event.key) {
+                            // No negative numbers are allowed
                             case "-":
                                 event.preventDefault()
                                 break;
+                            
+                            // Pressing 'Enter' signifies that the user wishes to apply changes/unfocus
                             case "Enter":
                                 event.currentTarget.blur()
                                 break;
+                            
+
                             default:
                                 break;
                         }
                     }}
+                    
+                    // When the input field is unfocused, apply the current time to the video
                     onBlur={()=>{
                         changeValue("currentTime", currentFormOptions.currentTime)
                     }}
                 />
-
             </div>
+
+            {/* Section dedicated for the perserve pitch option */}
             <div className="media-controller-section">
+                {/* Title for the section */}
                 <div className="media-controller-section-titlebar">
                     Preserve Pitch
                 </div>
+                
+                {/* Checkbox to enable/disable the ability to preserve pitch */}
                 <input type="checkbox" tabIndex={-1} checked={currentOptions.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!currentOptions.preservesPitch))}} name="perservePitch" id="perservePitch" />
             </div>
-
+            
+            {/* Section dedicated for the playback rate slider + number input */}
             <div className="media-controller-section">
+                {/* Title for the section */}
                 <div className="media-controller-section-titlebar">
                     Playback Rate
                 </div>
-                <input type="range" tabIndex={-1} value={currentOptions.playbackRate} min={0} max={2} step={0.1} 
+
+                {/* Playback rate slider as range input */}
+                <input type="range" name="playbackRate" id="playbackRate"  tabIndex={-1} value={currentOptions.playbackRate} min={0} max={2} step={0.1} 
                 onChange={(event)=>{
                     changeValue("playbackRate", Number(event.target.value)); 
                     setCurrentFormOptions((pendingState)=>({...pendingState, playbackRate: Number(event.target.value)}))
-                }} 
-                name="playbackRate" id="playbackRate" />
+                }} />
+
+                {/* Playback rate text as number input 
+                    Used as number input so that it can be edited/interactable
+                */}
                 <input type="number" placeholder="0"  value={currentFormOptions.playbackRate || ''} min={0} max={2} step={0.1}
                     onChange={(event)=>{
+                        // Round input to first decimal place
                         const targetValue = Number(Number(event.target.value).toFixed(1))
+                        // Apply value if number would be in range
                         if (targetValue >= 0 && targetValue <= 2){
                             setCurrentFormOptions(pendingState=>({playbackRate:targetValue, currentTime: pendingState.currentTime}))
                         }
                     }}
+
+                    // Some keys are to have unique effects
                     onKeyDown={(event)=>{
                         switch (event.key) {
+                            // No negative numbers are allowed
                             case "-":
                                 event.preventDefault()
                                 break;
+                            
+                            // Pressing 'Enter' signifies that the user wishes to apply changes/unfocus
                             case "Enter":
                                 event.currentTarget.blur()
                                 break;
@@ -320,29 +363,44 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                 break;
                         }
                     }}
+
+                    // When the input is unfocused, apply the playback rate to the video
                     onBlur={()=>{
                         changeValue("playbackRate", currentFormOptions.playbackRate)
                     }}
                 />
             </div>
+
+            {/* Section dedicated for grayscale/inverse colour options */}
             <div className="media-controller-section-holder">
+                {/* For grayscale */}
                 <div className="media-controller-section">
+                    {/* Title for section */}
                     <div className="media-controller-section-titlebar">
                         Grayscale
                     </div>
+                    {/* Checkbox to enable/disable grayscale */}
                     <input type="checkbox" tabIndex={-1} checked={currentOptions.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!currentOptions.grayscale))}} name="grayscale" id="grayscale" />
                 </div>
+                {/* For inverse colour */}
                 <div className="media-controller-section">
+                    {/* Title for section */}
                     <div className="media-controller-section-title">
                         Inverse
                     </div>
+                    {/* Checkbox to enable/disable inverse colour */}
                     <input type="checkbox" tabIndex={-1} checked={currentOptions.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!currentOptions.inverseColour))}} name="inverseColour" id="inverseColour" />
                 </div>
             </div>
 
+            {/* Section dedicated for the beat pad */}
             <div className="media-controller-section">
+                {/* Beatpad titlebar + buttons */}
                 <div className="media-controller-section-titlebar">
                     Beat Pad
+
+                    {/* '+' button, used to add a new beat pad 
+                    (default values are the video's current values) */}
                     <div className="media-controller-section-titlebar-button common-border"
                         onClick={()=>{
                             let randomKey: string = "NO_KEY" + Math.random().toString()
@@ -361,12 +419,16 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                         +
                     </div>
                 </div>
+                {/* Where each beat pad is displayed */}
                 <div className="beat-pad-section">
                     {
+                        // For each beat pad
                         Object.entries(beatPadMappings.list).map((item, index)=>{
                             const [currentKeyCode, currentBeatPadValue] = item
                             
+                            // Create the beatpad
                             return(
+                                // Main encapsulating div
                                 <div className="beat-pad-section-value common-border" key={"beat-pad-value"+index}
                                     onClick={()=>{applyBeatPadValue(currentBeatPadValue)}}
                                     onContextMenu={(event)=>{
@@ -428,15 +490,13 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                     }}
                                 
                                 >
+                                    {/* Contents of the beat pad item */}
                                     {index} <br/>
-                                    {/* {currentBeatPadValue.keycode != null ? <>{currentBeatPadValue.keycode} <br/></>: (
-                                        beatPadMappings.toMap == index ? <>Press a key<br/></> : <>Unassigned<br/></>
-                                    )} */}
                                     {beatPadMappings.toMap == currentKeyCode ? <>Press a key <br/></>: (
                                         currentKeyCode.substring(0,6) != "NO_KEY" ? <>{currentKeyCode} <br/></> : <>Unassigned<br/></>
                                     )}
                                     {currentBeatPadValue.preservesPitch ? <>True</> : <>False</>} <br/>
-                                    {currentBeatPadValue.playbackRate} <br/>
+                                    {currentBeatPadValue.playbackRate}x <br/>
                                     {currentBeatPadValue.timeStamp} <br/>
                                 </div>
                             )
@@ -445,9 +505,12 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 </div>
             </div>
 
+            {/* Section dedicated for the colour swap options */}
             <div className="media-controller-section">
+                {/* Titlebar + buttons */}
                 <div className="media-controller-section-titlebar">
                     Colour Swap
+                    {/* '+' button, used to add a new colour swap value (default values are swapping black with black within a range of 0) */}
                     <div className="media-controller-section-titlebar-button common-border" onClick={()=>{
                         changeValue("colourSwapList", {
                             values:[...currentOptions.colourSwapList.values, {
@@ -458,7 +521,11 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                             changedPixels: currentOptions.colourSwapList.changedPixels
                         })
                     }}>+</div>
-                    <div className="colour-swap-add common-border" onClick={()=>{
+
+                    {/* 'Random' button, used to add a new colour swap value based on the pixels current on screen */}
+                    <div className="media-controller-section-titlebar-button common-border" onClick={()=>{
+
+                        // Get the current frame + its accompanying data
                         const canvasContext = canvasRef.current!.getContext("2d")! 
                         const videoFrame = canvasContext.getImageData(
                             0,
@@ -471,55 +538,66 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
 
                         // If all the pixels have not been changed
                         if (currentOptions.colourSwapList.changedPixels.current!.size != totalPixels ){
-                            //Grab random pixel
-                            let randomPixel = (Math.floor(Math.random() * (frameData.length/4)))
+                            // Grab random pixel (from pool of all pixels)
+                            let randomPixel = (Math.floor(Math.random() * (totalPixels)))
 
-                            //If random pixel has been changed, keep selecting new one until we find one that hasnt been changed
+                            // If random pixel has been changed, keep selecting new one until we find one that hasnt been changed
                             while (currentOptions.colourSwapList.changedPixels.current!.has(randomPixel)){ 
-                                randomPixel = (Math.floor(Math.random() * (frameData.length/4)))
+                                randomPixel = (Math.floor(Math.random() * (totalPixels)))
                             }
                             
-                            //Find RGB value of random pixel
-                            const randomPixelGroup = randomPixel * 4
+                            // Find RGB value of random pixel
+                            const randomPixelIndex = randomPixel * 4
 
-                            const fromRed = frameData[randomPixelGroup + 0]
-                            const fromGreen = frameData[randomPixelGroup + 1]
-                            const fromBlue = frameData[randomPixelGroup + 2]
+                            const fromRed = frameData[randomPixelIndex + 0]
+                            const fromGreen = frameData[randomPixelIndex + 1]
+                            const fromBlue = frameData[randomPixelIndex + 2]
 
-                            // Generate new RGB value
+                            // Generate new RGB value for random pixel to swap to
                             const toRed = Math.floor(Math.random() * (256))
                             const toGreen = Math.floor(Math.random() * (256))
                             const toBlue = Math.floor(Math.random() * (256))
         
-        
-                                changeValue("colourSwapList", {
-                                    values: [...currentOptions.colourSwapList.values, {
-                                        from:{red:fromRed, green:fromGreen, blue:fromBlue, alpha:0},
-                                        to:{red:toRed, green:toGreen, blue:toBlue, alpha:0},
-                                        range:Math.floor(Math.random() * (100))
-                                    }],
-                                    changedPixels: currentOptions.colourSwapList.changedPixels
-                                })
+                            // Create new colour swap values with:
+                                // RGB value of random pixel 
+                                // The newly genereated RGB value to swap to
+                                // Random range value (from 0-100)
+                            changeValue("colourSwapList", {
+                                values: [...currentOptions.colourSwapList.values, {
+                                    from:{red:fromRed, green:fromGreen, blue:fromBlue, alpha:0},
+                                    to:{red:toRed, green:toGreen, blue:toBlue, alpha:0},
+                                    range:Math.floor(Math.random() * (100))
+                                }],
+                                changedPixels: currentOptions.colourSwapList.changedPixels
+                            })
                         }
 
+                        // If all pixels have been changed/swapped, do nothing (other than this console message)
                         if (currentOptions.colourSwapList.changedPixels.current!.size == totalPixels){
                             console.log("no pixels in current frame to randomize")
                         }
                     }}>Random</div>
                 </div>
+                {/* Where each colour swap value is displayed */}
                 <div className="color-swap-section">
                     {
+                        // For each colour swap value
                         currentOptions.colourSwapList.values.map(
                             (value, index)=>{
                                 
+                                // Create the colour swap value
                                 return(
+                                    // Main encapsulating div
                                     <div className="colour-swap-section-value" key={"colour-swap-value"+index}>
+                                        {/* Colour input for the 'from' value */}
                                         <div className="colour-swap-section-value-option">
                                             FROM:
                                             <input type="color" value={rgbToHex(value.from.red, value.from.green, value.from.blue)} name="from-color-swap" id="from-color-swap"
                                                 
                                                 onChange={(event)=>{
+                                                    // Given value is in hex format, need to convert before applying to colour swap value
                                                     [value.from.red, value.from.green, value.from.blue] = hexToRGB(event.target.value)
+                                                    // Reapply modified value @ index
                                                     currentOptions.colourSwapList.values[index] = value
                                                     changeValue("colourSwapList", {
                                                         values: currentOptions.colourSwapList.values,
@@ -529,11 +607,14 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                             />
                                         </div>
 
+                                        {/* Colour input for the 'to' value */}
                                         <div className="colour-swap-section-value-option">
                                             TO:
                                             <input type="color" value={rgbToHex(value.to.red, value.to.green, value.to.blue)} name="to-color-swap" id="to-color-swap"
                                                 onChange={(event)=>{
+                                                    // Given value is in hex format, need to convert before applying to colour swap value
                                                     [value.to.red, value.to.green, value.to.blue] = hexToRGB(event.target.value)
+                                                    // Reapply modified value @ index
                                                     currentOptions.colourSwapList.values[index] = value
                                                     changeValue("colourSwapList", {
                                                         values: currentOptions.colourSwapList.values,
@@ -543,13 +624,17 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                             />
                                         </div>
                                         
+                                        {/* Number input for the 'range' value */}
                                         <div className="colour-swap-section-value-option" >
                                             RANGE:
                                             <input type="number" className="colour-swap-section-value-option-number" placeholder="0" value={value.range || ''} min={0} max={255}
                                                 onChange={(event)=>{
                                                     const targetValue = Number(event.target.value)
+                                                    // Apply value if number would be in range
                                                     if (targetValue >= 0 && targetValue <= 255){
+                                                        // Update value
                                                         value.range = targetValue
+                                                        // Reapply value @ index
                                                         currentOptions.colourSwapList.values[index] = value
                                                         changeValue("colourSwapList", {
                                                             values: currentOptions.colourSwapList.values,
@@ -557,11 +642,14 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                                         })
                                                     }
                                                 }}
+                                                // Some keys are to have unique effects
                                                 onKeyDown={(event)=>{
                                                     switch (event.key) {
+                                                        // No negative numbers are allowed
                                                         case "-":
                                                             event.preventDefault()
                                                             break;
+                                                        // Pressing 'Enter' signifies that the user wishes to apply changes/unfocus
                                                         case "Enter":
                                                             event.currentTarget.blur()
                                                             break;
@@ -571,9 +659,12 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                                 }}
                                             />
                                         </div>
-
+                                            
+                                        {/* Button to delete colour swap value */}
                                         <div className="colour-swap-delete common-border" onClick={()=>{
+                                            // Remove current index from values list
                                             currentOptions.colourSwapList.values.splice(index, 1)
+                                            // Reapply list into state
                                             changeValue("colourSwapList", {
                                                 values: currentOptions.colourSwapList.values,
                                                 changedPixels: currentOptions.colourSwapList.changedPixels
