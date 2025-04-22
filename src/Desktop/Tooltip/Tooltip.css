@@ -24,7 +24,7 @@
     pointer-events: none;
     opacity: 0.8;
 
-    animation-duration: 1s;
+    animation-duration: 0.6s;
     animation-name: fadeIn;
     animation-timing-function: step-end;
 
