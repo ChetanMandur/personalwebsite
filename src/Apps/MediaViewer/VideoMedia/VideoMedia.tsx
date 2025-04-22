@@ -579,11 +579,38 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
             {/* Overlay that displays over the canvas */}
             <div className="video-overlay">
 
-                {/* Top bar of the overlay, className updates based on display state (changes animation) */}
-                <div className={"top-bar "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-top-bar" : "hide-top-bar")}>
-                    
-                    {/* Button for opening/focusing MediaController */}
-                    <div className="common-border video-overlay-top-bar-button media-controller-button"
+                {/* Bottom bar of the overlay, className updates based on display state (changes animation) */}
+                <div className={"bottom-bar "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-bottom-bar" : "hide-bottom-bar")}>
+
+                    {/* Button for playing/pausing the video */}
+                    <div className="video-overlay-button common-border"
+                        onClick={(event)=>{
+                            event.stopPropagation()
+                            playPauseHandler()
+                        }}
+                    >
+                        <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
+                    </div> 
+
+                    {/* Main container for the seekbar */}
+                    <div className="seek-bar common-border"  ref={videoProperties.refCollection.seekBarRef}
+                        onMouseDown={(event)=>{
+                            setVideoProperties(pendingState => ({...pendingState, seekBarClicked: true}))
+                            videoScrubbing(event)
+                            document.addEventListener("mouseup", ()=>{
+                                setVideoProperties(pendingState => ({...pendingState, seekBarClicked: false}));
+                                document.removeEventListener("mousemove", videoScrubbing)
+                            }, {once:true})
+                            document.addEventListener("mousemove", videoScrubbing)
+                        }}
+                    >
+                        {/* The progress of the seekbar (ie the elapsed time of the video) */}
+                        <div className="seek-bar-progress" style={{width:`${videoProperties.currentTimePercentage * 100}%`}}> 
+                        </div>
+                    </div>
+
+                    {/* Button for opening/focusing the media controller */}
+                    <div className="video-overlay-button common-border"
                         onClick={()=>{
                             if (controllerAppRunningID == ""){
                                 runningAppsDispatch(
@@ -613,47 +640,16 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                         }}
                     >
                         <img src="https://www.svgrepo.com/show/480630/controller-3.svg" alt="" />
-                    </div>
-                    
-                    {/* Button for changing video fitment */}
-                    <div className="common-border video-overlay-top-bar-button video-fill-button"
+                    </div> 
+
+                    {/* Button for changing video fill mode */}
+                    <div className="video-overlay-button common-border"
                         onClick={()=>{setVideoProperties(pendingState=>({...pendingState, videoFill: !pendingState.videoFill}))}}
                     >
                         <img src={videoProperties.videoFill ? "https://www.svgrepo.com/show/509227/size-actual.svg" : "https://www.svgrepo.com/show/509229/size-fullscreen.svg"} alt="" />
-                    </div>
-
-                </div>
-                
-
-                {/* Bottom bar of the overlay, className updates based on display state (changes animation) */}
-                <div className={"bottom-bar "+((showOverlay.display || videoProperties.seekBarClicked) ? "show-bottom-bar" : "hide-bottom-bar")}>
-
-                    {/* Button for playing/pausing the video */}
-                    <div className="playback-button common-border"
-                        onClick={(event)=>{
-                            event.stopPropagation()
-                            playPauseHandler()
-                        }}
-                    >
-                        <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
                     </div> 
 
-                    {/* Main container for the seekbar */}
-                    <div className="seek-bar common-border"  ref={videoProperties.refCollection.seekBarRef}
-                        onMouseDown={(event)=>{
-                            setVideoProperties(pendingState => ({...pendingState, seekBarClicked: true}))
-                            videoScrubbing(event)
-                            document.addEventListener("mouseup", ()=>{
-                                setVideoProperties(pendingState => ({...pendingState, seekBarClicked: false}));
-                                document.removeEventListener("mousemove", videoScrubbing)
-                            }, {once:true})
-                            document.addEventListener("mousemove", videoScrubbing)
-                        }}
-                    >
-                        {/* The progress of the seekbar (ie the elapsed time of the video) */}
-                        <div className="seek-bar-progress" style={{width:`${videoProperties.currentTimePercentage * 100}%`}}> 
-                        </div>
-                    </div>
+
                 </div>
             </div>
             
