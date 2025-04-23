@@ -15,14 +15,17 @@ export default function StartMenu(){
 
   return(<div className="start-menu">
     <div className="app-list">
-      {AppListArray.map( (item) => { 
-        return ( 
-        <div className="app-entry" key={item[0]+"startMenuEntry"} onClick={()=>{runningAppsDispatch({type:"ADD", app_name:item[0]});setStartMenuOpen(false)}}> 
-          <div className="app-entry-icon"> <img src={item[1].icon}/></div>
-          <div className="app-entry-name"> {item[1].name}</div>
-        </div>
-        )  
-        })}
+      {AppListArray.filter((item)=>{
+        return !item[1].hidden
+      }).map( (item) => { 
+          return ( 
+            <div className="app-entry" key={item[0]+"startMenuEntry"} onClick={()=>{runningAppsDispatch({type:"ADD", app_name:item[0]});setStartMenuOpen(false)}}> 
+              <div className="app-entry-icon"> <img src={item[1].icon}/></div>
+              <div className="app-entry-name"> {item[1].name}</div>
+            </div>
+          )  
+        })
+      }
     </div>
     <div className="side-panel">
       <div className="profile-details">

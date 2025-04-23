@@ -13,6 +13,7 @@ export type AppProperties = {
   props: object,
   defaultWidthRatio: number;
   defaultHeightRatio:number,
+  hidden: boolean,
 }
 
 type AppListType = {
@@ -25,6 +26,7 @@ const defaultAppProperties: AppProperties = {
   props:{name:"default", ohmylord:"default"} as HelloWorldProps,
   defaultWidthRatio: 1/4,
   defaultHeightRatio: 1/2,
+  hidden: false
 }
 
 export const AppList : AppListType = {
@@ -38,6 +40,7 @@ export const AppList : AppListType = {
     defaultWidthRatio:1/2.5
   },
   "FileExplorer":{
+    ...defaultAppProperties,
     name:"File Explorer",
     icon:"https://www.svgrepo.com/show/486676/folder-outline.svg",
     app: FileExplorer,
@@ -46,6 +49,7 @@ export const AppList : AppListType = {
     defaultWidthRatio:1/2.5
   },
   "MediaViewer":{
+    ...defaultAppProperties,
     name:"Media Viewer",
     icon:"https://www.svgrepo.com/show/486284/data-center-table-management.svg",
     app: MediaViewer,
@@ -59,6 +63,7 @@ export const AppList : AppListType = {
     icon:"https://www.svgrepo.com/show/480630/controller-3.svg",
     app: MediaController,
     props: {mediaType:"NONE"} as MediaControllerProps,
+    hidden: true
 
   },
   "Default App Properties Test": {
