@@ -23,6 +23,8 @@ export default function Desktop() {
           <></>
         }
         {tooltipData.visible ? 
+          // The random key makes it so that each time the mouse is moved, the tooltip goes away
+          // If random key was not there, and the user moves within a tooltip summoning area, the tooltip would not disappear/reappear
           <Tooltip key={Math.random()}/> 
           :
           <></>
