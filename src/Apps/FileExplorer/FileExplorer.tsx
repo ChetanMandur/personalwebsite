@@ -557,9 +557,14 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                             onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}
                             onMouseMove={(event)=>{tooltipDispatch({type:"SET", event: event, newData:item[0], newDataType:"TEXT"})}}
                             onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
+                            draggable= {itemType == "FILE" ? "true" : "false"}
+                            onDragStart={(event)=>{
+                                tooltipDispatch({type:"HIDE"})
+                                event.dataTransfer.setData("myfilesystem/filepath", pathClean(currentFolder.path + "/" +item[0]))
+                            }}
                         >
                             {/* goated  */}
-                            <div className="icon"><img src={itemType == "FILE" ? fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"]) :"https://www.svgrepo.com/show/535397/folder-open.svg"} alt="" /></div>
+                            <div className="icon"><img draggable= "false" src={itemType == "FILE" ? fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"]) :"https://www.svgrepo.com/show/535397/folder-open.svg"} alt="" /></div>
                             <div className="name">{(item[0])}</div>
                         </div>
                     )

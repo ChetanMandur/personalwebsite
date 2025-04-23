@@ -93,7 +93,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
       </div>
       <div className="app-content">
         {running_properties.appProperties.app(running_properties.props)}
-        {isAppFocused ? <></> : <div className="content-overlay"/>}
+        {isAppFocused ? <></> : <div className="content-overlay" onDragEnter={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id: app_running_id})}} />}
       </div>
     </div>
   </div> 
