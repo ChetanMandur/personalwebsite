@@ -7,8 +7,8 @@ import { VideoMedia } from "./VideoMedia/VideoMedia"
 // Typing for Media Viewer Props
 // Contains name + content of a MyFileSystemFile
 export type MediaViewerProps = AppRunningID & {
-    fileName: string,
-    fileContent: MyFileSystemFile
+    fileName: string | null,
+    fileContent: MyFileSystemFile | null
 }
 
 
@@ -27,7 +27,11 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
     // Goal is to run when fileName prop is changed
     // Updates app's additional title
     useEffect(()=>{
-        runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: fileName })
+        runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE",
+             app_running_id:app_running_id,
+             appAdditionalTitle: (fileName == null ? "No media loaded" : fileName)
+        })
+
     },[app_running_id,fileName, runningAppsDispatch])
 
 
@@ -38,27 +42,38 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
      * @returns Proper display for item based on `type` property
      */
     function MediaGenerator():JSX.Element{
-        switch (fileContent.type) {
-            case "IMAGE":
-                return (
-                    <div className="image-media">
-                        <img src={fileContent.data}/>
-                    </div>
-                )
-
-            
-            case "VIDEO":
-                return (
-                    <VideoMedia fileContentData={fileContent.data} app_running_id={app_running_id}/>
-                )
-
-            
-            case "PDF":
-                return <embed src={fileContent.data} type="application/pdf" />
-
-            default:
-                return <></>
-
+        if (fileContent != null){
+            switch (fileContent.type) {
+                case "IMAGE":
+                    return (
+                        <div className="image-media">
+                            <img src={fileContent.data}/>
+                        </div>
+                    )
+    
+                
+                case "VIDEO":
+                    return (
+                        <VideoMedia fileContentData={fileContent.data} app_running_id={app_running_id}/>
+                    )
+    
+                
+                case "PDF":
+                    return <embed src={fileContent.data} type="application/pdf" />
+    
+                default:
+                    return <></>
+    
+            }
+        }
+        else{
+            return (
+                <div className="empty-media">
+                    No media loaded...
+                    <br />
+                    Please open a file through the file explorer
+                </div>
+            )
         }
     }
 

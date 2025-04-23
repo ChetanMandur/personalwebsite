@@ -49,7 +49,7 @@ export const AppList : AppListType = {
     name:"Media Viewer",
     icon:"https://www.svgrepo.com/show/486284/data-center-table-management.svg",
     app: MediaViewer,
-    props:{} as MediaViewerProps,
+    props:{fileName: null, fileContent:null} as MediaViewerProps,
     defaultHeightRatio:1/3,
     defaultWidthRatio:1/3
   },
