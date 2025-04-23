@@ -4,7 +4,7 @@ import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSyst
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import { MediaViewerProps } from "../MediaViewer/MediaViewer"
-import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter, getParentPath } from "./FileExplorerHelpers"
+import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter, getParentPath, getChildItemName } from "./FileExplorerHelpers"
 import { TooltipContext } from "../../Desktop/Contexts/TooltipContext"
 
 export type FileExplorerProps = AppRunningID & {
@@ -90,14 +90,14 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         else{
             // If path leads to a file, open the file in MediaViewer and pathEnter the parentPath
             if (pathResponse == "FILE"){ 
-                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{fileContent:(pathObject as MyFileSystemFile), fileName:pathToArray(path).pop()!} as MediaViewerProps})
+                runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{fileContent:(pathObject as MyFileSystemFile), fileName:getChildItemName(path)} as MediaViewerProps})
                 pathEnter(getParentPath(path))
                 setPathSuggestion(pendingState=>({...pendingState, display: false}))
             } 
             else if (pathResponse == "FOLDER"){ 
                 setAddressBox(path)
                 setCurrentFolder({path: path, content: Object.entries(pathObject)})
-                runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: pathToArray(path).pop()!})
+                runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: getChildItemName(path)})
 
                 RenderPathSuggestions(path)
                 setSelected("")

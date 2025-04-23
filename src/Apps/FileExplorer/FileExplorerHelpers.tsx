@@ -89,6 +89,22 @@ export function getParentPath(path:string):string{
     return arrayToPath(pathArray)
 }
 
+/**
+ * Given a path (in `string` format), returns the name of the child item
+ * @Example `/Photos/file` ==> `file`
+ * @param path - The path (as a `string`) whos child will be returned
+ * @returns A `string` of the child's name
+ */
+export function getChildItemName(path:string):string{
+    const pathItemName = pathToArray(path).pop()
+
+    if (typeof pathItemName == "string"){
+        return pathItemName
+    }
+    else{
+        return ""
+    }
+}
 
 /**
  * Given an item within a `MyFileSystemFolder` object, returns the type of item it is

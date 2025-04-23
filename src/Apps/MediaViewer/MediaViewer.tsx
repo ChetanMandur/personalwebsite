@@ -3,7 +3,7 @@ import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/Running
 import { MyFileSystemFile } from "../FileExplorer/MyFileSystem"
 import "./MediaViewer.css"
 import { VideoMedia } from "./VideoMedia/VideoMedia"
-import { doesPathExist, pathToArray } from "../FileExplorer/FileExplorerHelpers"
+import { doesPathExist, getChildItemName} from "../FileExplorer/FileExplorerHelpers"
 
 // Typing for Media Viewer Props
 // Contains name + content of a MyFileSystemFile
@@ -92,7 +92,7 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
 
                 onDrop={(event)=>{
                     const MyFileSystemFilePath = event.dataTransfer.getData("myfilesystem/filepath")
-                    const fileName = pathToArray(MyFileSystemFilePath).pop()
+                    const fileName = getChildItemName(MyFileSystemFilePath)
                     // We know that the function is gonna return a file, no need for checks nor the identifier
                     const [content, ] = doesPathExist(MyFileSystemFilePath)
                     setCurrentFile({name: fileName!, content: content as MyFileSystemFile})
