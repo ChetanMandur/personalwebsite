@@ -1,6 +1,6 @@
-import {useContext, useEffect, useState} from "react"
+import React, {useContext, useEffect, useState} from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
-import { MyFileSystemFile } from "../FileExplorer/MyFileSystem"
+import { FileFormatMapper, MyFileSystemFile } from "../FileExplorer/MyFileSystem"
 import "./MediaViewer.css"
 import { VideoMedia } from "./VideoMedia/VideoMedia"
 import { doesPathExist, getChildItemName} from "../FileExplorer/FileExplorerHelpers"
@@ -74,30 +74,94 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
             }
         }
         else{
+            /**
+             * Common function used by both the `onDragEnter` and the `onDragOver` event listeners for the 'empty-media' div
+             * 
+             * Defined in a seperate function since both event listeners use identical functions
+             * 
+             * Goal of the function is to determine if the element being dragged into/over the div is a valid input
+             * @param event The drag event given by the onDragEnter & onDragOver events listeners
+             */
+            function onDragHandler(event:React.DragEvent<HTMLDivElement>){
+                // Only accept elements that are either from MyFileSystem or the user's computer's file system
+                if (event.dataTransfer.types.includes("myfilesystem/filepath") || event.dataTransfer.types.includes("Files")){
+                    // Defines the type of drop effect used
+                    event.dataTransfer.dropEffect = "link"
+                    // Prevent default is needed to stop the browser default behaviour (which is to not allow any elements)
+                    event.preventDefault()
+                }
+            }
+
+
             return (
                 <div className="empty-media"
                 
                 // DragEnter/DragOver event defaults must be prevented to allow for dropping 
                 // (If not prevented, onDrop event won't run)
-                onDragEnter={(event)=>{
-                    if (event.dataTransfer.types.includes("myfilesystem/filepath")){
-                        event.preventDefault()
-                    }
-                }}
-                onDragOver={(event)=>{
-                    if (event.dataTransfer.types.includes("myfilesystem/filepath")){
-                        event.preventDefault()
-                    }
-                }}
+                onDragEnter={onDragHandler}
+                onDragOver={onDragHandler}
 
+                // Handler for when elements are dropped into the div
                 onDrop={(event)=>{
-                    const MyFileSystemFilePath = event.dataTransfer.getData("myfilesystem/filepath")
-                    const fileName = getChildItemName(MyFileSystemFilePath)
-                    // We know that the function is gonna return a file, no need for checks nor the identifier
-                    const [content, ] = doesPathExist(MyFileSystemFilePath)
-                    setCurrentFile({name: fileName!, content: content as MyFileSystemFile})
-                    
-                    event.preventDefault()
+                    // If the element come from MyFileSystem
+                    if (event.dataTransfer.types.includes("myfilesystem/filepath")){
+                        // Obtain the data from the element (ie. the path of file from within MyFileSystem)
+                        const MyFileSystemFilePath = event.dataTransfer.getData("myfilesystem/filepath")
+                        // Get the name of the file from the path
+                        const fileName = getChildItemName(MyFileSystemFilePath)
+                        // Get the contents of the file
+                            // We know that the function is gonna return a file, no need for checks nor the identifier
+                        const [content, ] = doesPathExist(MyFileSystemFilePath)
+                        // Set the current file as the one obtained from the path
+                        setCurrentFile({name: fileName!, content: content as MyFileSystemFile})
+                        
+                    }
+                    // If the element(s) come from the user's file system
+                    if (event.dataTransfer.types.includes("Files")){
+                        // The user is allowed to drag multiple files at once
+                        let counter:number = 0
+                        // For each of the files the user has dragged into the div
+                        for (const draggedSystemFile of event.dataTransfer.files ){
+                            // The final "." represents the seperator of the file name and file format
+                            const endOfFileName = draggedSystemFile.name.lastIndexOf(".")
+                            const fileName = draggedSystemFile.name.substring(0, endOfFileName)
+                            const fileFormat = draggedSystemFile.name.substring(endOfFileName+1, draggedSystemFile.name.length)
+                            
+                            // Find the type of file based on the file format
+                            const fileType = FileFormatMapper(fileFormat)
+
+                            // If file type not null, that means the file is of valid typing
+                                // This means that MediaViewer is able to open the file
+                            if (fileType != null){
+                                // Open the file and read its data
+                                const reader = new FileReader()
+                                reader.readAsDataURL(draggedSystemFile)
+
+                                // If counter is 0, that means this is the first file in the list
+                                    // The first file must open in the MediaViewer that files were dragged into
+                                if (counter == 0){
+                                    reader.onload = ()=>{
+                                        // Update currentFile with the data from the file
+                                        setCurrentFile({name: fileName, content:{type:fileType, hidden:false, data:reader.result as string}})
+                                    }
+                                }
+                                // If counter is not 0, this means that another MediaViewer must be opened with the file
+                                else{
+                                    reader.onload = ()=>{
+                                        // Open a new MediaViewer with the new file as its props
+                                        runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{fileContent:{type:fileType, hidden:false, data:reader.result as string}, fileName:fileName} as MediaViewerProps})
+
+                                    }
+                                }
+                            }
+                            // If file is null, that means that the file cannot be opened
+                            else{
+                                console.log("This format is not supported")
+                            }
+                            counter += 1
+                        }  
+                        event.preventDefault()
+                    }
                 }}
                 >
                     No media loaded...
@@ -105,6 +169,8 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
                     Please open a file through the File Explorer
                     <br />
                     Or drag and drop a file from the File Explorer
+                    <br />
+                    Or drag and drop a file from your computer 
                 </div>
             )
         }

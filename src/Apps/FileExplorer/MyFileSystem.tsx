@@ -1,15 +1,55 @@
+// Typing used to represent a MyFileSystemFile
+    // Represents the data of a file
+    // Has a `hidden` identifier to denote whether or not the file is hidden
 export type MyFileSystemFile ={
     type: "IMAGE" | "VIDEO" | "PDF",
     data: string,
     hidden: boolean,
 }
 
+// Typing used for the FileFormatMap
+type FileFormatMapType = {
+    [rawFileType:string]: MyFileSystemFile["type"]
+}
 
+// Map of all valid file formats and their accompanying file type
+const FileFormatMap:FileFormatMapType = {
+    "jpeg":"IMAGE",
+    "jpg":"IMAGE",
+    "gif": "IMAGE",
+    "png": "IMAGE",
+
+    "mp4":"VIDEO",
+
+    "pdf":"PDF"
+}
+
+/**
+ * When given a file format, returns the type of file the format represents (if any)
+ * 
+ * File format must be given without a leading period (`.`)
+ * @example "jpeg" ==> "IMAGE"
+ * @example ".jpeg" ==> null
+ * @example "gba" ==> null
+ * @param fileFormat The file format that is to be checked 
+ * @returns If valid, the type of file the format represents. If `null`, represents that file format is invalid
+ */
+export function FileFormatMapper(fileFormat:string): MyFileSystemFile["type"]|null{
+    if (fileFormat in FileFormatMap){
+        return FileFormatMap[fileFormat]
+    }
+    return null
+}
+
+// Typing for a MyFileSystemFolder
+    // Represents the possible contents of a folder
+    // Has an `hidden` identifier to denote whether or not the folder is hidden
 export type MyFileSystemFolder = {
     hidden: boolean ,
     [key:string]: MyFileSystemFolder | MyFileSystemFile | boolean,
 }
 
+// The file system
 export const MyFileSystem : MyFileSystemFolder = {
     hidden:false,
     Photos:{
