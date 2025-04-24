@@ -28,6 +28,10 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
     // currentFile as a state since the variables can change (variables change when loading a file from drag+drop)
     const [currentFile, setCurrentFile] = useState<CurrentFile>({name: fileName, content: fileContent})
 
+    // emptyMediaState represents whether or not the empty media has an element being dragged within it
+        // If an element is being dragged, represents whether or not the elements are valid to be read or not (if dropped)
+    const [emptyMediaState, setEmptyMediaState] = useState<"NONE"|"VALID-DROP"|"INVALID-DROP">("NONE")
+
     // RunningAppsContext is used to update the app's addiitonal title
     const {runningAppsDispatch} = useContext(RunningAppsContext)
     
@@ -75,6 +79,31 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
         }
         else{
             /**
+             * Function to determine if the files being dragged from the user's computer file system are all valid for `MediaViewer`
+             * 
+             * Used to determine whether or not the files being dragged should be allowed by `MediaViewer`
+             * @param files The list of files that are currently being dragged
+             * - Of type `DataTransferItemList` (given by `event.dataTransfer.items`) as the true files list (`event.dataTransfer.files`) is only avaiable after a drop
+             * @returns `boolean` whether or not the files being dragged are all readable by `MediaViewer`
+             */
+            function CheckFilesValidity(files: DataTransferItemList):boolean{
+                // For each file being dragged
+                for (const file of files){
+                    // Grab the file format
+                    const fileFormat = file.type.split("/")[1]
+
+                    // If file format does not exist within the map, exit early with a `false`
+                        // This is because, it only takes 1 invalid file for the drop to be invalid
+                    if (FileFormatMapper(fileFormat) == null){
+                        return false
+                    }
+                }
+
+                // All files exist within the map, return `true`
+                return true
+            }
+
+            /**
              * Common function used by both the `onDragEnter` and the `onDragOver` event listeners for the 'empty-media' div
              * 
              * Defined in a seperate function since both event listeners use identical functions
@@ -84,10 +113,23 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
              */
             function onDragHandler(event:React.DragEvent<HTMLDivElement>){
                 // Only accept elements that are either from MyFileSystem or the user's computer's file system
-                if (event.dataTransfer.types.includes("myfilesystem/filepath") || event.dataTransfer.types.includes("Files")){
+                    // If elements come from the user's computer, check if the file formats are supported
+                        // If even one file is not supported, don't allow the elements
+                if (event.dataTransfer.types.includes("myfilesystem/filepath") || (event.dataTransfer.types.includes("Files") && CheckFilesValidity(event.dataTransfer.items))){
+                    setEmptyMediaState("VALID-DROP")
                     // Defines the type of drop effect used
                     event.dataTransfer.dropEffect = "link"
+
                     // Prevent default is needed to stop the browser default behaviour (which is to not allow any elements)
+                    event.preventDefault()
+                }
+
+                // When the elements being dragged are not allowed/are not a valid input
+                    // Block the drop from happening and set emptyMediaState to `INVALID-DROP`
+                else{
+                    setEmptyMediaState("INVALID-DROP")
+                    // Block the drop from happening
+                    event.dataTransfer.dropEffect = "none"
                     event.preventDefault()
                 }
             }
@@ -95,82 +137,109 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
 
             return (
                 <div className="empty-media"
-                
+
                 // DragEnter/DragOver event defaults must be prevented to allow for dropping 
                 // (If not prevented, onDrop event won't run)
                 onDragEnter={onDragHandler}
                 onDragOver={onDragHandler}
 
+                // Once a drag leaves the div, reset emptyMediaState back to "NONE"
+                    // This is because this would mean that no items/elements are being dragged into the div
+                onDragLeave={(event)=>{event.preventDefault();setEmptyMediaState("NONE")}}
+
+
                 // Handler for when elements are dropped into the div
                 onDrop={(event)=>{
+                    // On drop, set emptyMediaState back to "NONE" (not needed but yolo)
+                    setEmptyMediaState("NONE")
+
                     // If the element come from MyFileSystem
                     if (event.dataTransfer.types.includes("myfilesystem/filepath")){
                         // Obtain the data from the element (ie. the path of file from within MyFileSystem)
                         const MyFileSystemFilePath = event.dataTransfer.getData("myfilesystem/filepath")
+
                         // Get the name of the file from the path
                         const fileName = getChildItemName(MyFileSystemFilePath)
+
                         // Get the contents of the file
                             // We know that the function is gonna return a file, no need for checks nor the identifier
                         const [content, ] = doesPathExist(MyFileSystemFilePath)
+
                         // Set the current file as the one obtained from the path
                         setCurrentFile({name: fileName!, content: content as MyFileSystemFile})
                         
                     }
+
                     // If the element(s) come from the user's file system
                     if (event.dataTransfer.types.includes("Files")){
+                        
                         // The user is allowed to drag multiple files at once
-                        let counter:number = 0
+                            // Denotes whether or not the file being processed is the first file or not
+                        let firstFile: boolean = true
+
                         // For each of the files the user has dragged into the div
                         for (const draggedSystemFile of event.dataTransfer.files ){
+
                             // The final "." represents the seperator of the file name and file format
                             const endOfFileName = draggedSystemFile.name.lastIndexOf(".")
                             const fileName = draggedSystemFile.name.substring(0, endOfFileName)
                             const fileFormat = draggedSystemFile.name.substring(endOfFileName+1, draggedSystemFile.name.length)
-                            
+
                             // Find the type of file based on the file format
+                                // This will never be `null` (fingers crossed) since invalid file types would not be allowed to be dragged in
                             const fileType = FileFormatMapper(fileFormat)
 
-                            // If file type not null, that means the file is of valid typing
-                                // This means that MediaViewer is able to open the file
-                            if (fileType != null){
-                                // Open the file and read its data
-                                const reader = new FileReader()
-                                reader.readAsDataURL(draggedSystemFile)
+                            // Open the file and read its data
+                            const reader = new FileReader()
+                            reader.readAsDataURL(draggedSystemFile)
 
-                                // If counter is 0, that means this is the first file in the list
-                                    // The first file must open in the MediaViewer that files were dragged into
-                                if (counter == 0){
-                                    reader.onload = ()=>{
-                                        // Update currentFile with the data from the file
-                                        setCurrentFile({name: fileName, content:{type:fileType, hidden:false, data:reader.result as string}})
-                                    }
+                            // Checks if the file being processed is the first file or not
+                                // The first file must open in the MediaViewer that files were dragged into
+                            if (firstFile){
+                                reader.onload = ()=>{
+                                    // Update currentFile with the data from the file
+                                    setCurrentFile({name: fileName, content:{type:fileType!, hidden:false, data:reader.result as string}})
                                 }
-                                // If counter is not 0, this means that another MediaViewer must be opened with the file
-                                else{
-                                    reader.onload = ()=>{
-                                        // Open a new MediaViewer with the new file as its props
-                                        runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{fileContent:{type:fileType, hidden:false, data:reader.result as string}, fileName:fileName} as MediaViewerProps})
-
-                                    }
-                                }
+                                firstFile = false
                             }
-                            // If file is null, that means that the file cannot be opened
+
+                            // If not, this means that another MediaViewer must be opened for the file
                             else{
-                                console.log("This format is not supported")
+                                reader.onload = ()=>{
+                                    // Open a new MediaViewer with the new file as its props
+                                    runningAppsDispatch({type:"ADD", app_name:"MediaViewer",  props:{fileContent:{type:fileType!, hidden:false, data:reader.result as string}, fileName:fileName} as MediaViewerProps})
+
+                                }
                             }
-                            counter += 1
+
                         }  
                         event.preventDefault()
                     }
                 }}
                 >
-                    No media loaded...
-                    <br />
-                    Please open a file through the File Explorer
-                    <br />
-                    Or drag and drop a file from the File Explorer
-                    <br />
-                    Or drag and drop a file from your computer 
+                    {/* Determines what is to be displayed based on emptyMediaState */}
+                    {emptyMediaState == "NONE" ? (
+                        <>
+                            No media loaded...
+                            <br />
+                            Please open a file through the File Explorer
+                            <br />
+                            Or drag and drop a file from the File Explorer
+                            <br />
+                            Or drag and drop a file from your computer 
+                        </>
+                    ) :(
+                        emptyMediaState == "VALID-DROP" ? (
+                            <div className="drop valid-drop">
+                                Valid drop!
+                            </div>
+                        ) :
+                        (
+                            <div className="drop invalid-drop">
+                                Don't drop!!!!! please!!!!!
+                            </div>
+                        )
+                    )}
                 </div>
             )
         }
