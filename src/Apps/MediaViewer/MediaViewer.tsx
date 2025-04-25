@@ -217,29 +217,28 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
                     }
                 }}
                 >
-                    {/* Determines what is to be displayed based on emptyMediaState */}
-                    {emptyMediaState == "NONE" ? (
-                        <>
-                            No media loaded...
-                            <br />
-                            Please open a file through the File Explorer
-                            <br />
-                            Or drag and drop a file from the File Explorer
-                            <br />
-                            Or drag and drop a file from your computer 
-                        </>
-                    ) :(
-                        emptyMediaState == "VALID-DROP" ? (
-                            <div className="drop valid-drop">
-                                Valid drop!
-                            </div>
-                        ) :
-                        (
-                            <div className="drop invalid-drop">
-                                Don't drop!!!!! please!!!!!
-                            </div>
-                        )
-                    )}
+                    {{
+                        "NONE": 
+                            (<>
+                                No media loaded...
+                                <br />
+                                Please open a file through the File Explorer
+                                <br />
+                                Or drag and drop a file from the File Explorer
+                                <br />
+                                Or drag and drop a file from your computer 
+                            </>),
+                        "VALID-DROP":
+                            (<div className="drop valid-drop">
+                                Drop to open file(s)
+                            </div>),
+                        "INVALID-DROP":
+                            (<div className="drop invalid-drop">
+                                Files invalid
+                                <br />
+                                One or more files are in an unsupported format
+                            </div>)
+                    }[emptyMediaState]}
                 </div>
             )
         }
