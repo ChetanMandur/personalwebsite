@@ -406,15 +406,8 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 break;
             
             case "playing":
-                // By playing/pausing the videoRef, the property in videoProperties will update
-
-                // For when playing == True
-                if (newOptionValue){
-                    videoProperties.refCollection.videoRef.current?.play()
-
-                } else{
-                    videoProperties.refCollection.videoRef.current?.pause()
-                }
+                // If playing value is updated, just pass the logic to the play/pause handler
+                playPauseHandler()
                 break;
 
             default:
