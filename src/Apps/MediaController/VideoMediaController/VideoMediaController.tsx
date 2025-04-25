@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { VideoMediaControllerProps } from "../MediaController";
 import { RunningAppsContext } from "../../../Desktop/Contexts/RunningAppsContext"
 import { VideoUpdatableOptions } from "../../MediaViewer/VideoMedia/VideoMedia"
