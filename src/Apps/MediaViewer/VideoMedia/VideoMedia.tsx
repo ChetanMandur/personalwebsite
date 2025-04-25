@@ -203,8 +203,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
             // If the video is currently playing
             if (videoProperties.playing){
 
-                //Update the video's current time and start the loop to constantly update 'currentTime'
-                videoProperties.refCollection.videoRef.current.currentTime = videoProperties.currentTime
+                // Start the loop to constantly update 'currentTime'
                 videoProperties.refCollection.currentTimeUpdateRef.current = requestAnimationFrame(updateCurrentTimeLoop)
 
             }
@@ -356,6 +355,18 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
 
 
     /**
+     * Updates both `videoProperties.currentTime` and the video's current time (`videoRef.current.currentTime`) in a single function
+     * 
+     * Purpose of the function is to streamline updating process for currentTime
+     * @param newTime The new time the set the video to
+     */
+    function updateCurrentTime(newTime:number){
+        setVideoProperties(pendingState =>({...pendingState, currentTime: newTime}))
+        videoProperties.refCollection.videoRef.current!.currentTime = newTime
+    }
+
+
+    /**
      * Handler for when the seekbar is clicked or when the mouse is moved while the seekbar is clicked on
      * 
      * Based on the position of the mouse within the (or in relation to) the seekbar, update the `currentTime` of the `<video>` element
@@ -376,8 +387,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         const newTime:number = videoProperties.refCollection.videoRef.current!.duration * seekBarClickedPercentage
 
         // Apply the new time to the video
-        videoProperties.refCollection.videoRef.current!.currentTime = newTime
-        setVideoProperties(pendingProperties => ({...pendingProperties, currentTime: newTime}))
+        updateCurrentTime(newTime)
     }
 
     /**
@@ -398,11 +408,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 videoProperties.refCollection.videoRef.current!.preservesPitch = newOptionValue as boolean;
                 break;
             case "currentTime":
-                setVideoProperties((pendingState) =>{
-                    return {...pendingState, currentTime: newOptionValue as number}
-                })
-                videoProperties.refCollection.videoRef.current!.currentTime = newOptionValue as number;
-
+                updateCurrentTime(newOptionValue as number)
                 break;
             
             case "playing":
@@ -439,6 +445,10 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
     function playPauseHandler(){
         if (videoProperties.refCollection.videoRef.current){
             if (videoProperties.refCollection.videoRef.current.paused){
+                videoProperties.refCollection.videoRef.current.play()
+            }
+            else if (videoProperties.refCollection.videoRef.current.ended){
+                updateCurrentTime(0)
                 videoProperties.refCollection.videoRef.current.play()
             }
             else{
