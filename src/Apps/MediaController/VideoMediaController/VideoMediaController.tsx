@@ -147,19 +147,16 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
     },[app_running_id, setControllerAppRunningID])
 
     // Purpose of the useEffect is to create/restart the loop used to update the current time used for the controller
-    // Without this loop, the controller's number input for the duration would not update 
+    // Without this loop, the controller's range input (progress bar) would not update according to the video's elapsed time
     useEffect(()=>{
         // Creates the interval (which is run ASAP, denoted by timeout=0) and stores its ID
         const intervalID = setInterval(()=>{
-            // Updates pending state to ensure that no other state changes are ignored
+            
+            // Updates the current time state to match that of the video
+                // This is needed as it keeps the controller's elapsed time in sync with that of the video
+                    // Without it, changes to the elapsed time from the video player's controls wont be shown on the controller, causing a desync
+                // Updates pending state to ensure that no other state changes are ignored
             setCurrentOptions(pendingState=>{
-
-                // Only updates current time state value (used by the number input form) when the video is playing
-                if (!videoRef.current?.paused){
-                    setCurrentFormOptions(pendingState=>({currentTime:videoRef.current!.currentTime, playbackRate: pendingState.playbackRate}))
-                }
-                
-                // Updates the current time state value (used by the range input form AND to denote the current elapsed time of the video) 
                 return {...pendingState, currentTime: videoRef.current!.currentTime, playing: !videoRef.current?.paused}
             })
         }, 0)
@@ -170,6 +167,14 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
         }
 
     },[])
+
+    // Purpose of the useEffect is to keep the number input (text underneath progress bar, denoting the elapsed time) in sync with the video/progress bar
+    // By keeping it in a seperate useEffect (and not within the loop above) allows for the number input to be manipulated
+        // If it were in the loop, the input would constantly be updated with the current time, ignoring any user input
+        // In a seperate loop, it only applies/is run when the variable is changed to a different value
+    useEffect(()=>{
+        setCurrentFormOptions(pendingState=>({currentTime:currentOptions.currentTime, playbackRate: pendingState.playbackRate}))
+    }, [currentOptions.currentTime])
 
 
     /**
