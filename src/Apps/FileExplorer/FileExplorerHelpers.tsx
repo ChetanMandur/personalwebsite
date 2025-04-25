@@ -90,19 +90,24 @@ export function getParentPath(path:string):string{
 }
 
 /**
- * Given a path (in `string` format), returns the name of the child item
- * @Example `/Photos/file` ==> `file`
+ * Given a path (in `string` format), returns the name of the child item (if it exists)
+ * 
+ * If the given path represents root, then no child is returned (ie. `undefined`)
+ * @example "/Photos/file" ==> "file"
+ * @example "/" ==> undefined
  * @param path - The path (as a `string`) whos child will be returned
- * @returns A `string` of the child's name
+ * @returns 
+ * - A `string` of the child's name 
+ * - `undefined` if `path` represents root
  */
-export function getChildItemName(path:string):string{
+export function getChildItemName(path:string):string|undefined{
     const pathItemName = pathToArray(path).pop()
 
     if (typeof pathItemName == "string"){
         return pathItemName
     }
     else{
-        return ""
+        return undefined
     }
 }
 

@@ -42,7 +42,7 @@ export type RunningAppListType = {
  {type: "ADD", app_name: string, props?: object} |
  {type:"DELETE"} & AppRunningID |
  {type:"UPDATE-APP-FOCUS"} & AppRunningID |
- {type:"UPDATE-APP-ADDITIONAL-TITLE", appAdditionalTitle: string} & AppRunningID |
+ {type:"UPDATE-APP-ADDITIONAL-TITLE", appAdditionalTitle: string|undefined} & AppRunningID |
  {type:"UPDATE-APP-PROPS", props: object} & AppRunningID |
  {type:"TITLEBAR-CLICKED"} & AppRunningID & PointerEvent |
  {type:"TITLEBAR-UNCLICKED"} |
