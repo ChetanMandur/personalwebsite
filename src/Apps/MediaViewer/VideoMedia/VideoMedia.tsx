@@ -78,6 +78,7 @@ type RefCollection = {
 // Typing holds all the properties that the video can have
 // Holds information for:
     // Whether the video is currently playing or not ('playing')
+        // This property is set when the <video> media play/pause event is invoked
     // The current time elapsed by the video ('currentTime')
     // The current percentage of the video that has elapsed ('currentTimePercentage')
     // Whether to have the video auto-loop or not ('loop')
