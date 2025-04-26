@@ -80,6 +80,7 @@ type RefCollection = {
     // Whether the video is currently playing or not ('playing')
     // The current time elapsed by the video ('currentTime')
     // The current percentage of the video that has elapsed ('currentTimePercentage')
+    // Whether to have the video auto-loop or not ('loop')
     // Whether to stretch/fill the video into the full window width and height ('videoFill')
     // Whether or not the seekbar is currently being clicked on or not ('seekBarClicked')
     // The collection of all the refs used by the video ('refCollection')
@@ -88,6 +89,7 @@ type VideoProperties = {
     playing: boolean,
     currentTime: number,
     currentTimePercentage: number,
+    loop: boolean,
     videoFill: boolean
     seekBarClicked:boolean,
     refCollection: RefCollection,
@@ -124,6 +126,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         playing: true,
         currentTime: 0,
         currentTimePercentage: 0,
+        loop: false,
         videoFill: true,
         seekBarClicked: false,
         refCollection: {
@@ -365,6 +368,16 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
         videoProperties.refCollection.videoRef.current!.currentTime = newTime
     }
 
+    /**
+     * Restarts the video
+     * 
+     * Function just sets the video's currentTime to 0 before playing the video
+     */
+    function restartVideo(){
+        updateCurrentTime(0)
+        videoProperties.refCollection.videoRef.current!.play()
+    }
+
 
     /**
      * Handler for when the seekbar is clicked or when the mouse is moved while the seekbar is clicked on
@@ -448,8 +461,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 videoProperties.refCollection.videoRef.current.play()
             }
             else if (videoProperties.refCollection.videoRef.current.ended){
-                updateCurrentTime(0)
-                videoProperties.refCollection.videoRef.current.play()
+                restartVideo()
             }
             else{
                 videoProperties.refCollection.videoRef.current.pause()
@@ -470,7 +482,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
     function generateContextMenu() : ContextMenuOptions{
         const output: ContextMenuOptions = {}
         
-        // If the video is currently filling/stretching into the full canvas
+        // Options to fit/fill the video into the window
         if(videoProperties.videoFill){
             output["Fit Video Into View"] = ()=>{
                 setVideoProperties(pendingState => ({
@@ -487,7 +499,30 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
             }
         }
 
-        // If there is no MediaController open for the video
+        // Options to have the video auto-loop or not
+        if (videoProperties.loop){
+            output["Stop loop"] = () =>{
+                setVideoProperties(pendingState =>({
+                    ...pendingState,
+                    loop: false
+                }))
+            }
+        }
+        else{
+            output["Loop video"] = () =>{
+                setVideoProperties(pendingState =>({
+                    ...pendingState,
+                    loop: true
+                }))
+                if (videoProperties.refCollection.videoRef.current?.ended){
+                    restartVideo()
+                }
+            }
+        }
+
+        // Options to handle the MediaController
+            // Open the controller if not open
+            // Close or focus the controller if open
         if (controllerAppRunningID == ""){
             output["Open Controller"] = ()=>{
                 runningAppsDispatch(
@@ -583,6 +618,11 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     ...pendingProperties,
                     playing: false
                 }))
+            }}
+            onEnded={()=>{
+                if (videoProperties.loop){
+                    restartVideo()
+                }
             }}
             hidden={true} autoPlay />
 
