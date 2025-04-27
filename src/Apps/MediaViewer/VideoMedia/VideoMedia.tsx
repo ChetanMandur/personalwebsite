@@ -155,7 +155,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
     const [showOverlay, setShowOverlay] = useState<OverlayProperties>({display:false, timeoutID: createRef<number|null>()})
 
     // Used to create a context menu when right clicking the canvas
-    const {contextMenuDispatch} = useContext(ContextMenuContext)
+    const {contextMenuData,contextMenuDispatch} = useContext(ContextMenuContext)
 
     // Used for two main purposes
         // Used to handle the related media controller (open/create, close/delete, and focus)
@@ -586,15 +586,19 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     event.stopPropagation();
                     runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
                 }} 
-                onClick={(event)=>{
-                    event.stopPropagation();
-                    playPauseHandler()
+                onMouseDown={(event)=>{
+                    if (event.buttons == 1){
+                        if (contextMenuData.source != app_running_id){
+                            playPauseHandler()
+                        }
+                    }
                 }}
                 onContextMenu={(event)=>{
                     contextMenuPropagation(event);
                     contextMenuDispatch(
                         {
                             type:"SET",
+                            source: app_running_id,
                             event:event,
                             newOptions: generateContextMenu()
                         }

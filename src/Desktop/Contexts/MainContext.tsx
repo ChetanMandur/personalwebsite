@@ -7,7 +7,7 @@ import { tooltipReducer, TooltipContext } from "./TooltipContext";
 export function StateContext(props:PropsWithChildren){
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [runningAppsData, runningAppsDispatch] = useReducer(runningAppsReducer, {})
-  const [contextMenuData, contextMenuDispatch] = useReducer(contextMenuReducer, {x:0,y:0,visible:false, options:{}})
+  const [contextMenuData, contextMenuDispatch] = useReducer(contextMenuReducer, {x:0,y:0,visible:false,source:undefined, options:{}})
   const [tooltipData, tooltipDispatch] = useReducer(tooltipReducer, {x:0, y:0, data: "", dataType: null, visible:false})
 
   return(
