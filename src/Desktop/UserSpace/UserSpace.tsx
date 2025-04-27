@@ -3,7 +3,6 @@ import "./UserSpace.css"
 import { useContext, useRef } from "react"
 import { RunningAppProperties, RunningAppsContext, titlebarTextGenerator } from "../Contexts/RunningAppsContext"
 import { StartMenuContext } from "../Contexts/StartMenuContext"
-import { ContextMenuContext } from "../Contexts/ContextMenuContext"
 import { TooltipContext } from "../Contexts/TooltipContext"
 
 
@@ -104,13 +103,27 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
 export default function UserSpace(){
   const {runningAppsData,runningAppsDispatch}= useContext(RunningAppsContext)
   const {setStartMenuOpen} = useContext(StartMenuContext)
-  const {contextMenuDispatch} = useContext(ContextMenuContext)
   const outline_ref = useRef<(HTMLDivElement|null)[]>([]);
 
 
   return(
 
-    <div className="user-space" onPointerDown={()=>{setStartMenuOpen(false)}} onPointerLeave={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) }} onPointerUp={()=>{runningAppsDispatch({type:"RESIZE-UNCLICKED"}); runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}); contextMenuDispatch({type:"HIDE"}) }} onPointerMove={(event) => { runningAppsDispatch({type:"WINDOW-MOVE", event:event})}}>
+    <div className="user-space" 
+      onPointerDown={()=>{
+        setStartMenuOpen(false)
+      }} 
+      onPointerLeave={()=>{
+        runningAppsDispatch({type:"RESIZE-UNCLICKED"});
+        runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) 
+      }} 
+      onPointerUp={()=>{
+        runningAppsDispatch({type:"RESIZE-UNCLICKED"});
+        runningAppsDispatch({type:"TITLEBAR-UNCLICKED"});
+      }} 
+      onPointerMove={(event) => {
+        runningAppsDispatch({type:"WINDOW-MOVE", event:event})
+      }}
+    >
         {/* Where each running app is rendered */}
         {
             Object.entries(runningAppsData).map((item, index)=>{

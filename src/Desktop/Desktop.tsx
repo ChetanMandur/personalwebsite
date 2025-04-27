@@ -14,7 +14,19 @@ export default function Desktop() {
   const {contextMenuData, contextMenuDispatch}=useContext(ContextMenuContext)
   const {tooltipData} = useContext(TooltipContext)
   return (
-      <div className="main-container" onContextMenu={(event)=>{contextMenuPropagation(event); if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}} onClick={()=>{ if(contextMenuData.visible){contextMenuDispatch({type:"HIDE"})}}}>
+      <div className="main-container" 
+        onMouseDown={()=>{
+          if(contextMenuData.visible){
+            contextMenuDispatch({type:"HIDE"})
+          }
+        }}
+        onContextMenu={(event)=>{
+          contextMenuPropagation(event);
+          if(contextMenuData.visible){
+            contextMenuDispatch({type:"HIDE"})
+          }
+        }}
+      >
         <UserSpace/>
         <Taskbar/>
         {contextMenuData.visible ? 
