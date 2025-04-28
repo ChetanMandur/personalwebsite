@@ -48,19 +48,22 @@ export default function Taskbar(){
               const app_running_id = item[0]
               const running_properties = item[1]
 
-              const context_options: ContextMenuOptions = {Close: ()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})},}
+              const context_options: ContextMenuOptions = {}
 
               if (running_properties.isMinimized){
                 context_options["Restore"] = ()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER",forceMinimize:true, app_running_id:app_running_id})}
-              } else{
-                context_options["Minimize"] = ()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER",forceMinimize:true, app_running_id:app_running_id})}
+              } 
+              else{
                 if (running_properties.maximizeType == "FULL"){
                   context_options["Unmaximize"] = ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})}
   
-                }else {
+                }
+                else {
                   context_options["Maximize"] = ()=>{runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id}); runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}
                 }
+                context_options["Minimize"] = ()=>{runningAppsDispatch({type:"MINIMIZE-HANDLER",forceMinimize:true, app_running_id:app_running_id})}
               }
+              context_options["Close"] = ()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}
 
               return(
                 <div className="common-border active-app" key={app_running_id+"taskbarIcon"} 
