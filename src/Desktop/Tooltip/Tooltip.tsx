@@ -31,16 +31,24 @@ export default function Tooltip(){
         } 
         : 
         {
-            // Top half of screen`
+            // Top half of screen
             top: `calc(${(tooltipData.y)}px + 0.5vh)`,
             maxHeight: `calc(100vh - (${(tooltipData.y)}px + 0.5vh))`,
         }
+    
+    if (tooltipData.duration != undefined){
+        tooltipStyle["animationDuration"] = tooltipData.duration + "s"
+    }
 
     return(
-        <div className="tooltip" ref={tooltipRef} style={{
-            ...tooltipStyle, 
-            left:`calc(${tooltipData.x}px + 1.5vh)`,
-            maxWidth: `calc(100vw - (${tooltipData.x}px + 1.5vh))`}}>
+        <div className="tooltip" ref={tooltipRef} 
+            style={{
+                ...tooltipStyle, 
+                left:`calc(${tooltipData.x}px + 1.5vh)`,
+                maxWidth: `calc(100vw - (${tooltipData.x}px + 1.5vh))`,
+
+            }}
+        >
             {
                 tooltipData.dataType == "TEXT" ?
                 <div className="tooltip-text">

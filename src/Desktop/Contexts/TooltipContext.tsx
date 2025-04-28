@@ -1,27 +1,36 @@
 import React, { createContext } from "react"
 
 export type TooltipProperties = {
-    x: number,
-    y: number,
-    visible: boolean,
-    dataType: "TEXT"| "IMAGE" | null ,
-    data:string
+    visible: boolean, // Whether or not the tooltip is visible
+    x: number, // The x position of the tooltip
+    y: number, // The y position of the tooltip
+    duration: number|undefined, // (Optional) How long, in seconds, it takes for the tooltip to appear
+    dataType: "TEXT"| "IMAGE" | null , // The type of data the tooltip contains
+    data:string // The tooltip data
 }
 
 type TooltipReducerAction = 
-{type: "SET", event: React.MouseEvent<HTMLDivElement, MouseEvent>, newDataType: TooltipProperties["dataType"], newData: string} |
-{type: "HIDE"}
+    {
+        type: "SET", 
+        event: React.MouseEvent<HTMLDivElement, MouseEvent>, 
+        duration?: number,
+        newDataType: TooltipProperties["dataType"], 
+        newData: string
+    } 
+    |
+    {
+        type: "HIDE"
+    }
 
 export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipReducerAction): TooltipProperties{
     let newTooltipData: TooltipProperties = {...tooltipData}
     switch (action.type){
         case "SET":{
-            // console.log("tooltip SET")
-
             newTooltipData = {
                 visible: true,
                 x: action.event!.clientX!,
                 y: action.event!.clientY!,
+                duration: action.duration,
                 data: action.newData!,
                 dataType: action.newDataType!,
             } as TooltipProperties
@@ -30,9 +39,8 @@ export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipRe
         }
 
         case "HIDE":{
-            // console.log("tooltip HIDE")
-            
             newTooltipData["visible"] = false
+            newTooltipData["duration"] = undefined
             break;
             
         }
@@ -46,4 +54,4 @@ export type TooltipContextType = {
     tooltipDispatch: React.Dispatch<TooltipReducerAction>
 }
 
-export const TooltipContext = createContext<TooltipContextType>({tooltipData:{x:0, y:0, data:"", dataType: null, visible:false}, tooltipDispatch: ()=>{}})
+export const TooltipContext = createContext<TooltipContextType>({tooltipData:{x:0, y:0, duration:undefined ,data:"", dataType: null, visible:false}, tooltipDispatch: ()=>{}})
