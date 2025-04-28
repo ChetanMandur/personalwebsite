@@ -441,7 +441,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                         contextMenuDispatch({
                                             type:"SET",
                                             event: event,
-                                            newOptions:{
+                                            options:{
                                                 "Delete pad": ()=>{
                                                     delete beatPadMappings.list[currentKeyCode]
                                                     setBeatPadMappings(beatPadMappings)

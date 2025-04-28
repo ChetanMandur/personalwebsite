@@ -6,14 +6,23 @@ export type ContextMenuOptions = {
 }
 
 export type ContextMenuProperties = {
-  x: number ,
-  y: number,
-  visible:boolean,
-  source: string|undefined,
-  options: ContextMenuOptions
+  x: number , // The x location of the ContextMenu
+  y: number, // The y location of the ContextMenu
+  visible:boolean, // Whether or not the ContextMenu is currently visible
+  source: string|undefined, // (Optional) The source of the ContextMenu
+  options: ContextMenuOptions // The options/buttons of the ContextMenu
 }
 
-export type ContextMenuReducerAction = {type: "SET",source?:string, event: React.MouseEvent, newOptions: ContextMenuOptions} | {type:"HIDE"}
+export type ContextMenuReducerAction = 
+  { type: "SET", // For the "SET" action
+    source?:string, // (Optional) the source of the ContextMenu
+    event: React.MouseEvent,  // The MouseEvent given with 'onContextMenu' event listener
+    options: ContextMenuOptions // The list of options/buttons to be within the ContextMenu
+  } 
+  | 
+  {
+    type:"HIDE" //For the "HIDE" action
+  }
 
 export function contextMenuPropagation(event: React.MouseEvent){
   event.stopPropagation();
@@ -30,7 +39,7 @@ export function contextMenuReducer(contextMenuData:ContextMenuProperties, action
         case "SET":
             temp.visible = true
             temp.source = action.source
-            temp.options = {...action.newOptions}
+            temp.options = {...action.options}
             temp.x = action.event.clientX!
             temp.y = action.event.clientY!
             break;

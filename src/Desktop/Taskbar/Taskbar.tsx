@@ -66,7 +66,7 @@ export default function Taskbar(){
                 <div className="common-border active-app" key={app_running_id+"taskbarIcon"} 
                   onContextMenu={(event)=>{
                     contextMenuPropagation(event);
-                    contextMenuDispatch({type:"SET", event:event, newOptions:context_options});
+                    contextMenuDispatch({type:"SET", event:event, options:context_options});
                   }} 
                   onMouseMove={(event)=>{
                     tooltipDispatch({type:"SET", newData:titlebarTextGenerator(running_properties), newDataType:"TEXT",event:event})

@@ -587,7 +587,10 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
                 }} 
                 onMouseDown={(event)=>{
+                    // If the mouse down event is caused by a left click
                     if (event.buttons == 1){
+                        // Only if the context menu is not from the video media
+                            // Ie. when the context menu is from another app/undefined
                         if (contextMenuData.source != app_running_id){
                             playPauseHandler()
                         }
@@ -600,7 +603,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             type:"SET",
                             source: app_running_id,
                             event:event,
-                            newOptions: generateContextMenu()
+                            options: generateContextMenu()
                         }
                     )
 

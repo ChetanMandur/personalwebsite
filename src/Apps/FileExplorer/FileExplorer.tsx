@@ -499,7 +499,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             onContextMenu={(event)=>{
                 contextMenuPropagation(event); 
                 setSelected("");
-                contextMenuDispatch({type:"SET",event:event, newOptions:toggleHiddenFilesContextMenu});
+                contextMenuDispatch({type:"SET",event:event, options:toggleHiddenFilesContextMenu});
             }}
         >
             {
@@ -525,7 +525,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                     contextMenuDispatch({
                                         type: "SET",
                                         event: event,
-                                        newOptions:{
+                                        options:{
                                             "Open in the background": ()=>{
                                                 runningAppsDispatch({
                                                     type:"ADD",

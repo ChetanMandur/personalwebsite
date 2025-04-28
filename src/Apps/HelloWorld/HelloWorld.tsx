@@ -69,7 +69,7 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     
     <div className="image"   style={{backgroundImage:imageURL}} onContextMenu={(event)=>{
     contextMenuPropagation(event); 
-    contextMenuDispatch({type:"SET", newOptions:imageContextMenuOptions, event:event});
+    contextMenuDispatch({type:"SET", options:imageContextMenuOptions, event:event});
     }} 
     onMouseMove={(event)=>{tooltipDispatch({type:"SET", event: event, newData:"Right click me!", newDataType:"TEXT"})}}
     onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
