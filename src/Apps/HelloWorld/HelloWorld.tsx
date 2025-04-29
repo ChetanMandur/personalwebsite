@@ -18,7 +18,7 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
   const appRef =useRef<HTMLDivElement|null>(null)
 
   const {runningAppsData, runningAppsDispatch} = useContext(RunningAppsContext)
-  const {contextMenuDispatch} = useContext(ContextMenuContext)
+  const {contextMenuData,contextMenuDispatch} = useContext(ContextMenuContext)
   const {tooltipDispatch} = useContext(TooltipContext)
 
   const hasFocus = runningAppsData[app_running_id].zIndex == 999
@@ -132,12 +132,16 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
 
     {test ? <div className="image2"   style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> : <></>}
     
-    <div className="image"   style={{backgroundImage:imageURL}} onContextMenu={(event)=>{
-    contextMenuPropagation(event); 
-    contextMenuDispatch({type:"SET", options:imageContextMenuOptions, event:event});
-    }} 
-    onMouseMove={(event)=>{tooltipDispatch({type:"SET", event: event, duration: 0 , newData:"Right click me!", newDataType:"TEXT"})}}
-    onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
+    <div className="image"   style={{backgroundImage:imageURL}} 
+      onContextMenu={(event)=>{
+        tooltipDispatch({type:"HIDE"});
+        contextMenuPropagation(event); 
+        contextMenuDispatch({type:"SET",source:app_running_id+"bottomImage" ,options:imageContextMenuOptions, event:event});
+        }} 
+      onMouseMove={(event)=>{if (contextMenuData.source != app_running_id+"bottomImage"){
+        tooltipDispatch({type:"SET", event: event, duration: 0 , newData:"Right click me!", newDataType:"TEXT"})
+      }}}
+      onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
     > {app_running_id} hi {name} {ohmylord} </div>
   </div>) 
 } 
