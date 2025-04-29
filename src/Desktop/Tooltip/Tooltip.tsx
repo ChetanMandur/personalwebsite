@@ -11,12 +11,7 @@ export default function Tooltip(){
 
     const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({})
 
-
-    // Sets the height of the tooltip
-    // `useLayoutEffect` allows us to get the final height of the tooltip after the inner contents been rendered
     useLayoutEffect(()=>{
-        const height = tooltipRef.current!.offsetHeight!
-        const width = tooltipRef.current!.offsetWidth!
 
         const newTooltipStyle: React.CSSProperties = {}
 
@@ -25,27 +20,28 @@ export default function Tooltip(){
             newTooltipStyle["animationDuration"] = tooltipData.duration + "s"
         }
 
-
-        // The tooltip's vertical position different depending on where the mouse is (relative to the screen)
-                // If the mouse is on the bottom half of the screen, the tooltip should appear slightly above the mouse
-                // If the mouse is on the top half of the screen, the tooltip should appear slightly below the mouse
+        // If mouse is on the bottom half of the screen
         if (tooltipData.y > window.innerHeight/2) {
-            newTooltipStyle["top"] = `calc(${(tooltipData.y - height)}px - 0.5vh)`
-            newTooltipStyle["maxHeight"] = `calc(100vh - (${(tooltipData.y - height)}px - 0.5vh))`
-        }
-        else{
-            newTooltipStyle["top"] = `calc(${(tooltipData.y)}px + 0.5vh)`
-            newTooltipStyle["maxHeight"] = `calc(100vh - (${(tooltipData.y)}px + 0.5vh))`
+            newTooltipStyle["bottom"] = `calc(${window.innerHeight - tooltipData.y}px)`
+            newTooltipStyle["maxHeight"] = `calc(${tooltipData.y}px)`
         }
 
-        // The tooltip's horizontal positon dpending how close to the right edge the mouse is
-        if ((window.innerWidth - tooltipData.x) > (width)  ){
-            newTooltipStyle["left"] = `calc(${tooltipData.x}px + 1.5vh)`
-            newTooltipStyle["maxWidth"] = `calc(100vw - (${tooltipData.x}px + 1.5vh))`
-        }
+        // If mouse is on the top half of the screen
         else{
-            newTooltipStyle["left"] = `calc(${tooltipData.x - width}px - 1vh)`
-            newTooltipStyle["maxWidth"] = `calc(100vw - (${tooltipData.x - width}px - 1vh))`
+            newTooltipStyle["top"] = `calc(${tooltipData.y}px )`
+            newTooltipStyle["maxHeight"] = `calc(${window.innerHeight -tooltipData.y}px )`
+        }
+
+        // If mouse is not near the right edge of the screen
+        if ((window.innerWidth - tooltipData.x) > (window.innerWidth * 0.1)  ){
+            newTooltipStyle["left"] = `calc(${tooltipData.x}px + 1.5vh )`
+            newTooltipStyle["maxWidth"] = `calc(${ window.innerWidth - tooltipData.x}px)`
+        }
+        
+        // If mouse is near the right edge of the screen
+        else{
+            newTooltipStyle["right"] = `calc(${window.innerWidth - tooltipData.x}px + 1vh )`
+            newTooltipStyle["maxWidth"] = `calc(${tooltipData.x}px)`
         }
 
         setTooltipStyle(newTooltipStyle)

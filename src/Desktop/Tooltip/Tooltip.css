@@ -15,9 +15,6 @@
     position: absolute;
     background-color: var(--bar-default-colour);
 
-    top:50%;
-    left:50%;
-
     border:var(--bar-border-outline);
     border-width: calc(var(--bar-border-outline-width)*0.8);
     border-style: outset;
