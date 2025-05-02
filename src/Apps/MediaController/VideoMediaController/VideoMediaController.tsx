@@ -4,6 +4,7 @@ import { RunningAppsContext } from "../../../Desktop/Contexts/RunningAppsContext
 import { VideoUpdatableOptions } from "../../MediaViewer/VideoMedia/VideoMedia"
 import { ContextMenuContext, contextMenuPropagation } from "../../../Desktop/Contexts/ContextMenuContext"
 import "./VideoMediaController.css"
+import { TooltipContext } from "../../../Desktop/Contexts/TooltipContext";
 
 // Typing used to represent a single beat pad
 // Supposed to be akin to a beat pad/square on a sampler/drum machine
@@ -55,6 +56,9 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
 
     // Used to provide a context menu for each individual beatpad
     const {contextMenuDispatch} = useContext(ContextMenuContext)
+
+    // Used to provide a tooltip for each option
+    const {tooltipDispatch} = useContext(TooltipContext)
 
     // Used to check if the controller is currently being focused by the user
     const {runningAppsData} = useContext(RunningAppsContext)
@@ -265,11 +269,28 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 {/* Section for play/pause button + progress bar  */}
                 <div className="media-controller-section-progressbar">
                     {/* Play/pause button */}
-                    <div className="media-controller-section-progressbar-playpause-button common-border" onClick={()=>{changeValue("playing", Boolean(!currentOptions.playing))}}>
+                    <div className="media-controller-section-progressbar-playpause-button common-border" 
+                        onClick={(event)=>{
+                            changeValue("playing", Boolean(!currentOptions.playing));
+                            tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(!currentOptions.playing ? "Pause" : "Play")})
+                        }}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(currentOptions.playing ? "Pause" : "Play")})}}
+                        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                    >
                             <img src={currentOptions.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" /> 
                     </div>
                     {/* Progress bar as a range input */}
-                    <input type="range"  tabIndex={-1} value={currentOptions.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}} name="currentTime" id="currentTime" />
+                    <input type="range"  tabIndex={-1} value={currentOptions.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} 
+                        onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}}
+                        onMouseMove={(event)=>{
+                            if (event.buttons == 0){
+                                tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Progress slider"})
+                            }
+                        }}
+                        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                        onMouseDown={()=>{tooltipDispatch({type:"HIDE"})}}
+                        name="currentTime" id="currentTime" 
+                    />
 
                 </div>
 
@@ -311,6 +332,15 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                     onBlur={()=>{
                         changeValue("currentTime", currentFormOptions.currentTime)
                     }}
+
+                    onMouseMove={(event)=>{
+                        if (event.target != document.activeElement){
+                            tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Current time"})
+                        }
+                    }}
+                    onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                    onFocus={()=>{tooltipDispatch({type:"HIDE"})}}
+                    
                 />
             </div>
 
@@ -322,7 +352,10 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 </div>
                 
                 {/* Checkbox to enable/disable the ability to preserve pitch */}
-                <input type="checkbox" tabIndex={-1} checked={currentOptions.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!currentOptions.preservesPitch))}} name="perservePitch" id="perservePitch" />
+                <input type="checkbox" tabIndex={-1} checked={currentOptions.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!currentOptions.preservesPitch))}} name="perservePitch" id="perservePitch"
+                    onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Preserve Pitch"})}}
+                    onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                />
             </div>
             
             {/* Section dedicated for the playback rate slider + number input */}
@@ -334,10 +367,18 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
 
                 {/* Playback rate slider as range input */}
                 <input type="range" name="playbackRate" id="playbackRate"  tabIndex={-1} value={currentOptions.playbackRate} min={0} max={2} step={0.1} 
-                onChange={(event)=>{
-                    changeValue("playbackRate", Number(event.target.value)); 
-                    setCurrentFormOptions((pendingState)=>({...pendingState, playbackRate: Number(event.target.value)}))
-                }} />
+                    onChange={(event)=>{
+                        changeValue("playbackRate", Number(event.target.value)); 
+                        setCurrentFormOptions((pendingState)=>({...pendingState, playbackRate: Number(event.target.value)}))
+                    }} 
+                    onMouseMove={(event)=>{
+                        if (event.buttons == 0){
+                            tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Playback rate slider"})
+                        }
+                    }}
+                    onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                    onMouseDown={()=>{tooltipDispatch({type:"HIDE"})}}
+                />
 
                 {/* Playback rate text as number input 
                     Used as number input so that it can be edited/interactable
@@ -373,6 +414,14 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                     onBlur={()=>{
                         changeValue("playbackRate", currentFormOptions.playbackRate)
                     }}
+
+                    onMouseMove={(event)=>{
+                        if (event.target != document.activeElement){
+                            tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Current playback rate"})
+                        }
+                    }}
+                    onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                    onFocus={()=>{tooltipDispatch({type:"HIDE"})}}
                 />
             </div>
 
@@ -385,7 +434,11 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                         Grayscale
                     </div>
                     {/* Checkbox to enable/disable grayscale */}
-                    <input type="checkbox" tabIndex={-1} checked={currentOptions.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!currentOptions.grayscale))}} name="grayscale" id="grayscale" />
+                    <input type="checkbox" tabIndex={-1} checked={currentOptions.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!currentOptions.grayscale))}} name="grayscale" id="grayscale" 
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(currentOptions.grayscale ? "Undo grayscale" : "Make grayscale")})}}
+                        onClick={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(!currentOptions.grayscale ? "Undo grayscale" : "Make grayscale")})}}
+                        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                    />
                 </div>
                 {/* For inverse colour */}
                 <div className="media-controller-section">
@@ -394,7 +447,12 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                         Inverse
                     </div>
                     {/* Checkbox to enable/disable inverse colour */}
-                    <input type="checkbox" tabIndex={-1} checked={currentOptions.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!currentOptions.inverseColour))}} name="inverseColour" id="inverseColour" />
+                    <input type="checkbox" tabIndex={-1} checked={currentOptions.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!currentOptions.inverseColour))}} name="inverseColour" id="inverseColour"
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(currentOptions.inverseColour ? "Undo colour invert" : "Invert colours")})}}
+                        onClick={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(!currentOptions.inverseColour ? "Undo colour invert" : "Invert colours")})}}
+                        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+
+                    />
                 </div>
             </div>
 
@@ -420,6 +478,8 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                             }
                             setBeatPadMappings(beatPadMappings)
                         }}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Add a new beat pad"})}} 
+                        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         +
                     </div>
@@ -430,11 +490,12 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                         // For each beat pad
                         Object.entries(beatPadMappings.list).map((item, index)=>{
                             const [currentKeyCode, currentBeatPadValue] = item
+                            const beatPadNumber = index + 1
                             
                             // Create the beatpad
                             return(
                                 // Main encapsulating div
-                                <div className="beat-pad-section-value common-border" key={"beat-pad-value"+index}
+                                <div className="beat-pad-section-value common-border" key={"beat-pad-value"+beatPadNumber}
                                     onClick={()=>{applyBeatPadValue(currentBeatPadValue)}}
                                     onContextMenu={(event)=>{
                                         contextMenuPropagation(event)
@@ -493,10 +554,19 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                             }
                                         })
                                     }}
+                                    onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", 
+                                        newData:`Beatpad #${beatPadNumber}\n
+                                                ${currentKeyCode.substring(0,6) != "NO_KEY" ? "Assigned to keyboard key: "+currentKeyCode : "Not assigned to keyboard key"}
+                                                ${currentBeatPadValue.preservesPitch ? "Preserves pitch" : "Alters pitch"}
+                                                ${currentBeatPadValue.playbackRate}x Playback rate
+                                                Jumps to timestamp: ${currentBeatPadValue.timeStamp} 
+                                                `
+                                        })}}
+                                    onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                                 
                                 >
                                     {/* Contents of the beat pad item */}
-                                    {index} <br/>
+                                    {beatPadNumber} <br/>
                                     {beatPadMappings.toMap == currentKeyCode ? <>Press a key <br/></>: (
                                         currentKeyCode.substring(0,6) != "NO_KEY" ? <>{currentKeyCode} <br/></> : <>Unassigned<br/></>
                                     )}
@@ -516,72 +586,83 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 <div className="media-controller-section-titlebar">
                     Colour Swap
                     {/* '+' button, used to add a new colour swap value (default values are swapping black with black within a range of 0) */}
-                    <div className="media-controller-section-titlebar-button common-border" onClick={()=>{
-                        changeValue("colourSwapList", {
-                            values:[...currentOptions.colourSwapList.values, {
-                                from:{red:0, green:0, blue:0, alpha:0},
-                                to:{red:0, green:0, blue:0, alpha:0},
-                                range:0
-                            }],
-                            changedPixels: currentOptions.colourSwapList.changedPixels
-                        })
-                    }}>+</div>
-
-                    {/* 'Random' button, used to add a new colour swap value based on the pixels current on screen */}
-                    <div className="media-controller-section-titlebar-button common-border" onClick={()=>{
-
-                        // Get the current frame + its accompanying data
-                        const canvasContext = canvasRef.current!.getContext("2d")! 
-                        const videoFrame = canvasContext.getImageData(
-                            0,
-                            0,
-                            canvasRef.current!.width, 
-                            canvasRef.current!.height
-                        )
-                        const frameData = videoFrame.data
-                        const totalPixels = frameData.length/4
-
-                        // If all the pixels have not been changed
-                        if (currentOptions.colourSwapList.changedPixels.current!.size != totalPixels ){
-                            // Grab random pixel (from pool of all pixels)
-                            let randomPixel = (Math.floor(Math.random() * (totalPixels)))
-
-                            // If random pixel has been changed, keep selecting new one until we find one that hasnt been changed
-                            while (currentOptions.colourSwapList.changedPixels.current!.has(randomPixel)){ 
-                                randomPixel = (Math.floor(Math.random() * (totalPixels)))
-                            }
-                            
-                            // Find RGB value of random pixel
-                            const randomPixelIndex = randomPixel * 4
-
-                            const fromRed = frameData[randomPixelIndex + 0]
-                            const fromGreen = frameData[randomPixelIndex + 1]
-                            const fromBlue = frameData[randomPixelIndex + 2]
-
-                            // Generate new RGB value for random pixel to swap to
-                            const toRed = Math.floor(Math.random() * (256))
-                            const toGreen = Math.floor(Math.random() * (256))
-                            const toBlue = Math.floor(Math.random() * (256))
-        
-                            // Create new colour swap values with:
-                                // RGB value of random pixel 
-                                // The newly genereated RGB value to swap to
-                                // Random range value (from 0-100)
+                    <div className="media-controller-section-titlebar-button common-border" 
+                        onClick={()=>{
                             changeValue("colourSwapList", {
-                                values: [...currentOptions.colourSwapList.values, {
-                                    from:{red:fromRed, green:fromGreen, blue:fromBlue, alpha:0},
-                                    to:{red:toRed, green:toGreen, blue:toBlue, alpha:0},
-                                    range:Math.floor(Math.random() * (100))
+                                values:[...currentOptions.colourSwapList.values, {
+                                    from:{red:0, green:0, blue:0, alpha:0},
+                                    to:{red:0, green:0, blue:0, alpha:0},
+                                    range:0
                                 }],
                                 changedPixels: currentOptions.colourSwapList.changedPixels
                             })
-                        }
+                        }}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Adds a new blank colour swap value"})}}
+                        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                    >
+                        +
+                    </div>
 
-                        // If all pixels have been changed/swapped, do nothing (other than this console message)
-                        if (currentOptions.colourSwapList.changedPixels.current!.size == totalPixels){
-                            console.log("no pixels in current frame to randomize")
-                        }
-                    }}>Random</div>
+                    {/* 'Random' button, used to add a new colour swap value based on the pixels current on screen */}
+                    <div className="media-controller-section-titlebar-button common-border" 
+                        onClick={()=>{
+                            // Get the current frame + its accompanying data
+                            const canvasContext = canvasRef.current!.getContext("2d")! 
+                            const videoFrame = canvasContext.getImageData(
+                                0,
+                                0,
+                                canvasRef.current!.width, 
+                                canvasRef.current!.height
+                            )
+                            const frameData = videoFrame.data
+                            const totalPixels = frameData.length/4
+
+                            // If all the pixels have not been changed
+                            if (currentOptions.colourSwapList.changedPixels.current!.size != totalPixels ){
+                                // Grab random pixel (from pool of all pixels)
+                                let randomPixel = (Math.floor(Math.random() * (totalPixels)))
+
+                                // If random pixel has been changed, keep selecting new one until we find one that hasnt been changed
+                                while (currentOptions.colourSwapList.changedPixels.current!.has(randomPixel)){ 
+                                    randomPixel = (Math.floor(Math.random() * (totalPixels)))
+                                }
+                                
+                                // Find RGB value of random pixel
+                                const randomPixelIndex = randomPixel * 4
+
+                                const fromRed = frameData[randomPixelIndex + 0]
+                                const fromGreen = frameData[randomPixelIndex + 1]
+                                const fromBlue = frameData[randomPixelIndex + 2]
+
+                                // Generate new RGB value for random pixel to swap to
+                                const toRed = Math.floor(Math.random() * (256))
+                                const toGreen = Math.floor(Math.random() * (256))
+                                const toBlue = Math.floor(Math.random() * (256))
+            
+                                // Create new colour swap values with:
+                                    // RGB value of random pixel 
+                                    // The newly genereated RGB value to swap to
+                                    // Random range value (from 0-100)
+                                changeValue("colourSwapList", {
+                                    values: [...currentOptions.colourSwapList.values, {
+                                        from:{red:fromRed, green:fromGreen, blue:fromBlue, alpha:0},
+                                        to:{red:toRed, green:toGreen, blue:toBlue, alpha:0},
+                                        range:Math.floor(Math.random() * (100))
+                                    }],
+                                    changedPixels: currentOptions.colourSwapList.changedPixels
+                                })
+                            }
+
+                            // If all pixels have been changed/swapped, do nothing (other than this console message)
+                            if (currentOptions.colourSwapList.changedPixels.current!.size == totalPixels){
+                                console.log("no pixels in current frame to randomize")
+                            }
+                        }}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Changes a random colour current on screen"})}}
+                        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                    >
+                        Random
+                    </div>
                 </div>
                 {/* Where each colour swap value is displayed */}
                 <div className="color-swap-section">
@@ -593,12 +674,18 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                 // Create the colour swap value
                                 return(
                                     // Main encapsulating div
-                                    <div className="colour-swap-section-value" key={"colour-swap-value"+index}>
+                                    <div className="colour-swap-section-value" key={"colour-swap-value"+index}
+                                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:
+                                            `Swaps colour (${value.from.red},${value.from.green},${value.from.blue}) to (${value.to.red},${value.to.green},${value.to.blue}) with a threshold of ${value.range}`
+                                        })}}
+                                        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                                    >
                                         {/* Colour input for the 'from' value */}
                                         <div className="colour-swap-section-value-option">
                                             FROM:
                                             <input type="color" value={rgbToHex(value.from.red, value.from.green, value.from.blue)} name="from-color-swap" id="from-color-swap"
-                                                
+                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Change colour to swap"})}}
+                                                onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                                                 onChange={(event)=>{
                                                     // Given value is in hex format, need to convert before applying to colour swap value
                                                     [value.from.red, value.from.green, value.from.blue] = hexToRGB(event.target.value)
@@ -616,6 +703,8 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                         <div className="colour-swap-section-value-option">
                                             TO:
                                             <input type="color" value={rgbToHex(value.to.red, value.to.green, value.to.blue)} name="to-color-swap" id="to-color-swap"
+                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Change colour to swap to"})}}
+                                                onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                                                 onChange={(event)=>{
                                                     // Given value is in hex format, need to convert before applying to colour swap value
                                                     [value.to.red, value.to.green, value.to.blue] = hexToRGB(event.target.value)
@@ -633,6 +722,11 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                         <div className="colour-swap-section-value-option" >
                                             RANGE:
                                             <input type="number" className="colour-swap-section-value-option-number" placeholder="0" value={value.range || ''} min={0} max={255}
+                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Change range threshold"})}}
+                                                onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                                                onFocus={()=>{tooltipDispatch({type:"HIDE"})}}
+
+                                               
                                                 onChange={(event)=>{
                                                     const targetValue = Number(event.target.value)
                                                     // Apply value if number would be in range
@@ -666,15 +760,19 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                         </div>
                                             
                                         {/* Button to delete colour swap value */}
-                                        <div className="colour-swap-delete common-border" onClick={()=>{
-                                            // Remove current index from values list
-                                            currentOptions.colourSwapList.values.splice(index, 1)
-                                            // Reapply list into state
-                                            changeValue("colourSwapList", {
-                                                values: currentOptions.colourSwapList.values,
-                                                changedPixels: currentOptions.colourSwapList.changedPixels
-                                            })
-                                        }}>Remove</div>
+                                        <div className="colour-swap-delete common-border" 
+                                            onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Delete colour swap value"})}}
+                                            onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
+                                            onClick={()=>{
+                                                // Remove current index from values list
+                                                currentOptions.colourSwapList.values.splice(index, 1)
+                                                // Reapply list into state
+                                                changeValue("colourSwapList", {
+                                                    values: currentOptions.colourSwapList.values,
+                                                    changedPixels: currentOptions.colourSwapList.changedPixels
+                                                })
+                                            }}
+                                        >Remove</div>
                                     </div>
                                 )
                             }
