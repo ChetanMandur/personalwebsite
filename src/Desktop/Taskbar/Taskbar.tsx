@@ -72,7 +72,7 @@ export default function Taskbar(){
                     contextMenuDispatch({type:"SET", event:event, options:context_options});
                   }} 
                   onMouseMove={(event)=>{
-                    tooltipDispatch({type:"SET", newData:titlebarTextGenerator(running_properties), newDataType:"TEXT",event:event})
+                    tooltipDispatch({type:"SET", data:titlebarTextGenerator(running_properties), dataType:"TEXT",event:event})
                   }}
                   onMouseOut={()=>{
                     tooltipDispatch({type:"HIDE"})

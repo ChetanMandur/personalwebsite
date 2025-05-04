@@ -52,7 +52,7 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     <form action=""  >
       <input type="checkbox" checked={test}  onChange={()=>{setTest(!test); console.log(test)}} name="testCheckBox" id="testCheckBox"
         onMouseMove={(event)=>{
-          tooltipDispatch({type:"SET", event:event,duration:0 , newDataType: "TEXT", newData:"Magic"})
+          tooltipDispatch({type:"SET", event:event,duration:0 , dataType: "TEXT", data:"Magic"})
         }}
         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
       />
@@ -62,10 +62,10 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     <div className="long-form" tabIndex={-1}
     onMouseMove={(event)=>{
       if(test){
-        tooltipDispatch({type:"SET", event: event, newData:"https://placedog.net/400/263?id=56", newDataType:"IMAGE"})
+        tooltipDispatch({type:"SET", event: event, data:"https://placedog.net/400/263?id=56", dataType:"IMAGE"})
       }
       else{
-        tooltipDispatch({type:"SET", event: event, newDataType:"TEXT", newData: "Click the checkbox and come back here"})
+        tooltipDispatch({type:"SET", event: event, dataType:"TEXT", data: "Click the checkbox and come back here"})
       }
     }}
     onMouseOut={()=>{if(test){tooltipDispatch({type:"HIDE"})}}}
@@ -139,7 +139,7 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
         contextMenuDispatch({type:"SET",source:app_running_id+"bottomImage" ,options:imageContextMenuOptions, event:event});
         }} 
       onMouseMove={(event)=>{if (contextMenuData.source != app_running_id+"bottomImage"){
-        tooltipDispatch({type:"SET", event: event, duration: 0 , newData:"Right click me!", newDataType:"TEXT"})
+        tooltipDispatch({type:"SET", event: event, duration: 0 , data:"Right click me!", dataType:"TEXT"})
       }}}
       onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
     > {app_running_id} hi {name} {ohmylord} </div>

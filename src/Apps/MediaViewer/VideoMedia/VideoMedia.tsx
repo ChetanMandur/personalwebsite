@@ -647,7 +647,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             playPauseHandler()
                         }}
                         onMouseMove={(event)=>{
-                            tooltipDispatch({type:"SET", event:event, newDataType:"TEXT", newData:(videoProperties.playing == false ? "Play" : "Pause")})
+                            tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(videoProperties.playing == false ? "Play" : "Pause")})
                         }}
                         onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
@@ -701,7 +701,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             }
                         }}
                         onMouseMove={(event)=>{
-                            tooltipDispatch({type:"SET", event:event, newDataType:"TEXT", newData:(controllerAppRunningID == "" ? "Open Media Controller" : "Focus Media Controller")})
+                            tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(controllerAppRunningID == "" ? "Open Media Controller" : "Focus Media Controller")})
                         }}
                         onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
@@ -712,7 +712,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     <div className="video-overlay-button common-border"
                         onClick={()=>{setVideoProperties(pendingState=>({...pendingState, videoFill: !pendingState.videoFill}))}}
                         onMouseMove={(event)=>{
-                            tooltipDispatch({type:"SET", event:event, newDataType:"TEXT", newData:(videoProperties.videoFill ? "Fit video into window" : "Fill video into window")})
+                            tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(videoProperties.videoFill ? "Fit video into window" : "Fill video into window")})
                         }}
                         onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >

@@ -14,8 +14,8 @@ type TooltipReducerAction =
         type: "SET", 
         event: React.MouseEvent<HTMLDivElement, MouseEvent>, 
         duration?: number,
-        newDataType: TooltipProperties["dataType"], 
-        newData: string
+        dataType: TooltipProperties["dataType"], 
+        data: string
     } 
     |
     {
@@ -31,8 +31,8 @@ export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipRe
                 x: action.event!.clientX!,
                 y: action.event!.clientY!,
                 duration: action.duration,
-                data: action.newData!,
-                dataType: action.newDataType!,
+                data: action.data!,
+                dataType: action.dataType!,
             } as TooltipProperties
 
             break;

@@ -272,9 +272,9 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                     <div className="media-controller-section-progressbar-playpause-button common-border" 
                         onClick={(event)=>{
                             changeValue("playing", Boolean(!currentOptions.playing));
-                            tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(!currentOptions.playing ? "Pause" : "Play")})
+                            tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:(!currentOptions.playing ? "Pause" : "Play")})
                         }}
-                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(currentOptions.playing ? "Pause" : "Play")})}}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:(currentOptions.playing ? "Pause" : "Play")})}}
                         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                             <img src={currentOptions.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" /> 
@@ -284,7 +284,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                         onChange={(event)=>{changeValue("currentTime", Number(event.target.value))}}
                         onMouseMove={(event)=>{
                             if (event.buttons == 0){
-                                tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Progress slider"})
+                                tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Progress slider"})
                             }
                         }}
                         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
@@ -335,7 +335,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
 
                     onMouseMove={(event)=>{
                         if (event.target != document.activeElement){
-                            tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Current time"})
+                            tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Current time"})
                         }
                     }}
                     onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
@@ -353,7 +353,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                 
                 {/* Checkbox to enable/disable the ability to preserve pitch */}
                 <input type="checkbox" tabIndex={-1} checked={currentOptions.preservesPitch} onChange={()=>{changeValue("preservesPitch", Boolean(!currentOptions.preservesPitch))}} name="perservePitch" id="perservePitch"
-                    onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Preserve Pitch"})}}
+                    onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Preserve Pitch"})}}
                     onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                 />
             </div>
@@ -373,7 +373,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                     }} 
                     onMouseMove={(event)=>{
                         if (event.buttons == 0){
-                            tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Playback rate slider"})
+                            tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Playback rate slider"})
                         }
                     }}
                     onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
@@ -417,7 +417,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
 
                     onMouseMove={(event)=>{
                         if (event.target != document.activeElement){
-                            tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Current playback rate"})
+                            tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Current playback rate"})
                         }
                     }}
                     onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
@@ -435,8 +435,8 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                     </div>
                     {/* Checkbox to enable/disable grayscale */}
                     <input type="checkbox" tabIndex={-1} checked={currentOptions.grayscale} onChange={()=>{changeValue("grayscale", Boolean(!currentOptions.grayscale))}} name="grayscale" id="grayscale" 
-                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(currentOptions.grayscale ? "Undo grayscale" : "Make grayscale")})}}
-                        onClick={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(!currentOptions.grayscale ? "Undo grayscale" : "Make grayscale")})}}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:(currentOptions.grayscale ? "Undo grayscale" : "Make grayscale")})}}
+                        onClick={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:(!currentOptions.grayscale ? "Undo grayscale" : "Make grayscale")})}}
                         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                     />
                 </div>
@@ -448,8 +448,8 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                     </div>
                     {/* Checkbox to enable/disable inverse colour */}
                     <input type="checkbox" tabIndex={-1} checked={currentOptions.inverseColour} onChange={()=>{changeValue("inverseColour", Boolean(!currentOptions.inverseColour))}} name="inverseColour" id="inverseColour"
-                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(currentOptions.inverseColour ? "Undo colour invert" : "Invert colours")})}}
-                        onClick={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:(!currentOptions.inverseColour ? "Undo colour invert" : "Invert colours")})}}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:(currentOptions.inverseColour ? "Undo colour invert" : "Invert colours")})}}
+                        onClick={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:(!currentOptions.inverseColour ? "Undo colour invert" : "Invert colours")})}}
                         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
 
                     />
@@ -478,7 +478,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                             }
                             setBeatPadMappings(beatPadMappings)
                         }}
-                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Add a new beat pad"})}} 
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Add a new beat pad"})}} 
                         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         +
@@ -554,8 +554,8 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                             }
                                         })
                                     }}
-                                    onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", 
-                                        newData:`Beatpad #${beatPadNumber}\n
+                                    onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", 
+                                        data:`Beatpad #${beatPadNumber}\n
                                                 ${currentKeyCode.substring(0,6) != "NO_KEY" ? "Assigned to keyboard key: "+currentKeyCode : "Not assigned to keyboard key"}
                                                 ${currentBeatPadValue.preservesPitch ? "Preserves pitch" : "Alters pitch"}
                                                 ${currentBeatPadValue.playbackRate}x Playback rate
@@ -597,7 +597,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                 changedPixels: currentOptions.colourSwapList.changedPixels
                             })
                         }}
-                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Adds a new blank colour swap value"})}}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Adds a new blank colour swap value"})}}
                         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         +
@@ -658,7 +658,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                 console.log("no pixels in current frame to randomize")
                             }
                         }}
-                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Changes a random colour current on screen"})}}
+                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Changes a random colour current on screen"})}}
                         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         Random
@@ -675,7 +675,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                 return(
                                     // Main encapsulating div
                                     <div className="colour-swap-section-value" key={"colour-swap-value"+index}
-                                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:
+                                        onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:
                                             `Swaps colour (${value.from.red},${value.from.green},${value.from.blue}) to (${value.to.red},${value.to.green},${value.to.blue}) with a threshold of ${value.range}`
                                         })}}
                                         onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
@@ -684,7 +684,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                         <div className="colour-swap-section-value-option">
                                             FROM:
                                             <input type="color" value={rgbToHex(value.from.red, value.from.green, value.from.blue)} name="from-color-swap" id="from-color-swap"
-                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Change colour to swap"})}}
+                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Change colour to swap"})}}
                                                 onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                                                 onChange={(event)=>{
                                                     // Given value is in hex format, need to convert before applying to colour swap value
@@ -703,7 +703,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                         <div className="colour-swap-section-value-option">
                                             TO:
                                             <input type="color" value={rgbToHex(value.to.red, value.to.green, value.to.blue)} name="to-color-swap" id="to-color-swap"
-                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Change colour to swap to"})}}
+                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Change colour to swap to"})}}
                                                 onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                                                 onChange={(event)=>{
                                                     // Given value is in hex format, need to convert before applying to colour swap value
@@ -722,7 +722,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                         <div className="colour-swap-section-value-option" >
                                             RANGE:
                                             <input type="number" className="colour-swap-section-value-option-number" placeholder="0" value={value.range || ''} min={0} max={255}
-                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Change range threshold"})}}
+                                                onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Change range threshold"})}}
                                                 onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                                                 onFocus={()=>{tooltipDispatch({type:"HIDE"})}}
 
@@ -761,7 +761,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                                             
                                         {/* Button to delete colour swap value */}
                                         <div className="colour-swap-delete common-border" 
-                                            onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, newDataType: "TEXT", newData:"Delete colour swap value"})}}
+                                            onMouseMove={(event)=>{event.stopPropagation();tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:"Delete colour swap value"})}}
                                             onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
                                             onClick={()=>{
                                                 // Remove current index from values list
