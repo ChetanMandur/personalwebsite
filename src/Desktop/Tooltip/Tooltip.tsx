@@ -30,27 +30,27 @@ export default function Tooltip(){
         }
 
         // If mouse is on the bottom half of the screen
-        if (tooltipData.y > window.innerHeight/2) {
-            newTooltipStyle["bottom"] = `calc(${window.innerHeight - tooltipData.y}px)`
-            newTooltipStyle["maxHeight"] = `calc(${tooltipData.y}px)`
+        if (tooltipData.mouseEvent!.clientY > window.innerHeight/2) {
+            newTooltipStyle["bottom"] = `calc(${window.innerHeight - tooltipData.mouseEvent!.clientY}px)`
+            newTooltipStyle["maxHeight"] = `calc(${tooltipData.mouseEvent!.clientY}px)`
         }
 
         // If mouse is on the top half of the screen
         else{
-            newTooltipStyle["top"] = `calc(${tooltipData.y}px )`
-            newTooltipStyle["maxHeight"] = `calc(${window.innerHeight -tooltipData.y}px )`
+            newTooltipStyle["top"] = `calc(${tooltipData.mouseEvent!.clientY}px )`
+            newTooltipStyle["maxHeight"] = `calc(${window.innerHeight -tooltipData.mouseEvent!.clientY}px )`
         }
 
         // If mouse is not near the right edge of the screen
-        if ((window.innerWidth - tooltipData.x) > (window.innerWidth * 0.1)  ){
-            newTooltipStyle["left"] = `calc(${tooltipData.x}px + 1.5vh )`
-            newTooltipStyle["maxWidth"] = `calc(${ window.innerWidth - tooltipData.x}px)`
+        if ((window.innerWidth - tooltipData.mouseEvent!.clientX) > (window.innerWidth * 0.1)  ){
+            newTooltipStyle["left"] = `calc(${tooltipData.mouseEvent!.clientX}px + 1.5vh )`
+            newTooltipStyle["maxWidth"] = `calc(${ window.innerWidth - tooltipData.mouseEvent!.clientX}px)`
         }
         
         // If mouse is near the right edge of the screen
         else{
-            newTooltipStyle["right"] = `calc(${window.innerWidth - tooltipData.x}px + 1vh )`
-            newTooltipStyle["maxWidth"] = `calc(${tooltipData.x}px)`
+            newTooltipStyle["right"] = `calc(${window.innerWidth - tooltipData.mouseEvent!.clientX}px + 1vh )`
+            newTooltipStyle["maxWidth"] = `calc(${tooltipData.mouseEvent!.clientX}px)`
         }
 
         setTooltipStyle(newTooltipStyle)
