@@ -15,9 +15,9 @@ export default function Tooltip(){
         const hide = () =>{
             tooltipDispatch({type:"HIDE"})
         }
-        tooltipData.mouseEvent!.target.addEventListener("mouseout", hide, {once:true})
-        tooltipData.mouseEvent!.target.addEventListener("mouseleave", hide, {once:true})
-        tooltipData.mouseEvent!.target.addEventListener("focus", hide, {once:true})
+        tooltipData.event!.target.addEventListener("mouseout", hide, {once:true})
+        tooltipData.event!.target.addEventListener("mouseleave", hide, {once:true})
+        tooltipData.event!.target.addEventListener("focus", hide, {once:true})
     },[])
 
     useLayoutEffect(()=>{
@@ -30,27 +30,27 @@ export default function Tooltip(){
         }
 
         // If mouse is on the bottom half of the screen
-        if (tooltipData.mouseEvent!.clientY > window.innerHeight/2) {
-            newTooltipStyle["bottom"] = `calc(${window.innerHeight - tooltipData.mouseEvent!.clientY}px)`
-            newTooltipStyle["maxHeight"] = `calc(${tooltipData.mouseEvent!.clientY}px)`
+        if (tooltipData.event!.clientY > window.innerHeight/2) {
+            newTooltipStyle["bottom"] = `calc(${window.innerHeight - tooltipData.event!.clientY}px)`
+            newTooltipStyle["maxHeight"] = `calc(${tooltipData.event!.clientY}px)`
         }
 
         // If mouse is on the top half of the screen
         else{
-            newTooltipStyle["top"] = `calc(${tooltipData.mouseEvent!.clientY}px )`
-            newTooltipStyle["maxHeight"] = `calc(${window.innerHeight -tooltipData.mouseEvent!.clientY}px )`
+            newTooltipStyle["top"] = `calc(${tooltipData.event!.clientY}px )`
+            newTooltipStyle["maxHeight"] = `calc(${window.innerHeight -tooltipData.event!.clientY}px )`
         }
 
         // If mouse is not near the right edge of the screen
-        if ((window.innerWidth - tooltipData.mouseEvent!.clientX) > (window.innerWidth * 0.1)  ){
-            newTooltipStyle["left"] = `calc(${tooltipData.mouseEvent!.clientX}px + 1.5vh )`
-            newTooltipStyle["maxWidth"] = `calc(${ window.innerWidth - tooltipData.mouseEvent!.clientX}px)`
+        if ((window.innerWidth - tooltipData.event!.clientX) > (window.innerWidth * 0.1)  ){
+            newTooltipStyle["left"] = `calc(${tooltipData.event!.clientX}px + 1.5vh )`
+            newTooltipStyle["maxWidth"] = `calc(${ window.innerWidth - tooltipData.event!.clientX}px)`
         }
         
         // If mouse is near the right edge of the screen
         else{
-            newTooltipStyle["right"] = `calc(${window.innerWidth - tooltipData.mouseEvent!.clientX}px + 1vh )`
-            newTooltipStyle["maxWidth"] = `calc(${tooltipData.mouseEvent!.clientX}px)`
+            newTooltipStyle["right"] = `calc(${window.innerWidth - tooltipData.event!.clientX}px + 1vh )`
+            newTooltipStyle["maxWidth"] = `calc(${tooltipData.event!.clientX}px)`
         }
 
         setTooltipStyle(newTooltipStyle)

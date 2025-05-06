@@ -2,7 +2,7 @@ import React, { createContext } from "react"
 
 export type TooltipProperties = {
     visible: boolean, // Whether or not the tooltip is visible
-    mouseEvent: React.MouseEvent | null, // The mouse event related to the tooltip
+    event: React.MouseEvent | null, // The mouse event related to the tooltip
     duration: number|undefined, // (Optional) How long, in seconds, it takes for the tooltip to appear
     dataType: "TEXT"| "IMAGE" | null , // The type of data the tooltip contains
     data:string // The tooltip data
@@ -27,7 +27,7 @@ export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipRe
         case "SET":{
             newTooltipData = {
                 visible: true,
-                mouseEvent: action.event,
+                event: action.event,
                 duration: action.duration,
                 data: action.data!,
                 dataType: action.dataType!,
@@ -39,7 +39,7 @@ export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipRe
         case "HIDE":{
             newTooltipData["visible"] = false
             newTooltipData["duration"] = undefined
-            newTooltipData["mouseEvent"] = null
+            newTooltipData["event"] = null
             break;
             
         }
@@ -53,4 +53,4 @@ export type TooltipContextType = {
     tooltipDispatch: React.Dispatch<TooltipReducerAction>
 }
 
-export const TooltipContext = createContext<TooltipContextType>({tooltipData:{mouseEvent:null,duration:undefined ,data:"", dataType: null, visible:false}, tooltipDispatch: ()=>{}})
+export const TooltipContext = createContext<TooltipContextType>({tooltipData:{event:null,duration:undefined ,data:"", dataType: null, visible:false}, tooltipDispatch: ()=>{}})
