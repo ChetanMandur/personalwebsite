@@ -1,15 +1,24 @@
-import React, { useContext, useLayoutEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { TooltipContext } from "../Contexts/TooltipContext";
 import "./Tooltip.css"
 
 export default function Tooltip(){
     // Used to get the current data of the tooltip
-    const {tooltipData} = useContext(TooltipContext)
+    const {tooltipDispatch,tooltipData} = useContext(TooltipContext)
 
     // Used to have a reference to the tooltip (needed when getting height of tooltip)
     const tooltipRef = useRef<HTMLDivElement>(null)
 
     const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({})
+
+    useEffect(()=>{
+        const hide = () =>{
+            tooltipDispatch({type:"HIDE"})
+        }
+        tooltipData.mouseEvent!.target.addEventListener("mouseout", hide, {once:true})
+        tooltipData.mouseEvent!.target.addEventListener("mouseleave", hide, {once:true})
+        tooltipData.mouseEvent!.target.addEventListener("focus", hide, {once:true})
+    },[])
 
     useLayoutEffect(()=>{
 

@@ -553,10 +553,9 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                     })
                                 }
                             }}  
-                            onClick={(event)=>{itemClickedHandler(item, event); tooltipDispatch({type:"HIDE"});}} 
+                            onClick={(event)=>{itemClickedHandler(item, event);}} 
                             onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}
                             onMouseMove={(event)=>{tooltipDispatch({type:"SET", event: event, data:item[0], dataType:"TEXT"})}}
-                            onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
                             draggable= {itemType == "FILE" ? "true" : "false"}
                             onDragStart={(event)=>{
                                 tooltipDispatch({type:"HIDE"})

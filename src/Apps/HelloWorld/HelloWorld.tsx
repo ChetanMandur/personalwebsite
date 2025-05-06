@@ -54,7 +54,6 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
         onMouseMove={(event)=>{
           tooltipDispatch({type:"SET", event:event,duration:0 , dataType: "TEXT", data:"Magic"})
         }}
-        onMouseLeave={()=>{tooltipDispatch({type:"HIDE"})}}
       />
       <input type="checkbox"   onChange={()=>{runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id:appRunningIDpicker, props:{...runningAppsData[appRunningIDpicker]["props"], ohmylord: Math.random().toString()} as HelloWorldProps}); console.log("props changed!!!!!!!!!")}} name="propChangeBox" id="propChangeBox" />
       <input type="text" name="appRunningIDpicker" id="appRunningIDpicker" value={appRunningIDpicker} onChange={(event)=>{setAppRunningIDpicker(event.target.value)}} />    
@@ -68,7 +67,6 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
         tooltipDispatch({type:"SET", event: event, dataType:"TEXT", data: "Click the checkbox and come back here"})
       }
     }}
-    onMouseOut={()=>{if(test){tooltipDispatch({type:"HIDE"})}}}
      >
       {(hasFocus) ? 
         (`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis placerat aliquam quam sed ultricies. Aliquam molestie, ex aliquam efficitur facilisis, mauris felis commodo risus, eget consequat justo dui at est. Sed vitae tortor velit. Fusce fringilla odio ut bibendum efficitur. Sed in augue fringilla tellus volutpat semper. Suspendisse at magna in sapien dapibus gravida nec at neque. Nullam sollicitudin mauris lorem, egestas semper elit elementum sit amet. In volutpat urna id facilisis sagittis.
@@ -134,14 +132,12 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     
     <div className="image"   style={{backgroundImage:imageURL}} 
       onContextMenu={(event)=>{
-        tooltipDispatch({type:"HIDE"});
         contextMenuPropagation(event); 
         contextMenuDispatch({type:"SET",source:app_running_id+"bottomImage" ,options:imageContextMenuOptions, event:event});
         }} 
       onMouseMove={(event)=>{if (contextMenuData.source != app_running_id+"bottomImage"){
         tooltipDispatch({type:"SET", event: event, duration: 0 , data:"Right click me!", dataType:"TEXT"})
       }}}
-      onMouseOut={()=>{tooltipDispatch({type:"HIDE"});}}
     > {app_running_id} hi {name} {ohmylord} </div>
   </div>) 
 } 

@@ -74,9 +74,6 @@ export default function Taskbar(){
                   onMouseMove={(event)=>{
                     tooltipDispatch({type:"SET", data:titlebarTextGenerator(running_properties), dataType:"TEXT",event:event})
                   }}
-                  onMouseOut={()=>{
-                    tooltipDispatch({type:"HIDE"})
-                  }}
                   onClick={()=>{
                     runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id, forceMinimize:false});
                   }}

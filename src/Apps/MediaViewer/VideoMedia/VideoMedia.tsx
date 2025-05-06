@@ -649,7 +649,6 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                         onMouseMove={(event)=>{
                             tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(videoProperties.playing == false ? "Play" : "Pause")})
                         }}
-                        onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
                     </div> 
@@ -703,7 +702,6 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                         onMouseMove={(event)=>{
                             tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(controllerAppRunningID == "" ? "Open Media Controller" : "Focus Media Controller")})
                         }}
-                        onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         <img src="https://www.svgrepo.com/show/480630/controller-3.svg" alt="" />
                     </div> 
@@ -714,7 +712,6 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                         onMouseMove={(event)=>{
                             tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(videoProperties.videoFill ? "Fit video into window" : "Fill video into window")})
                         }}
-                        onMouseOut={()=>{tooltipDispatch({type:"HIDE"})}}
                     >
                         <img src={videoProperties.videoFill ? "https://www.svgrepo.com/show/509227/size-actual.svg" : "https://www.svgrepo.com/show/509229/size-fullscreen.svg"} alt="" />
                     </div> 
