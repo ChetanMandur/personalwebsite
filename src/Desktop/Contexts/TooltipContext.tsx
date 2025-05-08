@@ -3,6 +3,7 @@ import React, { createContext } from "react"
 export type TooltipProperties = {
     visible: boolean, // Whether or not the tooltip is visible
     event: React.MouseEvent | null, // The mouse event related to the tooltip
+    source: string | undefined, // (Optional) The source of the tooltip, used to define where the tooltip is from
     duration: number|undefined, // (Optional) How long, in seconds, it takes for the tooltip to appear
     dataType: "TEXT"| "IMAGE" | null , // The type of data the tooltip contains
     data:string // The tooltip data
@@ -12,6 +13,7 @@ type TooltipReducerAction =
     {
         type: "SET", 
         event: React.MouseEvent<HTMLDivElement, MouseEvent>, 
+        source?: string,
         duration?: number,
         dataType: TooltipProperties["dataType"], 
         data: string
@@ -28,6 +30,7 @@ export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipRe
             newTooltipData = {
                 visible: true,
                 event: action.event,
+                source: action.source,
                 duration: action.duration,
                 data: action.data!,
                 dataType: action.dataType!,
@@ -40,6 +43,7 @@ export function tooltipReducer(tooltipData: TooltipProperties, action: TooltipRe
             newTooltipData["visible"] = false
             newTooltipData["duration"] = undefined
             newTooltipData["event"] = null
+            newTooltipData["source"] = undefined
             break;
             
         }
@@ -53,4 +57,4 @@ export type TooltipContextType = {
     tooltipDispatch: React.Dispatch<TooltipReducerAction>
 }
 
-export const TooltipContext = createContext<TooltipContextType>({tooltipData:{event:null,duration:undefined ,data:"", dataType: null, visible:false}, tooltipDispatch: ()=>{}})
+export const TooltipContext = createContext<TooltipContextType>({tooltipData:{event:null,source:undefined,duration:undefined ,data:"", dataType: null, visible:false}, tooltipDispatch: ()=>{}})

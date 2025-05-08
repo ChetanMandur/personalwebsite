@@ -163,7 +163,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
     const {runningAppsDispatch} = useContext(RunningAppsContext)
 
     // Used to create tooltips on overlay buttons
-    const {tooltipDispatch} = useContext(TooltipContext)
+    const {tooltipData,tooltipDispatch} = useContext(TooltipContext)
 
 
     // Used when component is first mounted and unmounted
@@ -575,7 +575,10 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                 setShowOverlay({...showOverlay, display:true})
                 showOverlay.timeoutID.current = setTimeout(()=>{
                     setShowOverlay({...showOverlay, display:false});
-                    tooltipDispatch({type:"HIDE"})
+                    
+                    if (tooltipData.source == app_running_id + "videoOverlay"){
+                        tooltipDispatch({type:"HIDE"})
+                    }
                 }, 3000)
             }}
         >
@@ -647,7 +650,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             playPauseHandler()
                         }}
                         onMouseMove={(event)=>{
-                            tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(videoProperties.playing == false ? "Play" : "Pause")})
+                            tooltipDispatch({type:"SET",source: app_running_id + "videoOverlay" ,event:event, dataType:"TEXT", data:(videoProperties.playing == false ? "Play" : "Pause")})
                         }}
                     >
                         <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
@@ -700,7 +703,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             }
                         }}
                         onMouseMove={(event)=>{
-                            tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(controllerAppRunningID == "" ? "Open Media Controller" : "Focus Media Controller")})
+                            tooltipDispatch({type:"SET",source: app_running_id + "videoOverlay", event:event, dataType:"TEXT", data:(controllerAppRunningID == "" ? "Open Media Controller" : "Focus Media Controller")})
                         }}
                     >
                         <img src="https://www.svgrepo.com/show/480630/controller-3.svg" alt="" />
@@ -710,7 +713,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     <div className="video-overlay-button common-border"
                         onClick={()=>{setVideoProperties(pendingState=>({...pendingState, videoFill: !pendingState.videoFill}))}}
                         onMouseMove={(event)=>{
-                            tooltipDispatch({type:"SET", event:event, dataType:"TEXT", data:(videoProperties.videoFill ? "Fit video into window" : "Fill video into window")})
+                            tooltipDispatch({type:"SET",source: app_running_id + "videoOverlay", event:event, dataType:"TEXT", data:(videoProperties.videoFill ? "Fit video into window" : "Fill video into window")})
                         }}
                     >
                         <img src={videoProperties.videoFill ? "https://www.svgrepo.com/show/509227/size-actual.svg" : "https://www.svgrepo.com/show/509229/size-fullscreen.svg"} alt="" />
