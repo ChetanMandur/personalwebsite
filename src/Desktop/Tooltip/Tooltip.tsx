@@ -37,7 +37,7 @@ export default function Tooltip(){
 
         // If mouse is on the top half of the screen
         else{
-            newTooltipStyle["top"] = `calc(${tooltipData.event!.clientY}px )`
+            newTooltipStyle["top"] = `calc(${tooltipData.event!.clientY}px + 1.2vh)`
             newTooltipStyle["maxHeight"] = `calc(${window.innerHeight -tooltipData.event!.clientY}px )`
         }
 
