@@ -20,6 +20,7 @@ const FileFormatMap:FileFormatMapType = {
     "png": "IMAGE",
 
     "mp4":"VIDEO",
+    "webm":"VIDEO",
 
     "pdf":"PDF"
 }
