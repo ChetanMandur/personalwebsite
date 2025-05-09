@@ -1,0 +1,148 @@
+.file-explorer{
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    --menu-bar-height: 3vh;
+
+
+    .menu-bar{
+      display:flex;
+      width:100%;
+      flex-direction: row;
+      flex: 0 1 var(--menu-bar-height);
+      max-height: var(--menu-bar-height);
+      background-color: var(--bar-default-colour);
+
+      
+
+      .back-button{
+        user-select: none;
+        flex: 0 1 var(--menu-bar-height);
+        img{
+          max-width: var(--menu-bar-height);
+          max-height: var(--menu-bar-height);
+        }
+      }
+      input[type=text]{
+        background-color: rgba(255, 255, 255, 0.18);
+        width:100%;
+        flex: 1 1 auto;
+        border-top: none;
+        padding-left: 0.6vh;
+        font-family: "Win95Font";
+      }
+      input[type=text]:focus{
+        background-color: rgba(255, 255, 255, 0.301);
+        outline: 0;
+      }
+
+
+      /* I never want to touch autofill ever, why wont they make it easier for me to inject styles */
+      /* input:-webkit-autofill,
+      input:-webkit-autofill:focus {
+        transition: background-color 0s 600000s, color 0s 600000s !important;
+        font-family: "Win95Font";
+      } */
+
+    }
+
+    .path-suggestion{
+      position:absolute;
+      --top-offset: calc(var(--menu-bar-height) + var(--bar-border-outline-width));
+      top: var(--top-offset);
+      max-height: calc(100% - var(--top-offset));
+      width:calc(100% - var(--bar-border-outline-width)*2);
+      background-color: rgb(40, 40, 40);
+      color: rgb(180, 180, 180);
+      overflow-y: auto;
+      overflow-x: hidden;
+      user-select: none;
+
+
+      display:flex;
+      flex-direction: column;
+
+      .path-suggestion-item{
+        width: 100%;
+        padding:1vh;
+
+        .path-suggestion-item-type{
+          display:inline;
+          color: rgb(109, 109, 109);
+          font-style: italic;
+
+        }
+      }
+
+      .path-suggestion-item-active{
+        background-color: rgb(60, 60, 60);
+      }
+      
+      .path-suggestion-message{
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        text-decoration: underline;
+
+        padding-top:1vh;
+        padding-bottom: 1vh;
+      }
+    }
+
+    .folder-content{
+      background-color: var(--bar-default-colour);
+      display:flex;
+      flex-direction: row;
+      align-content: flex-start;
+      flex-wrap: wrap;
+      column-gap: 1vh;
+      flex: 1 1 auto;
+      overflow-y: auto;
+
+      .item{
+        user-select: none;
+        margin-top: 1vh;
+        width: 6vh;
+        height: 6vh;
+        display:flex;
+        flex-direction: column;
+        box-shadow: 0.3vh 0.3vh rgba(0, 0, 0, 0.644); 
+        background-color: rgba(255, 255, 255, 0.274);
+
+        .icon{
+          flex: 0 1 5vh;
+          justify-content: center;
+
+          display:flex;
+          justify-content: center;
+          align-items: center;
+
+          img{
+            max-width: 4vh;
+            max-height: 4vh;
+          }
+
+        }
+        .name{
+          flex: 1 1 auto;
+          font-size: 0.8rem;
+          overflow:hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          text-align: center;
+          --name-padding-size: 0.3vh;
+          padding-left: var(--name-padding-size);
+          padding-right: var(--name-padding-size);
+
+
+        }
+      }
+
+      .selected {
+        background-color: rgba(255, 255, 255, 0.571);
+      }
+    }
+
+}

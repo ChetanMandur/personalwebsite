@@ -4,6 +4,8 @@
   --app-border-size: 0.3vh;
   --snap-colour:rgb(77, 77, 77);
   --snap-opacity:rgba(73, 73, 73, 0.788);
+  --titlebar-height: 2vh;
+
 
 
   .outline{
@@ -121,7 +123,11 @@
       z-index: 0;
       display: flex;
       flex-direction: column;
-      --titlebar-height: 2vh;
+      flex: 1 1 auto;
+      overflow: hidden;
+      width:100%;
+      height:100%;
+
 
       .titlebar {
 
@@ -148,12 +154,15 @@
         .name {
           flex: 1 1 auto;
           white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
           align-self: center;
 
         }
 
         .titlebar-option {
           flex: 0 1 var(--titlebar-height);
+          min-width: var(--titlebar-height);
           display: flex;
           justify-content: center;
           align-items: center;
@@ -167,21 +176,25 @@
 
       }
 
-      .content {
+      .app-content {
         padding: var(--app-border-size);
         padding-top: 0;
         flex: 1 1 auto;
         overflow: hidden;
+        overflow-wrap: anywhere;
+        position: relative;
 
         .content-overlay {
           position: absolute;
 
-          width: calc(100% - var(--app-border-size)*2);
-          height: calc(100% - var(--app-border-size) - var(--titlebar-height));
+          top:0;
+          width: calc(100% - var(--app-border-size)*(2 - 0.01));
+          height: calc(100% - var(--app-border-size)*(1 - 0.01));
 
           background-color: rgba(0, 0, 0, 0.60);
 
         }
+
       }
     }
   }

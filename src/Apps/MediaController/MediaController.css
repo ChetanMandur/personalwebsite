@@ -1,0 +1,100 @@
+.media-controller{
+    height:100%;
+    background-color: var(--bar-default-colour);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    user-select: none;
+
+    .media-controller-section-holder{
+        display:flex;
+        flex-direction: row;
+        justify-content: center;
+        column-gap: 1vh;
+        
+    }
+
+    .media-controller-section{
+        padding-top: 1vh;
+        align-items: center;
+        display:flex;
+        flex-direction: column;
+
+        .media-controller-section-titlebar{
+            display: flex;
+            flex-direction: row;
+            column-gap: 0.5vh;
+            align-items: center;
+
+            .media-controller-section-titlebar-button{
+                padding: 0.5vh;
+                text-align: center;
+                user-select: none;
+            }
+
+        }
+
+        input[type="range"]{
+            padding-top: 1vh;
+
+            padding-bottom: 1vh;
+
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            width: 100%
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 0.1vh;
+            background-color: var(--bar-border-colour);
+            
+            border: var(--bar-border-outline);
+            border-right-color: black;
+            border-bottom-color: black;
+
+            box-sizing: content-box;
+        }
+        input[type="range"]::-webkit-slider-thumb{
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1vh;
+            height: 2vh;
+            margin-top: calc( calc( calc(0.1vh) /2) - calc( calc(2vh) /2) );
+            background-color: var(--bar-default-colour);
+
+            /* .common-border */
+            border: var(--bar-border-outline);
+            border-right-color: black;
+            border-bottom-color: black;
+        }
+
+        input[type="number"]{
+            background-color: var(--bar-default-colour);
+            text-align: center;
+            border: none;
+        }
+
+        input[type="number"]:focus{
+            outline: none
+        }
+
+        input[type="number"]:focus::placeholder{
+            color: transparent
+        }
+        
+        input[type="number"]::placeholder{
+            color: rgb(0, 0, 0);
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button{
+            -webkit-appearance: none;
+            margin: 0;
+
+        }
+    }
+}
+

@@ -14,9 +14,9 @@
     display: flex;
     flex-direction: column;
     row-gap: 0.6vh;
-    max-width: 8vh;
+    max-width: 9vh;
     height: fit-content;
-    max-height: 20vh;
+    /* max-height: 20vh; */
 
     user-select: none;
 

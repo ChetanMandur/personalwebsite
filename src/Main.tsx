@@ -1,6 +1,6 @@
 import "./Main.css";
 import Desktop from "./Desktop/Desktop";
-import { StateContext } from "./Desktop/Contexts/StateContext";
+import { StateContext } from "./Desktop/Contexts/MainContext";
 
 
 

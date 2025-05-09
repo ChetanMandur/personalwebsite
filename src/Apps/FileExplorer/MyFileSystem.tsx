@@ -1,0 +1,128 @@
+// Typing used to represent a MyFileSystemFile
+    // Represents the data of a file
+    // Has a `hidden` identifier to denote whether or not the file is hidden
+export type MyFileSystemFile ={
+    type: "IMAGE" | "VIDEO" | "PDF",
+    data: string,
+    hidden: boolean,
+}
+
+// Typing used for the FileFormatMap
+type FileFormatMapType = {
+    [rawFileType:string]: MyFileSystemFile["type"]
+}
+
+// Map of all valid file formats and their accompanying file type
+const FileFormatMap:FileFormatMapType = {
+    "jpeg":"IMAGE",
+    "jpg":"IMAGE",
+    "gif": "IMAGE",
+    "png": "IMAGE",
+
+    "mp4":"VIDEO",
+    "webm":"VIDEO",
+
+    "pdf":"PDF"
+}
+
+/**
+ * When given a file format, returns the type of file the format represents (if any)
+ * 
+ * File format must be given without a leading period (`.`)
+ * @example "jpeg" ==> "IMAGE"
+ * @example ".jpeg" ==> null
+ * @example "gba" ==> null
+ * @param fileFormat The file format that is to be checked 
+ * @returns If valid, the type of file the format represents. If `null`, represents that file format is invalid
+ */
+export function FileFormatMapper(fileFormat:string): MyFileSystemFile["type"]|null{
+    if (fileFormat in FileFormatMap){
+        return FileFormatMap[fileFormat]
+    }
+    return null
+}
+
+// Typing for a MyFileSystemFolder
+    // Represents the possible contents of a folder
+    // Has an `hidden` identifier to denote whether or not the folder is hidden
+export type MyFileSystemFolder = {
+    hidden: boolean ,
+    [key:string]: MyFileSystemFolder | MyFileSystemFile | boolean,
+}
+
+// The file system
+export const MyFileSystem : MyFileSystemFolder = {
+    hidden:false,
+    Photos:{
+        hidden:false,
+        "wikipedia photo of the day dec 23 2024": {
+            type: "IMAGE",
+            data: "https://upload.wikimedia.org/wikipedia/commons/0/02/Carved_wooden_bench_furniture_and_crafts_at_Heuan_Chan_heritage_house_in_Luang_Prabang_Laos.jpg",
+            hidden: false
+        },
+        "tybg":{
+            type: "IMAGE",
+            data:"https://c.tenor.com/4kpF986JjZkAAAAd/tenor.gif",
+            hidden: false
+        },
+        "tybg2":{
+            type: "IMAGE",
+            data:"https://dl.dropboxusercontent.com/scl/fi/2330xcgfclvmetfe670so/SnapTik-dot-Kim-275ba222f1df7d6d2ed5dccfd7d68861-ezgif.com-video-to-gif-converter.gif?rlkey=ommis3ex9lh6jxpjpoomjhfjf&st=v4nxgs1m&dl=0",
+            hidden:false
+        },
+        "cat fell":{
+            type:"IMAGE",
+            data:"https://media1.tenor.com/m/nAYI--YdBzIAAAAd/fell.gif",
+            hidden:false
+        },
+        imageSubFolder:{
+            hidden:false
+        }
+    },
+    Videos:{
+        hidden:false,
+        "wikipedia media of the day dec 23 2024": {
+            type: "VIDEO",
+            data: "https://upload.wikimedia.org/wikipedia/commons/7/78/Hindenburg_Explodes_%28audio_extracted%29.webm",
+            hidden: false
+        },
+        "i know live":{
+            type:"VIDEO",
+            data: "https://dl.dropboxusercontent.com/scl/fi/38slbwzsjhjrtbu4foq4q/iknow.mp4?rlkey=9dbb68bgfl5v2i1el6i46520z&st=hhwqe6l6&dl=0",
+            hidden:false,
+        },
+        "2016xxlcypher":{
+            type: "VIDEO",
+            data:"https://dl.dropboxusercontent.com/scl/fi/ypj2w4480tnz2cdwawmuk/2016xxlcypher.mp4?rlkey=u64ygq5crrlr38s4h5l37ez1k&st=j7upd3rl&dl=0",
+            hidden:false
+        },
+        "60fps":{
+            type: "VIDEO",
+            data:"https://dl.dropboxusercontent.com/scl/fi/12j6sdk3879inkijzd4dt/60fps.mp4?rlkey=04scwwrb73oxfsqk09myyb08b&st=dpsxdg7f&dl=0",
+            hidden:false
+        },
+        "30fps":{
+            type: "VIDEO",
+            data:"https://dl.dropboxusercontent.com/scl/fi/d0yy66y0oe2l82mkdf6be/30fps.mp4?rlkey=nwa117hx2zjkpnekkb1q8hw8u&st=sfafnxv3&dl=0",
+            hidden:false
+        }
+    },
+    Documents:{
+        hidden:false,
+        "OOT manual, ty nintendo for the pdf":{
+            type: "PDF",
+            data: "https://www.nintendo.com/eu/media/downloads/games_8/emanuals/nintendo_8/Manual_Nintendo64_TheLegendOfZeldaOcarinaOfTime_EN.pdf",
+            hidden: false,
+        }
+
+    },
+    "test":{
+        hidden:false,
+        type:"IMAGE",
+        data:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Khone_Phapheng_Falls%2C_Si_Phan_Don%2C_Laos%2C_widest_waterfall_in_the_world.jpg/750px-Khone_Phapheng_Falls%2C_Si_Phan_Don%2C_Laos%2C_widest_waterfall_in_the_world.jpg"
+    },
+    TestHidden:{
+        hidden:true,
+    }
+}
+

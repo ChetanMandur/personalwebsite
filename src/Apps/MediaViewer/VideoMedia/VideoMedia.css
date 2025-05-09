@@ -1,0 +1,114 @@
+@keyframes show-bottom-bar {
+    from{
+        transform: translateY(20vh);
+    }
+    to{
+        transform: translateY(0vh);
+
+    }
+}
+
+@keyframes hide-bottom-bar {
+    from{
+        transform: translateY(0vh);
+
+    }
+    to{
+        transform: translateY(20vh);
+
+
+        
+    }
+}
+
+
+.video-media{
+    width: 100%;
+    height: 100%;
+
+    
+    video{
+        object-fit: fill;
+        width: 100%;
+        height: 100%;
+    }
+
+    .video-overlay{
+        position: absolute;
+        top:0;
+        width: 100%;
+        height: 100%;
+
+        /* background-color: rgba(255, 0, 0, 0.559); */
+
+        pointer-events: none;
+        
+        .bottom-bar{
+            pointer-events: all;
+            position: absolute;
+            bottom:0;
+            width: 100%;
+            height: 2.4vh;
+            display: flex;
+            flex-direction: row;
+            user-select: none;
+
+            .video-overlay-button{
+                flex: 0 1 2.4vh;
+                width:2.4vh;
+                background-color: var(--bar-default-colour);
+                pointer-events: all;
+                img{
+                    height:100%;
+                    width:100%
+                }
+            }
+
+            .seek-bar{
+                flex: 1 1 auto;
+                background-color: var(--bar-unfocus-colour);
+
+                pointer-events: all;
+                .seek-bar-progress{
+                    pointer-events: none;
+                    height:100%;
+                    background-color: var(--bar-default-colour);
+
+                }
+            }
+        }
+        .show-bottom-bar{
+            animation-name: show-bottom-bar;
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+    
+    
+        }
+    
+        .hide-bottom-bar{
+            animation-name: hide-bottom-bar;
+            animation-duration: 0.5s;
+            animation-fill-mode: forwards;
+            animation-timing-function: linear;
+        }
+    }
+
+
+    
+
+    canvas{
+        object-fit: fill;
+        width: 100%;
+        height: 100%;
+    }
+
+    .canvas-fill{
+        object-fit: fill;
+    }
+
+    .canvas-contain{
+        object-fit: contain;
+    }
+
+}   
