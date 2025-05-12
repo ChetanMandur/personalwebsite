@@ -52,7 +52,7 @@ export default function UserSpace(){
                   case "TL":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "var(--app-maximized-width-half)", 
-                      height: "var(--app-maximized-height-quarter)", 
+                      height: "var(--app-maximized-height-half)", 
                       top: "0", 
                       left:"0", 
 
@@ -73,7 +73,7 @@ export default function UserSpace(){
                   case "BL":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "var(--app-maximized-width-half)", 
-                      height: "var(--app-maximized-height-quarter)", 
+                      height: "var(--app-maximized-height-half)", 
                       top: "calc(var(--user-space-height)/2)", 
                       left:"0", 
                       borderColor:"var(--snap-colour)",
@@ -83,7 +83,7 @@ export default function UserSpace(){
                   case "TR":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "var(--app-maximized-width-half)", 
-                      height: "var(--app-maximized-height-quarter)", 
+                      height: "var(--app-maximized-height-half)", 
                       top: "0", 
                       left:"50%", 
                       borderColor:"var(--snap-colour)",
@@ -103,7 +103,7 @@ export default function UserSpace(){
                   case "BR":
                     outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                       width: "var(--app-maximized-width-half)", 
-                      height: "var(--app-maximized-height-quarter)", 
+                      height: "var(--app-maximized-height-half)", 
                       left:"50%",
                       top: "calc((var(--user-space-height)/2)",
                       borderColor:"var(--snap-colour)",

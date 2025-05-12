@@ -183,8 +183,8 @@
         width: var(--app-maximized-width-half);
     }
 
-    .app-maximized-height-quarter{
-        height: var(--app-maximized-height-quarter);
+    .app-maximized-height-half{
+        height: var(--app-maximized-height-half);
     }
 
     .app-maximized {
