@@ -3,8 +3,8 @@
   bottom: var(--taskbar-height);
   height: 55vh;
   width: 40vh;
-  background-color: var(--bar-default-colour);
-  border: var(--bar-border-outline);
+  background-color: var(--bar-focused-colour);
+  border: var(--bar-focused-border-outline);
   z-index: 999;
   display: flex;
   flex-direction: row;
@@ -15,7 +15,7 @@
     flex-direction: column;
     row-gap: 0.4vh;
     flex: 1 1 auto;
-    border-right: var(--bar-border-outline);
+    border-right: var(--bar-focused-border-outline);
     padding-top: 1%;
     padding-right: 1%;
     overflow-y: scroll;
@@ -28,8 +28,8 @@
       column-gap: 1vh;
       align-items: center;
 
-      border-top: var(--bar-border-outline);
-      border-right: var(--bar-border-outline);
+      border-top: var(--bar-focused-border-outline);
+      border-right: var(--bar-focused-border-outline);
       border-bottom: 0.2vh solid black;
 
       .app-entry-icon {
@@ -52,7 +52,7 @@
     }
 
     .app-entry:active {
-      background-color: var(--bar-button-active-color);
+      background-color: var(--bar-focused-button-active-color);
     }
   }
 
@@ -63,7 +63,7 @@
     overflow: hidden;
 
     .profile-details {
-      border-bottom: var(--bar-border-outline);
+      border-bottom: var(--bar-focused-border-outline);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -103,7 +103,7 @@
       }
 
       .action-button:active {
-        background-color: var(--bar-button-active-color);
+        background-color: var(--bar-focused-button-active-color);
       }
     }
 

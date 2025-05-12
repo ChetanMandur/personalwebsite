@@ -4,7 +4,7 @@
         display: flex;
         min-width: 200px;
         min-height: 200px;
-        background-color: var(--bar-default-colour);
+        background-color: var(--bar-focused-colour);
 
 
         .hitboxes {
@@ -150,8 +150,8 @@
                 }
 
                 .titlebar-option-unfocused {
-                    border-left: var(--bar-border-outline-unfocus);
-                    border-top: var(--bar-border-outline-unfocus);
+                    border-left: var(--bar-unfocused-border-outline);
+                    border-top: var(--bar-unfocused-border-outline);
                 }
 
 
@@ -231,9 +231,9 @@
     }
 
     .app-unfocused {
-        border-left: var(--bar-border-outline-unfocus);
-        border-top: var(--bar-border-outline-unfocus);
-        background-color: var(--bar-unfocus-colour);
+        border-left: var(--bar-unfocused-border-outline);
+        border-top: var(--bar-unfocused-border-outline);
+        background-color: var(--bar-unfocused-colour);
     }
 
 }

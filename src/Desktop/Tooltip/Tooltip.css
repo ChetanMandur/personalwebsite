@@ -13,9 +13,9 @@
 
     display: flex;
     position: absolute;
-    background-color: var(--bar-default-colour);
+    background-color: var(--bar-focused-colour);
 
-    border:var(--bar-border-outline);
+    border:var(--bar-focused-border-outline);
     border-width: calc(var(--bar-border-outline-width)*0.8);
     border-style: outset;
     pointer-events: none;

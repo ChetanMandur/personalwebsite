@@ -3,10 +3,10 @@
     position:absolute;
     top:50%;
     left:50%;
-    background-color: var(--bar-default-colour);
+    background-color: var(--bar-focused-colour);
 
 
-    border:var(--bar-border-outline);
+    border:var(--bar-focused-border-outline);
     border-width: calc(var(--bar-border-outline-width)*0.8);
     border-style: outset;
 
@@ -24,7 +24,7 @@
 
     .context-menu-option{
         border-width: calc(var(--bar-border-outline-width)*0.8);
-        border-bottom:var(--bar-border-outline);
+        border-bottom:var(--bar-focused-border-outline);
         padding:0.4vh
     }
 

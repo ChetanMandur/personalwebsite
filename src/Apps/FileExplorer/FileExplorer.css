@@ -13,7 +13,7 @@
       flex-direction: row;
       flex: 0 1 var(--menu-bar-height);
       max-height: var(--menu-bar-height);
-      background-color: var(--bar-default-colour);
+      background-color: var(--bar-focused-colour);
 
       
 
@@ -92,7 +92,7 @@
     }
 
     .folder-content{
-      background-color: var(--bar-default-colour);
+      background-color: var(--bar-focused-colour);
       display:flex;
       flex-direction: row;
       align-content: flex-start;
