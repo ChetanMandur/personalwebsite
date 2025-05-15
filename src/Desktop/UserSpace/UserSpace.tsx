@@ -37,6 +37,9 @@ export default function UserSpace(){
               const app_running_id = item[0]
               const running_properties = runningAppsData[app_running_id]
 
+              // Handles the animation for the outline when hovering maximize sections
+
+              // When app is maximized in a section and the titlebar is being clicked (ie. User is able to drop into section)
               if (running_properties["maximizeType"] != null && running_properties["titlebarClicked"]){
                 switch (running_properties["maximizeType"]) {
                   case "FULL":
@@ -111,8 +114,11 @@ export default function UserSpace(){
                     }],{fill:"forwards", duration:100, iterations:1})
                       break;
                 }
-              } else{
-                if (running_properties["maximizeType"] == null){
+              } 
+              // When app is neither in a maximize state or the titlebar is clicked
+              else{
+                // If the app is no longer being hovered in a maximize section
+                if (running_properties["maximizeType"] == null && running_properties["titlebarClicked"] ){
                   outline_ref.current[index]?.animate([{zIndex: running_properties.zIndex+1,
                     width: running_properties.width+"px",
                      height: running_properties.height+"px", 
@@ -121,7 +127,9 @@ export default function UserSpace(){
                      borderColor:"transparent",
                      backgroundColor:"transparent",
                     }],{fill:"forwards", duration:500, iterations:1})
-                } else{
+                } 
+                // If the app has been dropped in a maximized state
+                else if (running_properties["maximizeType"] != null && !running_properties["titlebarClicked"] ){
                   outline_ref.current[index]?.animate([{
                      borderColor:"transparent",
                      backgroundColor:"transparent",
