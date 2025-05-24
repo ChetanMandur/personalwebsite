@@ -8,20 +8,6 @@
 
 
 
-  .outline{
-    position:absolute;
-    border: var(--bar-border-outline-width) solid transparent;
- 
-    pointer-events: none;
-    
-  }
-
-  
-
-  --user-space-height: calc((100% - var(--taskbar-height) - var(--bar-border-outline-width)*0.9));
-  --app-maximized-width-half: calc(50% - var(--app-border-size)*1.7);
-  --app-maximized-height-half: calc(var(--user-space-height)/2 - var(--app-border-size)*1.75);
-  --app-maximized-height-full: calc(var(--user-space-height) - var(--bar-border-outline-width)*1.75);
   
   
 }
