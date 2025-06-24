@@ -10,10 +10,16 @@
   
 
     --user-space-height: calc((100% - var(--taskbar-height) - var(--bar-border-outline-width)*0.9));
-    --app-maximized-width-half: calc(50% - var(--app-border-size)*1.7);
-    --app-maximized-height-half: calc(var(--user-space-height)/2 - var(--app-border-size)*1.75);
+    
+    --app-maximized-width-half: calc(50% - var(--bar-border-outline-width)*1.7);
+    --app-maximized-width-full: calc(100% - var(--bar-border-outline-width)*1.8);
+    /* --app-maximized-width-full: calc(100% - var(--bar-border-outline-width) - var(--app-border-size)); */
+
+    --app-maximized-height-half: calc(var(--user-space-height)/2 - var(--bar-border-outline-width)*1.75);
     --app-maximized-height-full: calc(var(--user-space-height) - var(--bar-border-outline-width)*1.75);
 
+    
+    --app-border-size: 0.3vh;
 
     .app-window {
         position: absolute;
@@ -200,52 +206,55 @@
         }
     }
 
-    /* Variables found in UserSpace.css */
-    .app-maximized-width-half{
-        width: var(--app-maximized-width-half);
-    }
-
-    .app-maximized-height-half{
-        height: var(--app-maximized-height-half);
-    }
-
     .app-maximized {
         left: 0;
         top: 0;
-        width: calc(100% - var(--app-border-size)*2);
+        width: var(--app-maximized-width-full);
         height: var(--app-maximized-height-full);
     }
 
     .app-maximized-tl {
         left: 0;
         top: 0;
+        width: var(--app-maximized-width-half);
+        height: var(--app-maximized-height-half);
     }
 
     .app-maximized-left {
         left: 0;
         top: 0;
         height: var(--app-maximized-height-full);
+        width: var(--app-maximized-width-half)
     }
 
     .app-maximized-bl {
         left: 0;
-        top:calc(var(--user-space-height)/2)
+        top:calc(var(--user-space-height)/2);
+        width: var(--app-maximized-width-half);
+        height: var(--app-maximized-height-half);
     }
 
     .app-maximized-tr {
         left:50%;
         top: 0;
+        width: var(--app-maximized-width-half);
+        height: var(--app-maximized-height-half);
     }
 
     .app-maximized-right {
         left:50%;
         top: 0;
         height: var(--app-maximized-height-full);
+        width: var(--app-maximized-width-half);
+
     }
 
     .app-maximized-br {
         left: 50%;
-        top:calc(var(--user-space-height)/2)
+        top:calc(var(--user-space-height)/2);
+        
+        width: var(--app-maximized-width-half);
+        height: var(--app-maximized-height-half);
     }
 
     .app-minimized {

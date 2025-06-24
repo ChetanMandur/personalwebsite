@@ -38,22 +38,22 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
       maximize_class = "app-maximized "
       break;
     case "TL":
-      maximize_class = "app-maximized-height-half app-maximized-width-half app-maximized-tl "
+      maximize_class = "app-maximized-tl "
       break;
     case "LEFT":
-      maximize_class = "app-maximized-width-half app-maximized-left "
+      maximize_class = "app-maximized-left "
       break;
     case "BL":
-        maximize_class = "app-maximized-height-half app-maximized-width-half app-maximized-bl "
+        maximize_class = "app-maximized-bl "
         break;
     case "TR":
-      maximize_class = "app-maximized-height-half app-maximized-width-half app-maximized-tr "
+      maximize_class = "app-maximized-tr "
         break;
     case "RIGHT":
-      maximize_class = "app-maximized-width-half app-maximized-right "
+      maximize_class = "app-maximized-right "
         break;
     case "BR":
-      maximize_class = "app-maximized-height-half app-maximized-width-half app-maximized-br "
+      maximize_class = "app-maximized-br "
         break;
     default:
       maximize_class = " "
@@ -68,11 +68,12 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
     switch (running_properties["maximizeType"]) {
       case "FULL":
         outlineRef.current?.animate([{zIndex: running_properties.zIndex+1,
-          width: "calc(100% - var(--app-border-size)*1.7)", 
+          width: "var(--app-maximized-width-full)",
           height: "var(--app-maximized-height-full)", 
           top: "0", 
           left:"0",
-          borderColor:"var(--snap-colour)",
+          // borderColor:"var(--snap-colour)",
+          borderColor:"red",
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
         break;
@@ -83,7 +84,9 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           top: "0", 
           left:"0", 
 
-          borderColor:"var(--snap-colour)",
+          // borderColor:"var(--snap-colour)",
+          borderColor:"red",
+
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
         break;
@@ -93,7 +96,9 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           height: "var(--app-maximized-height-full)", 
           top: "0", 
           left:"0", 
-          borderColor:"var(--snap-colour)",
+          // borderColor:"var(--snap-colour)",
+          borderColor:"red",
+
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
         break;
@@ -103,7 +108,9 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           height: "var(--app-maximized-height-half)", 
           top: "calc(var(--user-space-height)/2)", 
           left:"0", 
-          borderColor:"var(--snap-colour)",
+          // borderColor:"var(--snap-colour)",
+          borderColor:"red",
+
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
           break;
@@ -113,7 +120,9 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           height: "var(--app-maximized-height-half)", 
           top: "0", 
           left:"50%", 
-          borderColor:"var(--snap-colour)",
+          // borderColor:"var(--snap-colour)",
+          borderColor:"red",
+
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
           break;
@@ -123,7 +132,9 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           height: "var(--app-maximized-height-full)", 
           top: "0", 
           left:"50%", 
-          borderColor:"var(--snap-colour)",
+          // borderColor:"var(--snap-colour)",
+          borderColor:"red",
+
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
           break;
@@ -133,7 +144,9 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           height: "var(--app-maximized-height-half)", 
           left:"50%",
           top: "calc((var(--user-space-height)/2)",
-          borderColor:"var(--snap-colour)",
+          // borderColor:"var(--snap-colour)",
+          borderColor:"red",
+
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
           break;
