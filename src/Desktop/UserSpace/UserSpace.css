@@ -4,5 +4,5 @@
   --snap-colour:rgb(77, 77, 77);
   --snap-opacity:rgba(73, 73, 73, 0.788);
   --titlebar-height: 2vh;
-  
+  position: relative;
 }

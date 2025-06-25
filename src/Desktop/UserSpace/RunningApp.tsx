@@ -68,85 +68,71 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
     switch (running_properties["maximizeType"]) {
       case "FULL":
         outlineRef.current?.animate([{zIndex: running_properties.zIndex+1,
-          width: "var(--app-maximized-width-full)",
-          height: "var(--app-maximized-height-full)", 
+          width: "100%",
+          height: "100%", 
           top: "0", 
           left:"0",
-          // borderColor:"var(--snap-colour)",
-          borderColor:"red",
+          borderColor:"var(--snap-colour)",
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
         break;
       case "TL":
         outlineRef.current?.animate([{zIndex: running_properties.zIndex+1,
-          width: "var(--app-maximized-width-half)", 
-          height: "var(--app-maximized-height-half)", 
+          width: "50%", 
+          height: "50%", 
           top: "0", 
           left:"0", 
-
-          // borderColor:"var(--snap-colour)",
-          borderColor:"red",
-
+          borderColor:"var(--snap-colour)",
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
         break;
       case "LEFT":
         outlineRef.current?.animate([{zIndex: running_properties.zIndex+1,
-          width: "var(--app-maximized-width-half)", 
-          height: "var(--app-maximized-height-full)", 
+          width: "50%", 
+          height: "100%", 
           top: "0", 
           left:"0", 
-          // borderColor:"var(--snap-colour)",
-          borderColor:"red",
-
+          borderColor:"var(--snap-colour)",
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
         break;
       case "BL":
         outlineRef.current?.animate([{zIndex: running_properties.zIndex+1,
-          width: "var(--app-maximized-width-half)", 
-          height: "var(--app-maximized-height-half)", 
-          top: "calc(var(--user-space-height)/2)", 
+          width: "50%", 
+          height: "50%", 
+          top: "50%", 
           left:"0", 
-          // borderColor:"var(--snap-colour)",
-          borderColor:"red",
-
+          borderColor:"var(--snap-colour)",
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
           break;
       case "TR":
         outlineRef.current?.animate([{zIndex: running_properties.zIndex+1,
-          width: "var(--app-maximized-width-half)", 
-          height: "var(--app-maximized-height-half)", 
+          width: "50%", 
+          height: "50%", 
           top: "0", 
           left:"50%", 
-          // borderColor:"var(--snap-colour)",
-          borderColor:"red",
-
+          borderColor:"var(--snap-colour)",
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
           break;
       case "RIGHT":
         outlineRef.current?.animate([{zIndex: running_properties.zIndex+1,
-          width: "var(--app-maximized-width-half)", 
-          height: "var(--app-maximized-height-full)", 
+          width: "50%", 
+          height: "100%", 
           top: "0", 
           left:"50%", 
-          // borderColor:"var(--snap-colour)",
-          borderColor:"red",
-
+          borderColor:"var(--snap-colour)",
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
           break;
       case "BR":
         outlineRef.current?.animate([{zIndex: running_properties.zIndex+1,
-          width: "var(--app-maximized-width-half)", 
-          height: "var(--app-maximized-height-half)", 
+          width: "50%", 
+          height: "50%", 
           left:"50%",
-          top: "calc((var(--user-space-height)/2)",
-          // borderColor:"var(--snap-colour)",
-          borderColor:"red",
-
+          top: "50%",
+          borderColor:"var(--snap-colour)",
           backgroundColor:"var(--snap-opacity)"
         }],{fill:"forwards", duration:animation_speed, iterations:1})
           break;
