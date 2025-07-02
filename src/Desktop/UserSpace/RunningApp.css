@@ -160,18 +160,28 @@
                     align-self: center;
                 }
 
-                .titlebar-option {
-                    flex: 0 1 var(--titlebar-height);
-                    min-width: var(--titlebar-height);
+                .titlebar-options{
+                    user-select: none;
                     display: flex;
-                    justify-content: center;
-                    align-items: center;
+                    flex-direction: row;
+                    flex: 0 1 var(--titlebar-height);
+
+                    .titlebar-option {
+                        flex: 0 1 var(--titlebar-height);
+                        min-width: var(--titlebar-height);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .titlebar-option-unfocused {
+                        border-left: var(--bar-unfocused-border-outline);
+                        border-top: var(--bar-unfocused-border-outline);
+                    }
+
                 }
 
-                .titlebar-option-unfocused {
-                    border-left: var(--bar-unfocused-border-outline);
-                    border-top: var(--bar-unfocused-border-outline);
-                }
+                
 
 
             }

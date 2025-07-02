@@ -20,11 +20,9 @@ export default function UserSpace(){
       }} 
       onPointerLeave={()=>{
         runningAppsDispatch({type:"RESIZE-UNCLICKED"});
-        runningAppsDispatch({type:"TITLEBAR-UNCLICKED"}) 
       }} 
       onPointerUp={()=>{
         runningAppsDispatch({type:"RESIZE-UNCLICKED"});
-        runningAppsDispatch({type:"TITLEBAR-UNCLICKED"});
       }} 
       onPointerMove={(event) => {
         runningAppsDispatch({type:"WINDOW-MOVE", event:event})

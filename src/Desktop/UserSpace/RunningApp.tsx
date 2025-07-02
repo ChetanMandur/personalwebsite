@@ -1,6 +1,6 @@
 import "./RunningApp.css"
 
-import { useContext, useRef} from "react"
+import { useContext, useEffect, useRef} from "react"
 
 import { RunningAppProperties, RunningAppsContext, titlebarTextGenerator } from "../Contexts/RunningAppsContext"
 import { TooltipContext } from "../Contexts/TooltipContext"
@@ -17,7 +17,20 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
   const {runningAppsData,runningAppsDispatch}= useContext(RunningAppsContext)
   const {tooltipDispatch} = useContext(TooltipContext)
   const outlineRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(()=>{
+    const pointerOutHandler = (event:PointerEvent) => {
+      if (event.relatedTarget == null || (event.relatedTarget as HTMLElement).tagName == "HTML"){
+          runningAppsDispatch({type:"TITLEBAR-UNCLICKED"})
+      }
+    }
 
+    window.addEventListener("pointerout", pointerOutHandler)
+
+    return ()=>{
+      window.removeEventListener("pointerout", pointerOutHandler)
+    }
+  },[])
 
   const app_window_style : React.CSSProperties = {}
 
@@ -167,7 +180,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
     <>
       <div className={"outline " + running_properties["maximizeType"]} ref={outlineRef}/>
       <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (isAppFocused ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsData[app_running_id]["ref"]} key={app_running_id+"runningApp"}>
-          {running_properties["maximizeType"] == null ? 
+          {running_properties["maximizeType"] == null && running_properties["titlebarClicked"] == false ? 
           <div className="hitboxes">
               <div className="box" id="TopL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TL"})}}></div>
               <div className="box" id="TopR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TR"})}}></div>
@@ -182,32 +195,50 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           <></>
           }
           <div className="app">
-              <div className="titlebar" onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", maximizeType:"FULL",app_running_id:app_running_id})}} >
-                  <div className="icon" onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}><img src={running_properties.appProperties.icon}/></div>
+              <div className="titlebar" 
+                onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", maximizeType:"FULL",app_running_id:app_running_id})}} 
+                onPointerDown={(event) =>{
+                  runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})
+                  document.addEventListener("pointerup", ()=>{
+                    runningAppsDispatch({type:"TITLEBAR-UNCLICKED"})
+                  }, {once:true})
+                }}
+
+              >
+                  <div className="icon">
+                    <img src={running_properties.appProperties.icon}/>
+                  </div>
                   <div className="name" 
-                      onMouseMove={(event)=>{tooltipDispatch({type:"SET",data: titlebarText, dataType:"TEXT", event:event})}} 
-                      onPointerDown={(event) =>{runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})}}
+                    onMouseMove={(event)=>{tooltipDispatch({type:"SET",data: titlebarText, dataType:"TEXT", event:event})}} 
                   >
-                      {titlebarText}
+                    {titlebarText}
                   </div>
-                  <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")}
-                      onClick={()=>{
-                          runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id, forceMinimize:false})
-                      }}
+
+                  <div className="titlebar-options"
+                    onPointerDown={(event)=>{event.stopPropagation()}}
                   >
+                    <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")}
+                      onClick={()=>{
+                            runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id, forceMinimize:false})
+                        }}
+                    >
                       -
-                  </div>
+                    </div>
 
-                  <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
+                    <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
                       onClick={()=>{
-                          runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
-                      }}
-                  >
+                            runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
+                        }}
+                    >
                       []
+                    </div>
+
+                    <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
+                      onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>
+                      X
+                    </div>
                   </div>
 
-                  <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
-                  onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>X</div>
               </div>
               <div className="app-content">
                   <div className="content-container">
