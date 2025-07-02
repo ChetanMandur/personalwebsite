@@ -21,7 +21,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
   useEffect(()=>{
     const pointerOutHandler = (event:PointerEvent) => {
       if (event.relatedTarget == null || (event.relatedTarget as HTMLElement).tagName == "HTML"){
-          runningAppsDispatch({type:"TITLEBAR-UNCLICKED"})
+          runningAppsDispatch({type:"TITLEBAR-UNCLICKED", app_running_id: app_running_id})
       }
     }
 
@@ -200,7 +200,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
                 onPointerDown={(event) =>{
                   runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})
                   document.addEventListener("pointerup", ()=>{
-                    runningAppsDispatch({type:"TITLEBAR-UNCLICKED"})
+                    runningAppsDispatch({type:"TITLEBAR-UNCLICKED", app_running_id: app_running_id})
                   }, {once:true})
                 }}
 

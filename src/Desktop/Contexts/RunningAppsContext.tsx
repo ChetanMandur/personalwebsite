@@ -45,7 +45,7 @@ export type RunningAppListType = {
  {type:"UPDATE-APP-ADDITIONAL-TITLE", appAdditionalTitle: string|undefined} & AppRunningID |
  {type:"UPDATE-APP-PROPS", props: object} & AppRunningID |
  {type:"TITLEBAR-CLICKED"} & AppRunningID & PointerEvent |
- {type:"TITLEBAR-UNCLICKED"} |
+ {type:"TITLEBAR-UNCLICKED"} & AppRunningID |
  {type:"RESIZE-CLICKED", resizeClickedLocation: RunningAppProperties["resizeClicked"]} & AppRunningID & PointerEvent |
  {type:"RESIZE-UNCLICKED"}|
  {type:"WINDOW-MOVE"} & PointerEvent|
@@ -257,13 +257,11 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
 
     }
     case "TITLEBAR-UNCLICKED":{
-      for (const i of Object.entries(newData)){
-        const current_app = {...newData[i[0]]}
-        if (current_app["titlebarClicked"]){
-          current_app["titlebarClicked"] = false
-        } 
-        newData[i[0]] = current_app
-      }
+      const current_app = {...newData[action.app_running_id]}
+
+      current_app["titlebarClicked"] = false
+
+      newData[action.app_running_id] = current_app
       break;
 
     }
