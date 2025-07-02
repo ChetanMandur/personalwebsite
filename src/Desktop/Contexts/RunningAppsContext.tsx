@@ -47,7 +47,7 @@ export type RunningAppListType = {
  {type:"TITLEBAR-CLICKED"} & AppRunningID & PointerEvent |
  {type:"TITLEBAR-UNCLICKED"} & AppRunningID |
  {type:"RESIZE-CLICKED", resizeClickedLocation: RunningAppProperties["resizeClicked"]} & AppRunningID & PointerEvent |
- {type:"RESIZE-UNCLICKED"}|
+ {type:"RESIZE-UNCLICKED"} & AppRunningID|
  {type:"WINDOW-MOVE"} & PointerEvent|
  {type:"MINIMIZE-HANDLER", forceMinimize: boolean} & AppRunningID|
  {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]}  & AppRunningID 
@@ -169,19 +169,20 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       break;
     }
     case "RESIZE-UNCLICKED":{
-      for (const i of Object.entries(newData)){
-        const current_app = {...newData[i[0]]}
-        if (current_app["resizeClicked"]){
-          current_app["resizeClicked"] = null
-          if (current_app["width"] < 200){
-            current_app["width"] = 200
-          }
-          if (current_app["height"] < 200){
-            current_app["height"] = 200
-          }
-          newData[i[0]] = current_app
-        }
+      const current_app = {...newData[action.app_running_id]}
+
+      current_app["resizeClicked"] = null
+
+      if (current_app["width"] < 200){
+        current_app["width"] = 200
       }
+
+      if (current_app["height"] < 200){
+        current_app["height"] = 200
+      }
+
+      newData[action.app_running_id] = current_app
+
       break;
     }
 

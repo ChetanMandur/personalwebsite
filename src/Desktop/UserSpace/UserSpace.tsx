@@ -18,12 +18,6 @@ export default function UserSpace(){
       onPointerDown={()=>{
         setStartMenuOpen(false)
       }} 
-      onPointerLeave={()=>{
-        runningAppsDispatch({type:"RESIZE-UNCLICKED"});
-      }} 
-      onPointerUp={()=>{
-        runningAppsDispatch({type:"RESIZE-UNCLICKED"});
-      }} 
       onPointerMove={(event) => {
         runningAppsDispatch({type:"WINDOW-MOVE", event:event})
       }}

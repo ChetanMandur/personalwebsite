@@ -22,6 +22,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
     const pointerOutHandler = (event:PointerEvent) => {
       if (event.relatedTarget == null || (event.relatedTarget as HTMLElement).tagName == "HTML"){
           runningAppsDispatch({type:"TITLEBAR-UNCLICKED", app_running_id: app_running_id})
+          runningAppsDispatch({type:"RESIZE-UNCLICKED", app_running_id: app_running_id})
       }
     }
 
@@ -176,20 +177,27 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
   const titlebarText = titlebarTextGenerator(running_properties)
   const isAppFocused = (running_properties["zIndex"] == 999 || running_properties["maximizeType"] != null)
 
+  function hitboxPointerDownHandler(event:React.PointerEvent<HTMLDivElement>, location:RunningAppProperties["resizeClicked"]){
+    runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:location})
+    document.addEventListener("pointerup", ()=>{
+      runningAppsDispatch({type:"RESIZE-UNCLICKED", app_running_id:app_running_id})
+    }, {once:true})
+  }
+
   return(
     <>
       <div className={"outline " + running_properties["maximizeType"]} ref={outlineRef}/>
       <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (isAppFocused ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsData[app_running_id]["ref"]} key={app_running_id+"runningApp"}>
           {running_properties["maximizeType"] == null && running_properties["titlebarClicked"] == false ? 
           <div className="hitboxes">
-              <div className="box" id="TopL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TL"})}}></div>
-              <div className="box" id="TopR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TR"})}}></div>
-              <div className="box" id="BotL"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"BL"})}}></div>
-              <div className="box" id="BotR"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"BR"})}}></div>
-              <div className="box" id="Top"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"TOP"})}}></div>
-              <div className="box" id="Bot"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"BOT"})}}></div>
-              <div className="box" id="Left"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"LEFT"})}}></div>
-              <div className="box" id="Right"  onPointerDown={(event)=>{runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:"RIGHT"})}}></div>
+              <div className="box" id="TopL"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "TL")}}/>
+              <div className="box" id="TopR"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "TR")}}/>
+              <div className="box" id="BotL"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "BL")}}/>
+              <div className="box" id="BotR"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "BR")}}/>
+              <div className="box" id="Top"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "TOP")}}/>
+              <div className="box" id="Bot"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "BOT")}}/>
+              <div className="box" id="Left"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "LEFT")}}/>
+              <div className="box" id="Right"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "RIGHT")}}/>
           </div> 
           : 
           <></>
