@@ -269,6 +269,12 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     }
 
     case "WINDOW-MOVE":{
+      // If the titlebar isn't being held, the window move function should not be doing any calculations
+      // Useful for the case where the user's mouse leaves the browser when moving a window
+      if (!newData[action.app_running_id]["titlebarClicked"]){
+        break
+      }
+
       // Get app related to running id
       const current_app = {...newData[action.app_running_id]}
 
@@ -355,8 +361,13 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     }
 
     case "WINDOW-RESIZE":{
-      const current_app = {...newData[action.app_running_id]}
+      // If a resize hitbox isn't being held, the window resize function should not be doing any calculations
+      // Useful for the case where the user's mouse leaves the browser when resizing a window
+      if (!newData[action.app_running_id]["resizeClicked"]){
+        break
+      }
 
+      const current_app = {...newData[action.app_running_id]}
       // Get mouse X and Y
       const mouseX = action.event!.clientX
       const mouseY = action.event!.clientY
