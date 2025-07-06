@@ -231,7 +231,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
 
               >
                   <div className="icon">
-                    <img src={running_properties.appProperties.icon}/>
+                    <img draggable={false} src={running_properties.appProperties.icon}/>
                   </div>
                   <div className="name" 
                     onMouseMove={(event)=>{tooltipDispatch({type:"SET",data: titlebarText, dataType:"TEXT", event:event})}} 
