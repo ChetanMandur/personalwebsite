@@ -179,8 +179,16 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
 
   function hitboxPointerDownHandler(event:React.PointerEvent<HTMLDivElement>, location:RunningAppProperties["resizeClicked"]){
     runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:location})
+
+    const pointerMoveHandler = (event:PointerEvent) => {
+      runningAppsDispatch({type:"NEW-WINDOW-RESIZE", app_running_id: app_running_id, event: event})
+    }
+
+    document.addEventListener("pointermove", pointerMoveHandler)
+
     document.addEventListener("pointerup", ()=>{
       runningAppsDispatch({type:"RESIZE-UNCLICKED", app_running_id:app_running_id})
+      document.removeEventListener("pointermove", pointerMoveHandler)
     }, {once:true})
   }
 

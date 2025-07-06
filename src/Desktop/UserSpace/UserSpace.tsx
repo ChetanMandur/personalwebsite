@@ -15,6 +15,7 @@ export default function UserSpace(){
   return(
 
     <div className="user-space" 
+      id="user-space"
       onPointerDown={()=>{
         setStartMenuOpen(false)
       }} 

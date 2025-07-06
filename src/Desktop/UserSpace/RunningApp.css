@@ -16,6 +16,9 @@
     
     --app-border-size: 0.3vh;
 
+    --app-min-width: 200px;
+    --app-min-height: 200px;
+    
     .app-window {
         position: absolute;
         display: flex;

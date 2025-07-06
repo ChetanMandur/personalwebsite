@@ -48,8 +48,8 @@ export type RunningAppListType = {
  {type:"TITLEBAR-UNCLICKED"} & AppRunningID |
  {type:"RESIZE-CLICKED", resizeClickedLocation: RunningAppProperties["resizeClicked"]} & AppRunningID & ReactPointerEvent |
  {type:"RESIZE-UNCLICKED"} & AppRunningID|
- {type:"WINDOW-MOVE"} & ReactPointerEvent|
  {type:"NEW-WINDOW-MOVE", event: PointerEvent} & AppRunningID |
+ {type:"NEW-WINDOW-RESIZE", event: PointerEvent} & AppRunningID |
  {type:"MINIMIZE-HANDLER", forceMinimize: boolean} & AppRunningID|
  {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]}  & AppRunningID 
   
@@ -354,143 +354,100 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       break
     }
 
-    case "WINDOW-MOVE":{
-      for (const i of Object.entries(newData)){
-        const current_app_running_id = i[0]
-        const current_app = {...newData[current_app_running_id]}
+    case "NEW-WINDOW-RESIZE":{
+      const current_app = {...newData[action.app_running_id]}
 
-        if (current_app["titlebarClicked"]){
-          current_app["x"]= action.event!.clientX - current_app["titlebarClickedDistanceX"] 
-          current_app["y"] =  action.event!.clientY - current_app["titlebarClickedDistanceY"]
+      // Get mouse X and Y
+      const mouseX = action.event!.clientX
+      const mouseY = action.event!.clientY
 
-          const taskbar_height = window.innerHeight * 0.07 
-          const mouseX = current_app.x + current_app.titlebarClickedDistanceX
-          const mouseY = current_app.y + current_app.titlebarClickedDistanceY
+      // Calculate the distance the mouse has moved
+      const distanceX = (mouseX - current_app["resizeLocationX"]); // right is positive
+      const distanceY = (mouseY - current_app["resizeLocationY"]); //down is positive
 
-          const xBorderWidth = 20;
-          const xBorder1 = xBorderWidth
-          const xBorder2 = window.innerWidth - xBorderWidth 
-          let mouseLocationX = ""
-          if ((0 <= mouseX) && (mouseX < xBorder1)){
-            mouseLocationX = "LEFT"
-          }
-          else if ((xBorder1 <= mouseX) && (mouseX < xBorder2)){
-            mouseLocationX = "MIDDLE"
-          }
-          else if ((xBorder2 <= mouseX) && (mouseX <= window.innerWidth)){
-            mouseLocationX = "RIGHT"
-          }
-          
-          const yBorderWidth = 10;
-          const yBorder1 = yBorderWidth
-          const yBorder2 = window.innerHeight - yBorderWidth - taskbar_height
-          let mouseLocationY = ""
-          if ((0 <= mouseY) && (mouseY < yBorder1)){
-            mouseLocationY = "TOP"
-          }
-          else if ((yBorder1 <= mouseY) && (mouseY < yBorder2)){
-            mouseLocationY = "MIDDLE"
-          }
-          else if ((yBorder2 <= mouseY) && (mouseY <= window.innerHeight)){
-            mouseLocationY = "BOTTOM"
-          }
+      // Setup variables for the app's next x, y, width, and height
+      let new_x = current_app["x"]
+      let new_y = current_app["y"]
+      let new_width = current_app["width"]
+      let new_height = current_app["height"]
 
-          if (mouseLocationX == "LEFT"){
-            if (mouseLocationY == "TOP"){
-              current_app["maximizeType"] = "TL"
-            }
-            else if (mouseLocationY == "MIDDLE"){
-              current_app["maximizeType"] = "LEFT"
-            }
-            else if (mouseLocationY == "BOTTOM"){
-              current_app["maximizeType"] = "BL"
-            }
-          }
-          if (mouseLocationX == "MIDDLE"){
-            if (mouseLocationY == "TOP"){
-              current_app["maximizeType"] = "FULL"
-            } else {
-              current_app["maximizeType"] = null
-            }
-          }
-          if (mouseLocationX == "RIGHT"){
-            if (mouseLocationY == "TOP"){
-              current_app["maximizeType"] = "TR"
-            }
-            else if (mouseLocationY == "MIDDLE"){
-              current_app["maximizeType"] = "RIGHT"
-            }
-            else if (mouseLocationY == "BOTTOM"){
-              current_app["maximizeType"] = "BR"
-            }
-          }
+      // Based on which resize section is grabbed, calculate the app's new x, y, width, and/or height
+      switch (current_app["resizeClicked"]) {
+          // If the top left is grabbed, that means the x,y, width, and height can changed
+          case "TL":
+            new_x += distanceX 
+            new_y += distanceY 
+            new_width -= distanceX
+            new_height -= distanceY
+            break;
 
+          // If the top right is grabbed, that means the y, width, and height can be changed
+          case "TR":
+            new_y += distanceY 
+            new_width += distanceX  
+            new_height -= distanceY
+            break;
+
+          // If the bottom left is grabbed, that means the x, width, and height can be changed
+          case "BL":
+            new_x += distanceX 
+            new_width -= distanceX  
+            new_height += distanceY
+            break;
+
+          // If the bottom right is grabbed, that means the width and height can be changed
+          case "BR":
+            new_width += distanceX
+            new_height += distanceY
+            break;
+
+          // If the top is grabbed, that means the y and height can be changed
+          case "TOP":
+            new_y += distanceY
+            new_height -= distanceY
+            break;
+
+          // If the bottom is grabbed, that means the height can be changed
+          case "BOT":
+            new_height += distanceY
+            break;
+
+          // If the left is grabbed, that means the x and width can be changed
+          case "LEFT":
+            new_x += distanceX
+            new_width -= distanceX
+            break;
+
+          // If the right is grabbed, that means the width can be changed
+          case "RIGHT":
+            new_width += distanceX
+            break;
         }
 
-        if (current_app["resizeClicked"] != null){
-          const distanceX = (action.event!.clientX- current_app["resizeLocationX"]); // right is positive
-          const distanceY = (action.event!.clientY- current_app["resizeLocationY"]); //down is positive
+        // Get app's min width and height
+        const appMinWidth = parseFloat(window.getComputedStyle(document.getElementById("user-space")!).getPropertyValue("--app-min-width"))
+        const appMinHeight = parseFloat(window.getComputedStyle(document.getElementById("user-space")!).getPropertyValue("--app-min-height"))
 
-          let new_x = current_app["x"]
-          let new_y = current_app["y"]
-          let new_width = current_app["width"]
-          let new_height = current_app["height"]
-
-          switch (current_app["resizeClicked"]) {
-            case "TL":
-              new_x += distanceX 
-              new_y += distanceY 
-              new_width -= distanceX
-              new_height -= distanceY
-              break;
-            case "TR":
-              new_y += distanceY 
-              new_width += distanceX  
-              new_height -= distanceY
-              break;
-            case "BL":
-              new_x += distanceX 
-              new_width -= distanceX  
-              new_height += distanceY
-              break;
-            case "BR":
-              new_width += distanceX
-              new_height += distanceY
-              break;
-            case "TOP":
-              new_y += distanceY
-              new_height -= distanceY
-              break;
-
-            case "BOT":
-              new_height += distanceY
-              break;
-
-            case "LEFT":
-              new_x += distanceX
-              new_width -= distanceX
-              break;
-
-            case "RIGHT":
-              new_width += distanceX
-              break;
-          }
-
-          if (new_width >= 200){
-            current_app["x"] = new_x
-            current_app["width"] =new_width
-            current_app["resizeLocationX"]= action.event!.clientX
-          }
-          if (new_height >= 200){
-            current_app["y"]= new_y
-            current_app["height"]=  new_height
-            current_app["resizeLocationY"] = action.event!.clientY
-          }
+        // Needs a constraint on the width to prevent changes when min-width is hit
+        if (new_width >= appMinWidth){
+          current_app["x"] = new_x
+          current_app["width"] =new_width
+          current_app["resizeLocationX"]= action.event!.clientX
         }
-        newData[current_app_running_id] = current_app
-      }
-      break;
+
+        // Needs a constraint on the height to prevent changes when min-height is hit
+        if (new_height >= appMinHeight){
+          current_app["y"]= new_y
+          current_app["height"]=  new_height
+          current_app["resizeLocationY"] = action.event!.clientY
+        }
+
+
+
+      newData[action.app_running_id] = current_app
+      break
     }
+
     case "MAXIMIZE":{
       const currentApp = {...newData[action.app_running_id!]}
       if (currentApp["maximizeType"] == action.maximizeType ){
