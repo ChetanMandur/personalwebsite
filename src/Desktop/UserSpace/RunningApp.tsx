@@ -181,7 +181,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
     runningAppsDispatch({type:"RESIZE-CLICKED",app_running_id:app_running_id, event:event, resizeClickedLocation:location})
 
     const pointerMoveHandler = (event:PointerEvent) => {
-      runningAppsDispatch({type:"NEW-WINDOW-RESIZE", app_running_id: app_running_id, event: event})
+      runningAppsDispatch({type:"WINDOW-RESIZE", app_running_id: app_running_id, event: event})
     }
 
     document.addEventListener("pointermove", pointerMoveHandler)
@@ -217,7 +217,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
                   runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})
 
                   const pointerMoveHandler =(event:PointerEvent) =>{
-                    runningAppsDispatch({type:"NEW-WINDOW-MOVE", app_running_id:app_running_id, event:event})
+                    runningAppsDispatch({type:"WINDOW-MOVE", app_running_id:app_running_id, event:event})
                   }
                   
                   document.addEventListener("pointermove", pointerMoveHandler)

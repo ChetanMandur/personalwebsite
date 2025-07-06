@@ -48,8 +48,8 @@ export type RunningAppListType = {
  {type:"TITLEBAR-UNCLICKED"} & AppRunningID |
  {type:"RESIZE-CLICKED", resizeClickedLocation: RunningAppProperties["resizeClicked"]} & AppRunningID & ReactPointerEvent |
  {type:"RESIZE-UNCLICKED"} & AppRunningID|
- {type:"NEW-WINDOW-MOVE", event: PointerEvent} & AppRunningID |
- {type:"NEW-WINDOW-RESIZE", event: PointerEvent} & AppRunningID |
+ {type:"WINDOW-MOVE", event: PointerEvent} & AppRunningID |
+ {type:"WINDOW-RESIZE", event: PointerEvent} & AppRunningID |
  {type:"MINIMIZE-HANDLER", forceMinimize: boolean} & AppRunningID|
  {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]}  & AppRunningID 
   
@@ -268,7 +268,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
 
     }
 
-    case "NEW-WINDOW-MOVE":{
+    case "WINDOW-MOVE":{
       // Get app related to running id
       const current_app = {...newData[action.app_running_id]}
 
@@ -354,7 +354,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       break
     }
 
-    case "NEW-WINDOW-RESIZE":{
+    case "WINDOW-RESIZE":{
       const current_app = {...newData[action.app_running_id]}
 
       // Get mouse X and Y
