@@ -14,7 +14,8 @@ export default function Desktop() {
   const {contextMenuData, contextMenuDispatch}=useContext(ContextMenuContext)
   const {tooltipData} = useContext(TooltipContext)
   return (
-      <div className="main-container" 
+      <div className="main-container"
+        id="desktop" 
         onMouseDown={()=>{
           if(contextMenuData.visible){
             contextMenuDispatch({type:"HIDE"})

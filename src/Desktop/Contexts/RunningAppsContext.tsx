@@ -5,7 +5,7 @@ export type AppRunningID = {
   app_running_id: string
 }
 
-type PointerEvent = {
+type ReactPointerEvent = {
   event: React.PointerEvent<HTMLDivElement>
 }
 
@@ -44,11 +44,12 @@ export type RunningAppListType = {
  {type:"UPDATE-APP-FOCUS"} & AppRunningID |
  {type:"UPDATE-APP-ADDITIONAL-TITLE", appAdditionalTitle: string|undefined} & AppRunningID |
  {type:"UPDATE-APP-PROPS", props: object} & AppRunningID |
- {type:"TITLEBAR-CLICKED"} & AppRunningID & PointerEvent |
+ {type:"TITLEBAR-CLICKED"} & AppRunningID & ReactPointerEvent |
  {type:"TITLEBAR-UNCLICKED"} & AppRunningID |
- {type:"RESIZE-CLICKED", resizeClickedLocation: RunningAppProperties["resizeClicked"]} & AppRunningID & PointerEvent |
+ {type:"RESIZE-CLICKED", resizeClickedLocation: RunningAppProperties["resizeClicked"]} & AppRunningID & ReactPointerEvent |
  {type:"RESIZE-UNCLICKED"} & AppRunningID|
- {type:"WINDOW-MOVE"} & PointerEvent|
+ {type:"WINDOW-MOVE"} & ReactPointerEvent|
+ {type:"NEW-WINDOW-MOVE", event: PointerEvent} & AppRunningID |
  {type:"MINIMIZE-HANDLER", forceMinimize: boolean} & AppRunningID|
  {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]}  & AppRunningID 
   
@@ -265,6 +266,92 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       newData[action.app_running_id] = current_app
       break;
 
+    }
+
+    case "NEW-WINDOW-MOVE":{
+      // Get app related to running id
+      const current_app = {...newData[action.app_running_id]}
+
+      // Get mouse x and y
+      const mouseX = action.event!.clientX
+      const mouseY = action.event!.clientY
+
+      // Update app's x and y position based on mouse
+      current_app["x"]= mouseX - current_app["titlebarClickedDistanceX"] 
+      current_app["y"] =  mouseY - current_app["titlebarClickedDistanceY"]
+
+      // Calculate taskbar height based on CSS value
+      const taskbar_height_measurement = window.getComputedStyle(document.getElementById("desktop")!).getPropertyValue("--taskbar-height")
+
+      // Taskbar is in vh, which is % of innerHeight
+      const taskbar_height = window.innerHeight * ( parseFloat(taskbar_height_measurement) / 100)
+
+      // On x-axis, there are 3 sections the mouse can be at
+      const xSectionWidth = 20; // Size of left&right section
+      const xBorder1 = xSectionWidth // Left/middle border
+      const xBorder2 = window.innerWidth - xSectionWidth // Middle/right border
+
+      let mouseLocationX = ""
+      if ((0 <= mouseX) && (mouseX < xBorder1)){
+        mouseLocationX = "LEFT"
+      }
+      else if ((xBorder1 <= mouseX) && (mouseX < xBorder2)){
+        mouseLocationX = "MIDDLE"
+      }
+      else if ((xBorder2 <= mouseX) && (mouseX <= window.innerWidth)){
+        mouseLocationX = "RIGHT"
+      }
+      
+
+      // On y-axis, there are 3 sections the mouse can be at
+      const ySectionHeight = 10; // Size of top&bottom section
+      const yBorder1 = ySectionHeight // Top/middle border
+      const yBorder2 = window.innerHeight - ySectionHeight - taskbar_height + 20 // Middle/bottle border
+      let mouseLocationY = ""
+      if ((0 <= mouseY) && (mouseY < yBorder1)){
+        mouseLocationY = "TOP"
+      }
+      else if ((yBorder1 <= mouseY) && (mouseY < yBorder2)){
+        mouseLocationY = "MIDDLE"
+      }
+      else if ((yBorder2 <= mouseY) && (mouseY <= window.innerHeight)){
+        mouseLocationY = "BOTTOM"
+      }
+
+      // Based on x and y section, determine the part of the screen the mouse is at
+      if (mouseLocationX == "LEFT"){
+        if (mouseLocationY == "TOP"){
+          current_app["maximizeType"] = "TL"
+        }
+        else if (mouseLocationY == "MIDDLE"){
+          current_app["maximizeType"] = "LEFT"
+        }
+        else if (mouseLocationY == "BOTTOM"){
+          current_app["maximizeType"] = "BL"
+        }
+      }
+      if (mouseLocationX == "MIDDLE"){
+        if (mouseLocationY == "TOP"){
+          current_app["maximizeType"] = "FULL"
+        } else {
+          current_app["maximizeType"] = null
+        }
+      }
+      if (mouseLocationX == "RIGHT"){
+        if (mouseLocationY == "TOP"){
+          current_app["maximizeType"] = "TR"
+        }
+        else if (mouseLocationY == "MIDDLE"){
+          current_app["maximizeType"] = "RIGHT"
+        }
+        else if (mouseLocationY == "BOTTOM"){
+          current_app["maximizeType"] = "BR"
+        }
+      }
+
+      // Apply properties to the app
+      newData[action.app_running_id] = current_app
+      break
     }
 
     case "WINDOW-MOVE":{

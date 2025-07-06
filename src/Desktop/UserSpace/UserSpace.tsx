@@ -8,7 +8,7 @@ import { RunningApp } from "./RunningApp"
 
 
 export default function UserSpace(){
-  const {runningAppsData,runningAppsDispatch}= useContext(RunningAppsContext)
+  const {runningAppsData}= useContext(RunningAppsContext)
   const {setStartMenuOpen} = useContext(StartMenuContext)
 
 
@@ -18,9 +18,6 @@ export default function UserSpace(){
       onPointerDown={()=>{
         setStartMenuOpen(false)
       }} 
-      onPointerMove={(event) => {
-        runningAppsDispatch({type:"WINDOW-MOVE", event:event})
-      }}
     >
         {/* Where each running app is rendered */}
         {

@@ -207,10 +207,19 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
                 onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", maximizeType:"FULL",app_running_id:app_running_id})}} 
                 onPointerDown={(event) =>{
                   runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})
+
+                  const pointerMoveHandler =(event:PointerEvent) =>{
+                    runningAppsDispatch({type:"NEW-WINDOW-MOVE", app_running_id:app_running_id, event:event})
+                  }
+                  
+                  document.addEventListener("pointermove", pointerMoveHandler)
+
                   document.addEventListener("pointerup", ()=>{
                     runningAppsDispatch({type:"TITLEBAR-UNCLICKED", app_running_id: app_running_id})
+                    document.removeEventListener("pointermove", pointerMoveHandler)
                   }, {once:true})
                 }}
+
 
               >
                   <div className="icon">
