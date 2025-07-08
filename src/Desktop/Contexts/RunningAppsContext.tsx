@@ -286,13 +286,8 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       current_app["x"]= mouseX - current_app["titlebarClickedDistanceX"] 
       current_app["y"] =  mouseY - current_app["titlebarClickedDistanceY"]
 
-      // Calculate taskbar height based on CSS value
-      const taskbar_height_measurement = window.getComputedStyle(document.getElementById("desktop")!).getPropertyValue("--taskbar-height")
-
-      // Taskbar is in vh, which is % of innerHeight
-      const taskbar_height = window.innerHeight * ( parseFloat(taskbar_height_measurement) / 100)
-
-      // On x-axis, there are 3 sections the mouse can be at
+      
+      // On x-axis, there are 3 sections the mouse can be at: left, middle, and right
       const xSectionWidth = 20; // Size of left&right section
       const xBorder1 = xSectionWidth // Left/middle border
       const xBorder2 = window.innerWidth - xSectionWidth // Middle/right border
@@ -308,11 +303,14 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
         mouseLocationX = "RIGHT"
       }
       
+      // Userspace height
+      const user_space_height = parseFloat(window.getComputedStyle(document.getElementById("user-space")!).height)
 
-      // On y-axis, there are 3 sections the mouse can be at
-      const ySectionHeight = 10; // Size of top&bottom section
+      // On y-axis, there are 3 sections the mouse can be at: top, middle, and bottom
+      const ySectionHeight = 20; // Size of top&bottom section
       const yBorder1 = ySectionHeight // Top/middle border
-      const yBorder2 = window.innerHeight - ySectionHeight - taskbar_height + 20 // Middle/bottle border
+      const yBorder2 = user_space_height - ySectionHeight // Middle/bottle border
+
       let mouseLocationY = ""
       if ((0 <= mouseY) && (mouseY < yBorder1)){
         mouseLocationY = "TOP"
