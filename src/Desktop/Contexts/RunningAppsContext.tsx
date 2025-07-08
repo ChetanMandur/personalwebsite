@@ -150,7 +150,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       newData[app_running_id] = {...DefaultRunningAppPropertiesGenerator(app_properties)}
       newData[app_running_id]["props"] = {...newData[app_running_id!]["props"], ...action.props, app_running_id:app_running_id } 
 
-      newData = focusChange({...newData}, app_running_id!, false)
+      newData = focusChange(newData, app_running_id!, false)
       break;
     }
     case "DELETE":{
@@ -217,7 +217,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       break;
     }
     case "UPDATE-APP-FOCUS":{
-      newData = focusChange({...runningAppsData}, action.app_running_id!, false)
+      newData = focusChange(newData, action.app_running_id!, false)
       newData[action.app_running_id].isMinimized = false;
       break;
     }
