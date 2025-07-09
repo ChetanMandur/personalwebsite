@@ -82,53 +82,56 @@ function focusChange(data:RunningAppListType, app_running_id:string, app_removed
   const newData = {...data}
   
 
-  //if app is removed/minimized
+  // If app is removed/minimized
   if (app_removed){
     const second_place:{app_running_id:string,zIndex:number} = {app_running_id:"", zIndex:0}
     for (const i of Object.entries(newData)){
-      //if focus of i is greater than second place, i is not the current app, and  i is not minimized
-      if (second_place["zIndex"] < i[1]["zIndex"] && i[0] != app_running_id! && i[1]["isMinimized"] == false){
-          //update second place with i
-          second_place["app_running_id"] = i[0]
-          second_place["zIndex"] = i[1]["zIndex"]
-        
+      // Get properties of current app
+      const current_app_running_id = i[0]
+      const current_app_properties = i[1]
+      // If focus of current app is greater than second place, current app is not the removed app, and current app is not minimized
+      if (second_place["zIndex"] < current_app_properties["zIndex"] && current_app_running_id != app_running_id! && current_app_properties["isMinimized"] == false){
+          // Update second place with i
+          second_place["app_running_id"] = current_app_running_id
+          second_place["zIndex"] = current_app_properties["zIndex"]
       }
     }
-    //if second place exists, update focus to main
+
+    // If second place exists, update focus to main
     if (second_place["app_running_id"] != "" && second_place["zIndex"] !=0){
-      const second_place_app = {...newData[second_place["app_running_id"]]}
+      const second_place_app = newData[second_place["app_running_id"]]
       second_place_app["zIndex"] = 999
       newData[second_place["app_running_id"]] = second_place_app
     }
   }
    
-  //if app is not removed/minimized
+  // If app is not removed/minimized
   else{
     // Go thru all the currently running apps
     for (const i of Object.entries(newData)){
-      //Copy i
-      const temp_app = {...i[1]}
-
-      // if i is the current app, update focus to main
-      if (i[0] == app_running_id){
-        temp_app["zIndex"] = 999
-        newData[app_running_id!] = temp_app
+      const current_app_running_id = i[0]
+      const current_app_properties = i[1]
+  
+      // If i is the current app, update focus to main
+      if (current_app_running_id == app_running_id){
+        current_app_properties["zIndex"] = 999
+        newData[app_running_id!] = current_app_properties
       }
-      // if i is not the current app
+      // If i is not the current app
       else{ 
-        //check if i is not minimized
-        if (i[1]["isMinimized"] == false){
-          //reduce focus of i
-          temp_app["zIndex"] = temp_app["zIndex"]-1 
+        // Check if i is not minimized
+        if (current_app_properties["isMinimized"] == false){
+          // Reduce focus of i
+          current_app_properties["zIndex"] = current_app_properties["zIndex"]-1 
         }
       }
 
-      //Re-apply i 
-      newData[i[0]] = temp_app
+      // Re-apply i 
+      newData[current_app_running_id] = current_app_properties
     }
   }
 
-  //Return modified list
+  // Return modified list
   return(newData)
 
 }
@@ -190,26 +193,26 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     case "MINIMIZE-HANDLER":{
       const current_app = {...newData[action.app_running_id!]}
 
-      //if app is minimized
+      // If app is minimized
       if (current_app["isMinimized"]){
-        //unminimize it
+        // Unminimize it
         current_app["isMinimized"] = false;
         newData[action.app_running_id!] = current_app
 
-        //update focus w/ app as main focus
+        // Update focus w/ app as main focus
         newData = focusChange(newData, action.app_running_id!, false)
       } 
-      // if app is not minimized
+      // If app is not minimized
       else{      
-        // if app is in focus   
+        // If app is in focus   
         if (current_app["zIndex"] == 999 || (action.forceMinimize == true)){
-          //minmize the app
+          // Minmize the app
           current_app["isMinimized"] = true;
           newData[action.app_running_id!] = current_app
-          //update focus with next in line (second place)
+          // Update focus with next in line (second place)
           newData = focusChange(newData, action.app_running_id!, true)
         } 
-        // if app is not in focus
+        // If app is not in focus
         else{
           newData = focusChange(newData, action.app_running_id!, false)
         }
