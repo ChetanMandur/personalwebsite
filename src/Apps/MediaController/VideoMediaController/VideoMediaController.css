@@ -1,6 +1,7 @@
 .media-controller-section > .media-controller-section-progressbar{
     display: flex;
     flex-direction: row;
+    width: 100%;
     .media-controller-section-progressbar-playpause-button{
         flex: 0 1 2.4vh;
         img{
