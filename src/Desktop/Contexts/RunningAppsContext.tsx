@@ -53,9 +53,13 @@ export type RunningAppListType = {
  {type:"MINIMIZE-HANDLER", forceMinimize: boolean} & AppRunningID|
  {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]}  & AppRunningID 
   
-
-function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): RunningAppProperties {
-
+/**
+ * Given the name of an app, return a default set of properties for the app
+ * @param app_name - The name of the app you wish to generate properties for
+ * @returns A list of default properties for the app
+ */
+function DefaultRunningAppPropertiesGenerator(app_name:string): RunningAppProperties {
+  const app_properties: AppProperties = AppList[app_name]
   return({
     ref:  createRef<HTMLDivElement>(),
     x: Math.floor(Math.random() *100),
@@ -149,8 +153,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
   switch (action.type){
     case "ADD": {
       const app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
-      const app_properties = AppList[action.app_name!]
-      newData[app_running_id] = {...DefaultRunningAppPropertiesGenerator(app_properties)}
+      newData[app_running_id] = {...DefaultRunningAppPropertiesGenerator(action.app_name)}
       newData[app_running_id]["props"] = {...newData[app_running_id!]["props"], ...action.props, app_running_id:app_running_id } 
 
       newData = focusChange(newData, app_running_id!, false)
