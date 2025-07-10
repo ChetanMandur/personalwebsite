@@ -84,7 +84,6 @@ function DefaultRunningAppPropertiesGenerator(app_name:string): RunningAppProper
 
 function focusChange(data:RunningAppListType, app_running_id:string, app_removed:boolean){
   const newData = {...data}
-  
 
   // If app is removed/minimized
   if (app_removed){
@@ -151,39 +150,71 @@ export function titlebarTextGenerator(running_properties: RunningAppProperties):
 export function runningAppsReducer(runningAppsData:RunningAppListType, action:RunningAppsReducerAction):RunningAppListType{
   let newData = {...runningAppsData}
   switch (action.type){
+
+    // Used for added an app to the running apps list
+    // Ie. used when opening a new app
     case "ADD": {
-      const app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
+      // Generate an app_running_id for the new app
+      let app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
+
+      // If by chance the app_running_id is being used, generate a new app_running_id
+      while (newData[app_running_id] != undefined){
+        app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
+      }
+
+      // Give default properties to the new app 
       newData[app_running_id] = {...DefaultRunningAppPropertiesGenerator(action.app_name)}
+
+      // If any props were given to the app upon opening, apply the props
       newData[app_running_id]["props"] = {...newData[app_running_id!]["props"], ...action.props, app_running_id:app_running_id } 
 
+      // Change focus to the new app
       newData = focusChange(newData, app_running_id!, false)
       break;
     }
+
+    // Used for closing an app
     case "DELETE":{
+      // Delete the app from the running apps list
       delete newData[action.app_running_id!]
+
+      // Change focus to the app with the highest focus (not including the app to-be/just removed)
       newData = focusChange(newData, action.app_running_id!, true)
       break;
 
     }
+
+    // Used for updating the props for an app
     case "UPDATE-APP-PROPS":{
+      // Merges new props with existing props
       newData[action.app_running_id]["props"] = {...newData[action.app_running_id!]["props"],...action.props}
       break;
     }
+
+    // Used for when a resize hitbox is pressed in on
+    // Ie. when the user clicks the corner/side of a window
     case "RESIZE-CLICKED":{
+      // Signifies which hitbox (corner/size) is being clicked on
       newData[action.app_running_id!]["resizeClicked"] = action.resizeClickedLocation!
+      
+      // The location of the mouse/hitbox when being clicked in on 
       newData[action.app_running_id!]["resizeLocationX"] = action.event!.clientX
       newData[action.app_running_id!]["resizeLocationY"] = action.event!.clientY
       break;
     }
+
+    // Used for when a resize hitbox is pressed off
+    // Ie. when the user unclicks the corner/side of a window
     case "RESIZE-UNCLICKED":{
       const current_app = {...newData[action.app_running_id]}
 
+      // Set resizeClicked to null to signifiy that no hitboxes are being clicked on
       current_app["resizeClicked"] = null
 
+      // Force width/height to have a min size of 200
       if (current_app["width"] < 200){
         current_app["width"] = 200
       }
-
       if (current_app["height"] < 200){
         current_app["height"] = 200
       }
@@ -193,6 +224,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       break;
     }
 
+    // Used for minimizing and restoring an app
     case "MINIMIZE-HANDLER":{
       const current_app = {...newData[action.app_running_id!]}
 
@@ -207,7 +239,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       } 
       // If app is not minimized
       else{      
-        // If app is in focus   
+        // If app is in focus or a request to force minimize is present
         if (current_app["zIndex"] == 999 || (action.forceMinimize == true)){
           // Minmize the app
           current_app["isMinimized"] = true;
@@ -215,47 +247,75 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
           // Update focus with next in line (second place)
           newData = focusChange(newData, action.app_running_id!, true)
         } 
-        // If app is not in focus
+        // If app is not in focus and there are is no request to force minimize present
         else{
+          // Set app as new focus, and don't minimize
           newData = focusChange(newData, action.app_running_id!, false)
         }
       }
       break;
     }
+
+    // Used to update an app into focus
     case "UPDATE-APP-FOCUS":{
+      // Update app into focus (ie. set zIndex to 999 / the top)
       newData = focusChange(newData, action.app_running_id!, false)
+      // Make sure the app is not minimized
       newData[action.app_running_id].isMinimized = false;
       break;
     }
 
+    // Used to update an app's additional title
     case "UPDATE-APP-ADDITIONAL-TITLE":{
-      // console.log("UPDATE-APP-ADDITIONAL-TITLE", action.appAdditionalTitle!)
       newData[action.app_running_id!]["appAdditionalTitle"] = action.appAdditionalTitle!
       break;
     }
 
+    // Used for when an app's title bar is pressed on
     case "TITLEBAR-CLICKED":{
       const current_app = {...newData[action.app_running_id!]}
+      
+      // Set titlebarClick to true
       current_app["titlebarClicked"] = true
 
-      
+      // Calculate the depth within the titlebar which is clicked
+      // Ie. where in the title bar is the user clicked on
+      // If the app is currently in a maximized state, need to find the % distance where the titlebar is clicked
+      // This is done because when the titlebar is clicked, the app is reverted back to it's original width/height and we want the mouse to be in the same relative position
+      // Ie. if the app is fully maximized, and the user clicked in the middle of the titlebar, we want still want the mouse to be in the middle of the titlebar within the OG sizing
+
+      // If app is in a maximized state
       if (current_app["maximizeType"] != null){
+        // Remove app from maximized state
         current_app["maximizeType"] = null
+
+        // Find the relative distance clicked within the titlebar
+        // Eg. Clicked 50% between the titlebar in the X and Y axis
+
+        // (MouseLocation - AppLocation) / AppSize
         const xRatio = (action.event!.clientX - current_app["ref"].current!.getBoundingClientRect().x ) / current_app["ref"].current!.getBoundingClientRect().width
         const yRatio = (action.event!.clientY - current_app["ref"].current!.getBoundingClientRect().y) / current_app["ref"].current!.getBoundingClientRect().height
 
 
+        // With the ratio, find the relative positon with the original sizing
+        // This sizing is in px
         const width_chunk = current_app["width"]*xRatio
         const height_chunk = current_app["height"]*yRatio 
 
 
+        // Position the app so that the mouse is clicked within the titlebar at the right location
         current_app["x"] = action.event!.clientX -  width_chunk
         current_app["y"] = action.event!.clientY -  height_chunk
 
+        // Change the depth to the new sizing
         current_app["titlebarClickedDepthX"] = width_chunk
         current_app["titlebarClickedDepthY"] = height_chunk
 
-      } else{
+      } 
+      // If the app is not in a maximized state
+      else{
+        // Find the depth which the titlebar is clicked in
+        // MouseLocation - AppLocation
         current_app["titlebarClickedDepthX"] = action.event!.clientX-current_app["ref"].current!.getBoundingClientRect().x
         current_app["titlebarClickedDepthY"] = action.event!.clientY-current_app["ref"].current!.getBoundingClientRect().y
       }
@@ -264,6 +324,8 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       break;
 
     }
+
+    // Used when the titlebar is pressed off 
     case "TITLEBAR-UNCLICKED":{
       const current_app = {...newData[action.app_running_id]}
 
@@ -274,6 +336,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
 
     }
 
+    // Used for handling moving/dragging the app window
     case "WINDOW-MOVE":{
       // If the titlebar isn't being held, the window move function should not be doing any calculations
       // Useful for the case where the user's mouse leaves the browser when moving a window
@@ -364,6 +427,7 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       break
     }
 
+    // Used for resizing the app window
     case "WINDOW-RESIZE":{
       // If a resize hitbox isn't being held, the window resize function should not be doing any calculations
       // Useful for the case where the user's mouse leaves the browser when resizing a window
@@ -463,11 +527,17 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       break
     }
 
+    // Used for setting the app to a maximized state 
+    // Or removing from a maximized state
     case "MAXIMIZE":{
       const currentApp = {...newData[action.app_running_id!]}
+
+      // If the app is already in the maximized state, remove it from the state
       if (currentApp["maximizeType"] == action.maximizeType ){
         currentApp["maximizeType"] = null
-      } else{
+      } 
+      // If the app isn't in a maximized state, or the state is different, update the state
+      else{
         currentApp["maximizeType"] = action.maximizeType!
       }
 
