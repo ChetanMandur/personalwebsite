@@ -14,8 +14,8 @@ export type RunningAppProperties = {
   x: number ,
   y: number,
   titlebarClicked: boolean,
-  titlebarClickedDistanceX: number ,
-  titlebarClickedDistanceY: number ,
+  titlebarClickedDepthX: number ,
+  titlebarClickedDepthY: number ,
 
   width: number,
   height:number,
@@ -61,8 +61,8 @@ function DefaultRunningAppPropertiesGenerator(app_properties: AppProperties): Ru
     x: Math.floor(Math.random() *100),
     y: Math.floor(Math.random() *100),
     titlebarClicked: false,
-    titlebarClickedDistanceX: 0,
-    titlebarClickedDistanceY: 0,
+    titlebarClickedDepthX: 0,
+    titlebarClickedDepthY: 0,
     height: (window.innerHeight * app_properties.defaultHeightRatio > 200 ? window.innerHeight * app_properties.defaultHeightRatio : 200),
     width: (window.innerWidth * app_properties.defaultWidthRatio > 200 ? window.innerWidth * app_properties.defaultWidthRatio : 200),
     resizeClicked: null,
@@ -249,12 +249,12 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
         current_app["x"] = action.event!.clientX -  width_chunk
         current_app["y"] = action.event!.clientY -  height_chunk
 
-        current_app["titlebarClickedDistanceX"] = width_chunk
-        current_app["titlebarClickedDistanceY"] = height_chunk
+        current_app["titlebarClickedDepthX"] = width_chunk
+        current_app["titlebarClickedDepthY"] = height_chunk
 
       } else{
-        current_app["titlebarClickedDistanceX"] = action.event!.clientX-current_app["ref"].current!.getBoundingClientRect().x
-        current_app["titlebarClickedDistanceY"] = action.event!.clientY-current_app["ref"].current!.getBoundingClientRect().y
+        current_app["titlebarClickedDepthX"] = action.event!.clientX-current_app["ref"].current!.getBoundingClientRect().x
+        current_app["titlebarClickedDepthY"] = action.event!.clientY-current_app["ref"].current!.getBoundingClientRect().y
       }
 
       newData[action.app_running_id!] = current_app
@@ -286,8 +286,8 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       const mouseY = action.event!.clientY
 
       // Update app's x and y position based on mouse
-      current_app["x"]= mouseX - current_app["titlebarClickedDistanceX"] 
-      current_app["y"] =  mouseY - current_app["titlebarClickedDistanceY"]
+      current_app["x"]= mouseX - current_app["titlebarClickedDepthX"] 
+      current_app["y"] =  mouseY - current_app["titlebarClickedDepthY"]
 
       
       // On x-axis, there are 3 sections the mouse can be at: left, middle, and right
