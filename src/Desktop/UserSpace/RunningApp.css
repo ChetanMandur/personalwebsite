@@ -216,42 +216,42 @@
         }
     }
 
-    .app-maximized {
+    .app-maximized-FULL {
         left: 0;
         top: 0;
         width: 100%;
         height: 100%;
     }
 
-    .app-maximized-tl {
+    .app-maximized-TL {
         left: 0;
         top: 0;
         width: 50%;
         height: 50%;
     }
 
-    .app-maximized-left {
+    .app-maximized-LEFT {
         left: 0;
         top: 0;
         height: 100%;
         width: 50%
     }
 
-    .app-maximized-bl {
+    .app-maximized-BL {
         left: 0;
         top:50%;
         width: 50%;
         height: 50%;
     }
 
-    .app-maximized-tr {
+    .app-maximized-TR {
         left:50%;
         top: 0;
         width: 50%;
         height: 50%;
     }
 
-    .app-maximized-right {
+    .app-maximized-RIGHT {
         left:50%;
         top: 0;
         height: 100%;
@@ -259,7 +259,7 @@
 
     }
 
-    .app-maximized-br {
+    .app-maximized-BR {
         left: 50%;
         top:50%;
         

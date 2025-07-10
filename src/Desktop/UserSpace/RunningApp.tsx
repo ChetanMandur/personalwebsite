@@ -46,34 +46,6 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
     app_window_style["height"]=running_properties.height+"px";
   } 
 
-  let maximize_class = " "
-  switch (running_properties["maximizeType"]) {
-    case "FULL":
-      maximize_class = "app-maximized "
-      break;
-    case "TL":
-      maximize_class = "app-maximized-tl "
-      break;
-    case "LEFT":
-      maximize_class = "app-maximized-left "
-      break;
-    case "BL":
-        maximize_class = "app-maximized-bl "
-        break;
-    case "TR":
-      maximize_class = "app-maximized-tr "
-        break;
-    case "RIGHT":
-      maximize_class = "app-maximized-right "
-        break;
-    case "BR":
-      maximize_class = "app-maximized-br "
-        break;
-    default:
-      maximize_class = " "
-  }
-
-
   // Handles the animation for the outline when hovering maximize sections
   const animation_speed = 250
 
@@ -195,8 +167,23 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
   return(
     <>
       <div className={"outline " + running_properties["maximizeType"]} ref={outlineRef}/>
-      <div className={"common-border app-window " + (maximize_class) + (running_properties["isMinimized"] ? "app-minimized " : " ") + (isAppFocused ? "" : "app-unfocused ") } style={app_window_style} onPointerDown={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id:app_running_id})}} ref={runningAppsData[app_running_id]["ref"]} key={app_running_id+"runningApp"}>
-          {running_properties["maximizeType"] == null && running_properties["titlebarClicked"] == false ? 
+      <div className={
+          "common-border app-window " + 
+          (running_properties["maximizeType"] != null ? "app-maximized-"+running_properties["maximizeType"] : " ") + 
+          (running_properties["isMinimized"] ? "app-minimized " : " ") +
+          (isAppFocused ? "" : "app-unfocused ") 
+        } 
+        style={app_window_style} 
+        onPointerDown={()=>{
+          runningAppsDispatch(
+            {type:"UPDATE-APP-FOCUS", app_running_id:app_running_id}
+            )
+          }
+        } 
+        ref={runningAppsData[app_running_id]["ref"]} 
+        key={app_running_id+"runningApp"}
+      >
+        {running_properties["maximizeType"] == null && running_properties["titlebarClicked"] == false ? 
           <div className="hitboxes">
               <div className="box" id="TopL"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "TL")}}/>
               <div className="box" id="TopR"  onPointerDown={(event)=>{hitboxPointerDownHandler(event, "TR")}}/>
@@ -209,69 +196,66 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
           </div> 
           : 
           <></>
-          }
-          <div className="app">
-              <div className="titlebar" 
-                onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", maximizeType:"FULL",app_running_id:app_running_id})}} 
-                onPointerDown={(event) =>{
-                  runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})
+        }
+        <div className="app">
+          <div className="titlebar" 
+            onDoubleClick={()=>{runningAppsDispatch({type:"MAXIMIZE", maximizeType:"FULL",app_running_id:app_running_id})}} 
+            onPointerDown={(event) =>{
+              runningAppsDispatch({type:"TITLEBAR-CLICKED", app_running_id:app_running_id, event:event})
 
-                  const pointerMoveHandler =(event:PointerEvent) =>{
-                    runningAppsDispatch({type:"WINDOW-MOVE", app_running_id:app_running_id, event:event})
-                  }
-                  
-                  document.addEventListener("pointermove", pointerMoveHandler)
+              const pointerMoveHandler =(event:PointerEvent) =>{
+                runningAppsDispatch({type:"WINDOW-MOVE", app_running_id:app_running_id, event:event})
+              }
+              
+              document.addEventListener("pointermove", pointerMoveHandler)
 
-                  document.addEventListener("pointerup", ()=>{
-                    runningAppsDispatch({type:"TITLEBAR-UNCLICKED", app_running_id: app_running_id})
-                    document.removeEventListener("pointermove", pointerMoveHandler)
-                  }, {once:true})
-                }}
+              document.addEventListener("pointerup", ()=>{
+                runningAppsDispatch({type:"TITLEBAR-UNCLICKED", app_running_id: app_running_id})
+                document.removeEventListener("pointermove", pointerMoveHandler)
+              }, {once:true})
+            }}
+          >
+            <div className="icon">
+              <img draggable={false} src={running_properties.appProperties.icon}/>
+            </div>
+            <div className="name" 
+              onMouseMove={(event)=>{tooltipDispatch({type:"SET",data: titlebarText, dataType:"TEXT", event:event})}} 
+            >
+              {titlebarText}
+            </div>
 
-
+            <div className="titlebar-options"
+              onPointerDown={(event)=>{event.stopPropagation()}}
+            >
+              <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")}
+                onClick={()=>{
+                      runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id, forceMinimize:false})
+                  }}
               >
-                  <div className="icon">
-                    <img draggable={false} src={running_properties.appProperties.icon}/>
-                  </div>
-                  <div className="name" 
-                    onMouseMove={(event)=>{tooltipDispatch({type:"SET",data: titlebarText, dataType:"TEXT", event:event})}} 
-                  >
-                    {titlebarText}
-                  </div>
-
-                  <div className="titlebar-options"
-                    onPointerDown={(event)=>{event.stopPropagation()}}
-                  >
-                    <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")}
-                      onClick={()=>{
-                            runningAppsDispatch({type:"MINIMIZE-HANDLER", app_running_id:app_running_id, forceMinimize:false})
-                        }}
-                    >
-                      -
-                    </div>
-
-                    <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
-                      onClick={()=>{
-                            runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
-                        }}
-                    >
-                      []
-                    </div>
-
-                    <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
-                      onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>
-                      X
-                    </div>
-                  </div>
-
+                -
               </div>
-              <div className="app-content">
-                  <div className="content-container">
-                    {running_properties.appProperties.app(running_properties.props)}
-                    {isAppFocused ? <></> : <div className="content-overlay" onDragEnter={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id: app_running_id})}} />}
-                  </div>
+
+              <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
+                onClick={()=>{
+                      runningAppsDispatch({type:"MAXIMIZE",maximizeType:"FULL", app_running_id:app_running_id})
+                  }}
+              >
+                []
               </div>
+
+              <div className={"common-border titlebar-option " + (isAppFocused ? "" : "titlebar-option-unfocused")} 
+                onClick={()=>{runningAppsDispatch({type:"DELETE", app_running_id:app_running_id})}}>
+                X
+              </div>
+            </div>
           </div>
+          <div className="app-content">
+            <div className="content-container">
+              {running_properties.appProperties.app(running_properties.props)}
+              {isAppFocused ? <></> : <div className="content-overlay" onDragEnter={()=>{runningAppsDispatch({type:"UPDATE-APP-FOCUS", app_running_id: app_running_id})}} />}
+            </div>
+          </div>
+        </div>
       </div> 
     </>
   )
