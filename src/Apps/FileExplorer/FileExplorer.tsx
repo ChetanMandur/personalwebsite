@@ -80,7 +80,6 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     //  If path suggestion is closed, the address field shouldn't be focused at all
     useEffect(()=>{
         if (!pathSuggestion.display){
-            console.log("dont show")
             pathSuggestion.ref.current?.blur()
         }
     }, [pathSuggestion.display])
