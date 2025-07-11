@@ -1,0 +1,6 @@
+.system-alert{
+    display:flex;
+    height: 100%;
+    flex-direction: column;
+    text-align: center;
+}
