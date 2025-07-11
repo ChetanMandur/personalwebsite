@@ -1,6 +1,6 @@
 .media-controller{
     height:100%;
-    background-color: var(--bar-default-colour);
+    background-color: var(--bar-focused-colour);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -49,9 +49,9 @@
 
         input[type="range"]::-webkit-slider-runnable-track {
             height: 0.1vh;
-            background-color: var(--bar-border-colour);
+            background-color: var(--bar-focused-border-colour);
             
-            border: var(--bar-border-outline);
+            border: var(--bar-focused-border-outline);
             border-right-color: black;
             border-bottom-color: black;
 
@@ -63,16 +63,16 @@
             width: 1vh;
             height: 2vh;
             margin-top: calc( calc( calc(0.1vh) /2) - calc( calc(2vh) /2) );
-            background-color: var(--bar-default-colour);
+            background-color: var(--bar-focused-colour);
 
             /* .common-border */
-            border: var(--bar-border-outline);
+            border: var(--bar-focused-border-outline);
             border-right-color: black;
             border-bottom-color: black;
         }
 
         input[type="number"]{
-            background-color: var(--bar-default-colour);
+            background-color: var(--bar-focused-colour);
             text-align: center;
             border: none;
         }

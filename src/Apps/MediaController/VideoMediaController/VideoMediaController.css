@@ -1,6 +1,7 @@
 .media-controller-section > .media-controller-section-progressbar{
     display: flex;
     flex-direction: row;
+    width: 100%;
     .media-controller-section-progressbar-playpause-button{
         flex: 0 1 2.4vh;
         img{
@@ -56,7 +57,7 @@
             input[type="color"]{
 
                 width: 3vh;
-                background-color: var(--bar-default-colour);
+                background-color: var(--bar-focused-colour);
                 height: 3vh;
                 
 

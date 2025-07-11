@@ -1,30 +1,40 @@
-.main-container {
-  --taskbar-height: 5vh;
-
-  --bar-default-colour: #4d4d4d;
-  --bar-border-outline-width: 0.3vh;
-  --bar-border-colour: #838383;
-  --bar-border-outline: var(--bar-border-outline-width) solid var(--bar-border-colour);
-  --bar-button-active-color: rgb(63, 63, 63);
-
-  --bar-unfocus-colour: #202020;
-  --bar-border-outline-unfocus-colour: #373737;
-  --bar-border-outline-unfocus: var(--bar-border-outline-width) solid var(--bar-border-outline-unfocus-colour);
-
-
-  --scroll-bar-colour: #282828;
-
+.desktop {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
 
-  /* * {
-    scrollbar-color: black var(--bar-default-colour);
-    scrollbar-width: thin;
-  } */
 
+  /* Height of the taskbar */
+  --taskbar-height: 5vh;
 
+  /* Bar (taskbar, titlebar) styling */
+  --bar-border-outline-width: 0.3vh; /*Width of the bar's border*/
+
+  /* When focused */
+  --bar-focused-colour: #4d4d4d;  /*Background colour for bar when focused*/
+  --bar-focused-border-colour: #838383; /*Colour of the bar*/
+  --bar-focused-border-outline: var(--bar-border-outline-width) solid var(--bar-focused-border-colour); /*Full border styling for the bar*/
+  --bar-focused-button-active-color: rgb(63, 63, 63); /*Colour of bar's button when active/pressed in*/
+
+  /* When unfocused */
+  --bar-unfocused-colour: #202020;
+  --bar-unfocused-border-outline-colour: #373737;
+  --bar-unfocused-border-outline: var(--bar-border-outline-width) solid var(--bar-unfocused-border-outline-colour);
+  
+
+  /* Colour of the scrollbar */
+  --scroll-bar-colour: #282828;
+
+  /* Common/Universal border used on elements */
+  .common-border {
+    border: var(--bar-focused-border-outline);
+    border-right-color: black;
+    border-bottom-color: black;
+
+  }
+
+  /* Scrollbar styling */
   ::-webkit-scrollbar {    
     width: 1vh;
   } 
@@ -36,26 +46,22 @@
     background-color: var(--scroll-bar-colour);
   }
 
+  ::-webkit-scrollbar-corner{
+    background-color: transparent;
+  }
+
+  /* Resizer styling */
   ::-webkit-resizer{
     background-image: url(https://www.svgrepo.com/show/532207/resize-handle.svg);
     background-size: contain;
   }
 
-  ::-webkit-scrollbar-corner{
-    background-color: transparent;
-  }
-
+  
+  /* Universal input element styling */
   input{
     font-size: 1rem;
   }
   
-  .common-border {
-
-    border: var(--bar-border-outline);
-    border-right-color: black;
-    border-bottom-color: black;
-
-
-  }
+  
 
 }

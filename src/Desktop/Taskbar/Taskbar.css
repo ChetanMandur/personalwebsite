@@ -7,11 +7,11 @@
 
 .taskbar {
   display: flex;
-  background-color: var(--bar-default-colour);
+  background-color: var(--bar-focused-colour);
   flex: 0 1 var(--taskbar-height);
   z-index: 1000;
   user-select: none;
-  border-top: var(--bar-border-outline);
+  border-top: var(--bar-focused-border-outline);
   column-gap: 0.6vh;
   max-height: var(--taskbar-height);
   pointer-events: none;
@@ -32,7 +32,7 @@
     }
 
     img:active {
-      background-color: var(--bar-button-active-color);
+      background-color: var(--bar-focused-button-active-color);
     }
   }
 
@@ -91,7 +91,7 @@
     }
 
     .active-app:active {
-      background-color: var(--bar-button-active-color);
+      background-color: var(--bar-focused-button-active-color);
     }
 
 
@@ -103,7 +103,7 @@
     flex-direction: column;  
     text-align: center;
     row-gap: 0.5vh;
-    border-left: var(--bar-border-outline);
+    border-left: var(--bar-focused-border-outline);
     border-left-width: 0.1vh;
 
     .common{

@@ -56,7 +56,7 @@
             .video-overlay-button{
                 flex: 0 1 2.4vh;
                 width:2.4vh;
-                background-color: var(--bar-default-colour);
+                background-color: var(--bar-focused-colour);
                 pointer-events: all;
                 img{
                     height:100%;
@@ -66,13 +66,13 @@
 
             .seek-bar{
                 flex: 1 1 auto;
-                background-color: var(--bar-unfocus-colour);
+                background-color: var(--bar-unfocused-colour);
 
                 pointer-events: all;
                 .seek-bar-progress{
                     pointer-events: none;
                     height:100%;
-                    background-color: var(--bar-default-colour);
+                    background-color: var(--bar-focused-colour);
 
                 }
             }

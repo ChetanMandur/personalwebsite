@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { createRef, useContext, useEffect, useState } from "react"
 import "./FileExplorer.css"
 import { MyFileSystem, MyFileSystemFile, MyFileSystemFolder } from "./MyFileSystem"
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext"
@@ -29,12 +29,14 @@ type CurrentFolder = {
 //Typing used for the pathSuggestion useState
 //Holds information/data on what to display in the 'suggestions' panel that appears when using the address bar
 // The information contains:
+    // a ref to reference the input field/address box
     // a boolean to determine whether or not to display the panel
     // a number to determine which item is being highlighted (if any)
     // a variable to represent the content/suggestions based on path given in addressBox
         // Typing is slightly different than FolderEntry, as it doesn't hold the content for each item in the path, rather the paths of each item + the item type
         // If path doesnt lead to a folder, can also explain what is at the path (via a string)
 type PathSuggestion = {
+    ref:React.MutableRefObject<null | HTMLInputElement>,
     display: boolean,
     highlight: number,
     content: [string, "FILE"|"FOLDER"][]| //For when path leads to a folder w/ items, an array of 
@@ -50,7 +52,9 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
     const [selected, setSelected] = useState<string>("") //Holds name of selected item 
     const [showHidden, setShowHidden] = useState<boolean>(false) //Property to determine if hidden files/folders are to be shown
 
-    const [pathSuggestion, setPathSuggestion] = useState<PathSuggestion>({display:false, highlight: -1, content: []}) //Path suggestions information
+    const [pathSuggestion, setPathSuggestion] = useState<PathSuggestion>(
+        {ref:createRef<HTMLInputElement>(),display:false, highlight: -1, content: []}
+    ) //Path suggestions information
 
 
     //Contexts that are used 
@@ -71,6 +75,14 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         } 
 
     },[])
+
+    // Used for 'blur-ing' the address text field when the path suggestion is closed
+    //  If path suggestion is closed, the address field shouldn't be focused at all
+    useEffect(()=>{
+        if (!pathSuggestion.display){
+            pathSuggestion.ref.current?.blur()
+        }
+    }, [pathSuggestion.display])
 
     /**
      * Given a path (as a string), try and enter the folder
@@ -439,9 +451,9 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                     setAddressBox(event.target.value); 
                     RenderPathSuggestions(event.target.value)
                 }} 
-                name="address-box" id="" 
+                name="address-box" 
+                ref={pathSuggestion.ref} 
             />
-
         </div>
         
         
@@ -470,7 +482,11 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                             return (
                                 <div key={item[0]+"pathSuggestionItem"} 
                                     className={"path-suggestion-item " + (pathSuggestion.highlight==index ? "path-suggestion-item-active": "")} 
-                                    onMouseDown={(event)=>{event.preventDefault();pathEnter(item[0])}} 
+                                    onMouseDown={(event)=>{
+                                        event.preventDefault();
+                                        pathEnter(item[0]);
+                                        setPathSuggestion(pendingState =>({...pendingState, display: false}))
+                                    }} 
                                     onMouseMove={()=>{
                                         setPathSuggestion(pendingState => ({...pendingState, highlight:index}))
                                         setAddressBox(item[0])
