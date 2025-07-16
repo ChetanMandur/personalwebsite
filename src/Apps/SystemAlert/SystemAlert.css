@@ -1,6 +1,37 @@
 .system-alert{
     display:flex;
+    overflow-y: scroll;
     height: 100%;
     flex-direction: column;
-    text-align: center;
+    align-items: center;
+    justify-content: space-evenly;
+    
+
+    .message{
+        text-align: center;
+        place-content: center;
+        height:50%;
+        width:100%;
+    }
+    
+    .options{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: flex-start;
+        height:50%;
+        width:100%;
+        gap: 0.5vh;
+
+        .option{
+            padding: 1vh;
+            height: min-content;
+            white-space: nowrap;
+        }
+
+        .option:active{
+            background-color: var(--bar-focused-button-active-color);
+        }
+    }
 }
