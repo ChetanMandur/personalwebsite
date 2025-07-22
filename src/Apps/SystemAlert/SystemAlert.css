@@ -12,6 +12,7 @@
         place-content: center;
         height:50%;
         width:100%;
+        overflow-y: auto;
     }
     
     .options{
@@ -19,7 +20,7 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
-        align-content: flex-start;
+        align-content: center;
         height:50%;
         width:100%;
         gap: 0.5vh;
