@@ -1,6 +1,7 @@
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext";
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext";
 import { TooltipContext } from "../../Desktop/Contexts/TooltipContext";
+import { SystemAlertProps } from "../SystemAlert/SystemAlert";
 import "./HelloWorld.css"
 import { useContext, useEffect, useRef, useState} from "react";
 
@@ -42,7 +43,8 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
   const imageContextMenuOptions: ContextMenuOptions = {
     "Show me the cat": ()=>{setImageURL("url(https://placecats.com/neo_2/300/200)")},
     "I am blue": ()=>{setImageURL("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")},
-    "A message for you": ()=>{alert("Some elements take longer for a tooltip to appear \nHover around and be patient my child")}
+    "A message for you": ()=>{runningAppsDispatch({type:"ADD", app_name:"SystemAlert", props: {message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child"} as SystemAlertProps})
+    }
   }
 
 

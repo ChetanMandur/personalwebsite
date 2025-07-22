@@ -6,6 +6,7 @@ import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/Running
 import { MediaViewerProps } from "../MediaViewer/MediaViewer"
 import { pathClean, doesPathExist, pathToArray, arrayToPath, folderItemType, fileThumbnailGetter, getParentPath, getChildItemName } from "./FileExplorerHelpers"
 import { TooltipContext } from "../../Desktop/Contexts/TooltipContext"
+import { SystemAlertProps } from "../SystemAlert/SystemAlert"
 
 export type FileExplorerProps = AppRunningID & {
     path: string
@@ -95,7 +96,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
         if (pathObject == null){
             if (suppressError == undefined || suppressError == false){
-                alert(`The path ${path} does not exist.` )
+                runningAppsDispatch({type:"ADD", app_name:"SystemAlert", props: {message:`The path ${path} does not exist.`} as SystemAlertProps})
             } 
             setAddressBox(currentFolder.path)
         } 
