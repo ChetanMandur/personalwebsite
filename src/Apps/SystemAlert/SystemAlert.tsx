@@ -23,13 +23,21 @@ export default function SystemAlert({message, options, closeButton, app_running_
 
     return (
         <div className="system-alert">
+            <audio 
+                onLoadedData={()=>{
+                    console.log("loaded")
+                }}
+                hidden={true} 
+                src="./win95errorClipped.mp3"
+                preload="auto"
+                autoPlay
+            />
             <div className="message">
                 {message}
             </div>
             <div className="options">
                 {
                     Object.entries(options).map((option)=>{
-
                         return(
                             <div className="option common-border" 
                                 onClick={(event)=>{
