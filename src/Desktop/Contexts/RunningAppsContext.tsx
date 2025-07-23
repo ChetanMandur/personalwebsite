@@ -51,8 +51,10 @@ export type RunningAppListType = {
  {type:"WINDOW-MOVE", event: PointerEvent} & AppRunningID |
  {type:"WINDOW-RESIZE", event: PointerEvent} & AppRunningID |
  {type:"MINIMIZE-HANDLER", forceMinimize: boolean} & AppRunningID|
- {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]}  & AppRunningID 
-  
+ {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]} & AppRunningID |
+ {type:"WINDOW-DIRECT-MOVE", x?: number, y?: number} & AppRunningID |
+ {type:"WINDOW-DIRECT-RESIZE", width?: number, height?: number} & AppRunningID 
+
 /**
  * Given the name of an app, return a default set of properties for the app
  * @param app_name - The name of the app you wish to generate properties for
@@ -542,6 +544,38 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       }
 
       newData[action.app_running_id!] = currentApp
+      break;
+    }
+
+    // Used for giving an app window an exact x/y coord to move to
+    case "WINDOW-DIRECT-MOVE":{
+      const current_app = {...newData[action.app_running_id]}
+      
+      // Since x/y coords are not mandatory, check if any are given before applying
+      if (action.x){
+        current_app["x"] = action.x
+      }
+      if (action.y){
+        current_app["y"] = action.y
+      }
+      
+      newData[action.app_running_id] = current_app
+      break;
+    }
+
+    // Used for giving an app window an exact width/height to resize to
+    case "WINDOW-DIRECT-RESIZE":{
+      const current_app = {...newData[action.app_running_id]}
+      
+      // Since width/height are not mandatory, check if any are given before applying
+      if (action.width){
+        current_app["width"] = action.width
+      }
+      if (action.height){
+        current_app["height"] = action.height
+      }
+      
+      newData[action.app_running_id] = current_app
       break;
     }
 

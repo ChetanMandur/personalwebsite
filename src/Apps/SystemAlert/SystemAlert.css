@@ -26,6 +26,7 @@
         height:50%;
         width:100%;
         gap: 0.5vh;
+        overflow-y: auto;
 
         .option{
             padding: 1vh;
