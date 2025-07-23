@@ -5,6 +5,7 @@
     align-items: center;
     justify-content: space-evenly;
     row-gap: 1vh;
+    background-color: var(--bar-focused-colour);
     
 
     .message{
