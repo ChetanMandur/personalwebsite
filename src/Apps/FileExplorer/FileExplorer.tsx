@@ -96,7 +96,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
 
         if (pathObject == null){
             if (suppressError == undefined || suppressError == false){
-                runningAppsDispatch({type:"ADD", app_name:"SystemAlert", props: {message:`The path ${path} does not exist.`} as SystemAlertProps})
+                runningAppsDispatch({type:"ADD", app_name:"SystemAlert", props: {message:`The path:\n "${path}"\ndoes not exist.`} as SystemAlertProps})
             } 
             setAddressBox(currentFolder.path)
         } 
