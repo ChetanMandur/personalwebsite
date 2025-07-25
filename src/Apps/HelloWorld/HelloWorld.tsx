@@ -47,6 +47,7 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
       runningAppsDispatch({type:"ADD", app_name:"SystemAlert", props: {
         message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child", 
         closeButton: {display:true, text:"Okie Dokie"},
+        soundEffect: "./iknow.mp4"
       } as SystemAlertProps})
     }
   }

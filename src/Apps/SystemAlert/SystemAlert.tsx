@@ -14,10 +14,11 @@ export type SystemAlertCloseButton = {
 export type SystemAlertProps = AppRunningID & {
     message: string,
     options: SystemAlertOptions,
-    closeButton: SystemAlertCloseButton
+    closeButton: SystemAlertCloseButton,
+    soundEffect?: string
 }
 
-export default function SystemAlert({message, options, closeButton, app_running_id}:SystemAlertProps){
+export default function SystemAlert({message, options, closeButton,soundEffect, app_running_id}:SystemAlertProps){
     options = {...options}
     
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
@@ -73,7 +74,7 @@ export default function SystemAlert({message, options, closeButton, app_running_
         <div className="system-alert">
             <audio 
                 hidden={true} 
-                src="./win95errorClipped.mp3"
+                src={soundEffect ?? "./win95errorClipped.mp3"}
                 preload="auto"
                 autoPlay
             />
