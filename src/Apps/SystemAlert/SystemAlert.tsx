@@ -1,18 +1,25 @@
-import { useContext, useLayoutEffect, useRef } from "react"
+import { useContext, useLayoutEffect, useRef} from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import "./SystemAlert.css"
 
 export type SystemAlertOptions = {
-    [key:string]: (app_running_id:string) => (void)
+    [key:string]: () => (void)
+}
+
+export type SystemAlertCloseButton = {
+    display: boolean,
+    text?: string
 }
 
 export type SystemAlertProps = AppRunningID & {
-    message: string
-    options: SystemAlertOptions
-    closeButton: boolean
+    message: string,
+    options: SystemAlertOptions,
+    closeButton: SystemAlertCloseButton
 }
 
 export default function SystemAlert({message, options, closeButton, app_running_id}:SystemAlertProps){
+    options = {...options}
+    
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
     const messageRef = useRef<HTMLDivElement>(null)
     const optionsRef = useRef<HTMLDivElement>(null)
@@ -51,13 +58,16 @@ export default function SystemAlert({message, options, closeButton, app_running_
 
         runningAppsDispatch({type:"WINDOW-DIRECT-RESIZE", app_running_id,width, height})
         runningAppsDispatch({type:"WINDOW-DIRECT-MOVE", app_running_id, x , y})
+
+
     },[])
 
-    if (closeButton){
-        options["Close"] = () =>{
-            runningAppsDispatch({type:"DELETE", app_running_id})
-        }
+    if (closeButton.display){
+            options[(closeButton.text ?? "Close")] = () =>{
+                runningAppsDispatch({type:"DELETE", app_running_id})
+            }
     }
+    
 
     return (
         <div className="system-alert">
@@ -78,7 +88,7 @@ export default function SystemAlert({message, options, closeButton, app_running_
                                 key={app_running_id+option[0]}
                                 onClick={(event)=>{
                                     event.stopPropagation()
-                                    option[1](app_running_id)
+                                    option[1]()
                                 }}
                             >
                                 {option[0]}

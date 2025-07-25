@@ -43,7 +43,11 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
   const imageContextMenuOptions: ContextMenuOptions = {
     "Show me the cat": ()=>{setImageURL("url(https://placecats.com/neo_2/300/200)")},
     "I am blue": ()=>{setImageURL("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")},
-    "A message for you": ()=>{runningAppsDispatch({type:"ADD", app_name:"SystemAlert", props: {message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child"} as SystemAlertProps})
+    "A message for you": ()=>{
+      runningAppsDispatch({type:"ADD", app_name:"SystemAlert", props: {
+        message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child", 
+        closeButton: {display:true, text:"Okie Dokie"},
+      } as SystemAlertProps})
     }
   }
 

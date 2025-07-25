@@ -72,7 +72,7 @@ export const AppList : AppListType = {
     name: "System Alert",
     icon: "https://www.svgrepo.com/show/498918/alert-box.svg",
     app: SystemAlert,
-    props: { message: "Default message", options: {} as SystemAlertOptions, closeButton:true } as SystemAlertProps,
+    props: { message: "Default message", options: {} as SystemAlertOptions, closeButton:{display:true} } as SystemAlertProps,
     defaultHeightRatio: 1/6,
     defaultWidthRatio: 1/4,
 
