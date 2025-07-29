@@ -39,7 +39,7 @@ export type RunningAppListType = {
 }
 
  export type RunningAppsReducerAction = 
- {type: "ADD", app_name: string, props?: object} |
+ {type: "ADD", app_name: string, props?: object, app_running_id?: string} |
  {type:"DELETE"} & AppRunningID |
  {type:"UPDATE-APP-FOCUS"} & AppRunningID |
  {type:"UPDATE-APP-ADDITIONAL-TITLE", appAdditionalTitle: string|undefined} & AppRunningID |
@@ -156,12 +156,24 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     // Used for added an app to the running apps list
     // Ie. used when opening a new app
     case "ADD": {
-      // Generate an app_running_id for the new app
-      let app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
 
-      // If by chance the app_running_id is being used, generate a new app_running_id
-      while (newData[app_running_id] != undefined){
+      // Create a variable to store the app running id
+      let app_running_id: string
+      
+      // If no predetermined app running id is given, auto generate one 
+      if (!action.app_running_id){
+        // Generate an app_running_id for the new app
         app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
+
+        // If by chance the app_running_id is being used, generate a new app_running_id
+        while (newData[app_running_id] != undefined){
+          app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
+        }
+      }
+
+      // If a predetermined app running id is given, use that
+      else{
+        app_running_id = action.app_running_id
       }
 
       // Give default properties to the new app 

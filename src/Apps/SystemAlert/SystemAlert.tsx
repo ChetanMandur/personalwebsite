@@ -24,6 +24,7 @@ export default function SystemAlert({message, options, closeButton,soundEffect, 
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
     const messageRef = useRef<HTMLDivElement>(null)
     const optionsRef = useRef<HTMLDivElement>(null)
+    const audioRef = useRef<HTMLAudioElement>(null)
 
     useLayoutEffect(()=>{
         
@@ -60,8 +61,9 @@ export default function SystemAlert({message, options, closeButton,soundEffect, 
         runningAppsDispatch({type:"WINDOW-DIRECT-RESIZE", app_running_id,width, height})
         runningAppsDispatch({type:"WINDOW-DIRECT-MOVE", app_running_id, x , y})
 
-
-    },[])
+        audioRef.current!.currentTime = 0
+        
+    },[runningAppsData[app_running_id].props])
 
     if (closeButton.display){
             options[(closeButton.text ?? "Close")] = () =>{
@@ -73,7 +75,8 @@ export default function SystemAlert({message, options, closeButton,soundEffect, 
     return (
         <div className="system-alert">
             <audio 
-                hidden={true} 
+                ref={audioRef}
+                hidden={true}
                 src={soundEffect ?? "./win95errorClipped.mp3"}
                 preload="auto"
                 autoPlay
