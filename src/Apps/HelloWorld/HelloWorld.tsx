@@ -1,7 +1,7 @@
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext";
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext";
 import { TooltipContext } from "../../Desktop/Contexts/TooltipContext";
-import { SystemAlertOptions, SystemAlertProps } from "../SystemAlert/SystemAlert";
+import { dialogueMaker } from "./Dialogue";
 import "./HelloWorld.css"
 import { useContext, useEffect, useRef, useState} from "react";
 
@@ -45,70 +45,7 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     "I am blue": ()=>{setImageURL("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")},
     "A message for you": ()=>{
       const system_alert_id:string = app_running_id + "SystemAlert"
-      runningAppsDispatch({type:"ADD", app_name:"SystemAlert", app_running_id: system_alert_id,
-        props: {
-          message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child", 
-          closeButton: {display:true, text:"Okie Dokie"},
-          soundEffect: "./iknow.mp4",
-          options:{
-            "Where am I?": ()=>{
-              runningAppsDispatch({
-                type: "UPDATE-APP-PROPS",
-                app_running_id: system_alert_id,
-                props: {
-                  message: "My world",
-                  closeButton: {text:"Ok.... well bye"},
-                  options:{
-                    "Cool": ()=>{
-                      runningAppsDispatch({
-                        type:"UPDATE-APP-PROPS",
-                        app_running_id: system_alert_id,
-                        props:{
-                          message:"Thanks.\n Hey, how's your day going?",
-                          options:{
-                            "Going pretty well, thanks for asking man": ()=>{
-                              runningAppsDispatch({
-                                type:"UPDATE-APP-PROPS",
-                                app_running_id: system_alert_id,
-                                props: {
-                                  message: "No problem, glad it's going well \n Welp I gotta go, don't wanna make more dialogue boxes",
-                                  closeButton:{display: true, text:"Oh ok, well goodbye"},
-                                  options:{}
-                                } as SystemAlertProps
-                              })
-                            },
-                            "It's going alright": ()=>{
-                              runningAppsDispatch({
-                                type:"UPDATE-APP-PROPS",
-                                app_running_id: system_alert_id,
-                                props:{
-                                  message:"Sounds good, hope you're enjoying yourself\n I would stick around but I don't wanna make this go on forever\n Click around and enjoy yourself",
-                                  closeButton:{display:true, text:"Ok, goodbye"},
-                                  options:{}
-                                } as SystemAlertProps
-                              })
-                            },
-                            "Not good at all":()=>{
-                              runningAppsDispatch({
-                                type:"UPDATE-APP-PROPS",
-                                app_running_id: system_alert_id,
-                                props:{
-                                  message:"Welp, we all have those days. I'm no therapist, I can't help you\n Plus I don't wanna keep making these dialogue boxes\n So, goodbye for now",
-                                  closeButton:{display:true, text:"Wow, ok, bye."},
-                                  options:{}
-                                } as SystemAlertProps
-                              })
-                            }
-                          } as SystemAlertOptions
-                        } as SystemAlertProps
-                      })
-                    }
-                  } as SystemAlertOptions
-                } as SystemAlertProps
-              })
-            }
-          } as SystemAlertOptions
-        } as SystemAlertProps})
+      dialogueMaker(runningAppsDispatch, system_alert_id, 0)
     }
   }
 
