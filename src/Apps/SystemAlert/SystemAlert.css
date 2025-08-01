@@ -33,6 +33,7 @@
             padding: 1vh;
             height: min-content;
             white-space: nowrap;
+            user-select: none;
         }
 
         .option:active{
