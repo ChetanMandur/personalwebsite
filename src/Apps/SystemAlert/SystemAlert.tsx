@@ -11,14 +11,14 @@ export type SystemAlertCloseButton = {
     text?: string
 }
 
-export type SystemAlertProps = AppRunningID & {
+export type SystemAlertProps = {
     message: string,
     options: SystemAlertOptions,
     closeButton: SystemAlertCloseButton,
     soundEffect?: string
 }
 
-export default function SystemAlert({message, options, closeButton,soundEffect, app_running_id}:SystemAlertProps){
+export default function SystemAlert({message, options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
     options = {...options}
     
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
