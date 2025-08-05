@@ -110,7 +110,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
             else if (pathResponse == "FOLDER"){ 
                 setAddressBox(path)
                 setCurrentFolder({path: path, content: Object.entries(pathObject)})
-                runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE", app_running_id:app_running_id,appAdditionalTitle: getChildItemName(path)})
+                runningAppsDispatch({type:"UPDATE-APP-TITLE-DETAILS", app_running_id:app_running_id,appTitleDetails: getChildItemName(path)})
 
                 RenderPathSuggestions(path)
                 setSelected("")

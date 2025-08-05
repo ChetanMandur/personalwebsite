@@ -39,9 +39,9 @@ export function MediaViewer({fileName, fileContent, app_running_id}:MediaViewerP
     // Goal is to run when currentFile.name prop is changed
     // Updates app's additional title
     useEffect(()=>{
-        runningAppsDispatch({type:"UPDATE-APP-ADDITIONAL-TITLE",
+        runningAppsDispatch({type:"UPDATE-APP-TITLE-DETAILS",
              app_running_id:app_running_id,
-             appAdditionalTitle: (currentFile.name == null ? "No media loaded" : currentFile.name)
+             appTitleDetails: (currentFile.name == null ? "No media loaded" : currentFile.name)
         })
 
     },[app_running_id,currentFile.name, runningAppsDispatch])
