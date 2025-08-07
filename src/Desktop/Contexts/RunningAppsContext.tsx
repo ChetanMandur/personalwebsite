@@ -31,6 +31,7 @@ export type RunningAppProperties = {
 
   appProperties: AppProperties,
   appTitleDetails?: string,
+  appTitleName?: string,
 }
 
 
@@ -43,6 +44,7 @@ export type RunningAppListType = {
  {type:"DELETE"} & AppRunningID |
  {type:"UPDATE-APP-FOCUS"} & AppRunningID |
  {type:"UPDATE-APP-TITLE-DETAILS", appTitleDetails: string|undefined} & AppRunningID |
+ {type:"UPDATE-APP-TITLE-NAME", appTitleName: string|undefined} & AppRunningID |
  {type:"UPDATE-APP-PROPS", props: object} & AppRunningID |
  {type:"TITLEBAR-CLICKED"} & AppRunningID & ReactPointerEvent |
  {type:"TITLEBAR-UNCLICKED"} & AppRunningID |
@@ -80,6 +82,7 @@ function DefaultRunningAppPropertiesGenerator(app_name:string): RunningAppProper
     props:{...app_properties.props},
     appProperties: app_properties,
     appTitleDetails: undefined,
+    appTitleName: undefined,
   })
 }
 
@@ -142,10 +145,12 @@ function focusChange(data:RunningAppListType, app_running_id:string, app_removed
 }
 
 export function titlebarTextGenerator(running_properties: RunningAppProperties):string{
+  const app_name:string = running_properties.appTitleName ?? running_properties.appProperties.name
+
   if (running_properties.appTitleDetails != undefined){
-    return running_properties.appProperties.name + " - " + running_properties.appTitleDetails
+    return app_name + " - " + running_properties.appTitleDetails
   } else {
-    return running_properties.appProperties.name
+    return app_name
   }
 }
 
@@ -282,6 +287,12 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     // Used to update an app's additional title
     case "UPDATE-APP-TITLE-DETAILS":{
       newData[action.app_running_id!]["appTitleDetails"] = action.appTitleDetails!
+      break;
+    }
+
+    // Used to update an app's title name to use a custom name
+    case "UPDATE-APP-TITLE-NAME":{
+      newData[action.app_running_id!]["appTitleName"] = action.appTitleName!
       break;
     }
 
