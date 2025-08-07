@@ -23,16 +23,18 @@ export function dialogueMaker(
             break;
         case 1:
             alert_props = {
-                  message: "My world",
-                  closeButton: {display:true,text:"Ok.... well bye"},
-                  options:{
-                    "Cool": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, 2)}
-                  } 
+                title:"Where am I?",
+                message: "My world",
+                closeButton: {display:true,text:"Ok.... well bye"},
+                options:{
+                "Cool": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, 2)}
+                } 
             } 
             break
         
         case 2:
             alert_props = {
+                title:"Cool",
                 message:"Thanks.\n Hey, how's your day going?",
                 closeButton: {display:false},
                 options:{
@@ -45,6 +47,7 @@ export function dialogueMaker(
         
         case "3a":
             alert_props = {
+                title:": )",
                 message: "No problem, glad it's going well \n Welp I gotta go, don't wanna make more dialogue boxes",
                 closeButton:{display: true, text:"Oh ok, well goodbye"},
                 options:{}
@@ -53,6 +56,7 @@ export function dialogueMaker(
 
         case "3b":
             alert_props = {
+                title:": |",
                 message:"Sounds good, hope you're enjoying yourself\n I would stick around but I don't wanna make this go on forever\n Click around and enjoy yourself",
                 closeButton:{display:true, text:"Ok, goodbye"},
                 options:{}
@@ -61,6 +65,7 @@ export function dialogueMaker(
 
         case "3c":
             alert_props = {
+                title:": (",
                 message:"Welp, we all have those days. I'm no therapist, I can't help you\n Plus I don't wanna keep making these dialogue boxes\n So, goodbye for now",
                 closeButton:{display:true, text:"Wow, ok, bye."},
                 options:{}

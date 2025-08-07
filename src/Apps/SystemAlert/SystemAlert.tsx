@@ -12,13 +12,15 @@ export type SystemAlertCloseButton = {
 }
 
 export type SystemAlertProps = {
+    title?: string,
+    titleDetails?: string,
     message: string,
     options: SystemAlertOptions,
     closeButton: SystemAlertCloseButton,
     soundEffect?: string
 }
 
-export default function SystemAlert({message, options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
+export default function SystemAlert({title,titleDetails, message, options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
     options = {...options}
     
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
@@ -62,6 +64,20 @@ export default function SystemAlert({message, options, closeButton,soundEffect, 
         runningAppsDispatch({type:"WINDOW-DIRECT-MOVE", app_running_id, x , y})
 
         audioRef.current!.currentTime = 0
+
+        if (title){
+            runningAppsDispatch({type:"UPDATE-APP-TITLE-NAME", app_running_id, appTitleName:title})
+        }
+        else{
+            runningAppsDispatch({type:"UPDATE-APP-TITLE-NAME", app_running_id, appTitleName:undefined})
+        }
+
+        if (titleDetails){
+            runningAppsDispatch({type:"UPDATE-APP-TITLE-DETAILS", app_running_id, appTitleDetails: titleDetails})
+        }
+        else{
+            runningAppsDispatch({type:"UPDATE-APP-TITLE-DETAILS", app_running_id, appTitleDetails:undefined})
+        }
         
     },[runningAppsData[app_running_id].props])
 
