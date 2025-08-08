@@ -31,7 +31,8 @@ export default function StartMenu(){
       <div className="profile-details">
         {/* <img className="common-border profile-picture" src="https://avatars.githubusercontent.com/u/25832939?v=4" alt="" /> */}
         {/* <img className="common-border profile-picture" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Doolhofzwam_%28Daedalea_quercina%29_30-11-2022._%28d.j.b%29.jpg/2560px-Doolhofzwam_%28Daedalea_quercina%29_30-11-2022._%28d.j.b%29.jpg" alt="" /> */}
-        <img className="common-border profile-picture" src="https://placecats.com/neo/300/200" alt="" />
+        {/* <img className="common-border profile-picture" src="https://placecats.com/neo/300/200" alt="" /> */}
+        <img className="common-border profile-picture" src="./placecatneo.jpeg" alt="" />
         <div className="profile-name">Chetan Mandur</div>
       </div>
       <div className="actions">
