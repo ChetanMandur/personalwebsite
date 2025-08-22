@@ -14,7 +14,7 @@ export type SystemAlertCloseButton = {
 }
 
 export type SystemAlertProps = {
-    title?: string,
+    title?: "Warning" | "Error" | string & {},
     titleDetails?: string,
     message: string,
     options: SystemAlertOptions,
