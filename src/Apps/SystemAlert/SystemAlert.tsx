@@ -1,6 +1,8 @@
 import { useContext, useLayoutEffect, useRef} from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import "./SystemAlert.css"
+import { SystemSounds } from "../../SystemSounds"
+
 
 export type SystemAlertOptions = {
     [key:string]: () => (void)
@@ -17,7 +19,7 @@ export type SystemAlertProps = {
     message: string,
     options: SystemAlertOptions,
     closeButton: SystemAlertCloseButton,
-    soundEffect?: string
+    soundEffect?: SystemSounds|string
 }
 
 export default function SystemAlert({title,titleDetails, message, options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
@@ -62,8 +64,9 @@ export default function SystemAlert({title,titleDetails, message, options, close
 
         runningAppsDispatch({type:"WINDOW-DIRECT-RESIZE", app_running_id,width, height})
         runningAppsDispatch({type:"WINDOW-DIRECT-MOVE", app_running_id, x , y})
-
+        
         audioRef.current!.currentTime = 0
+        audioRef.current!.play()
 
         if (title){
             runningAppsDispatch({type:"UPDATE-APP-TITLE-NAME", app_running_id, appTitleName:title})
