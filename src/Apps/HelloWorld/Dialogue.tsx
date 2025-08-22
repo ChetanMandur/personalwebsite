@@ -1,5 +1,6 @@
 import { RunningAppsReducerAction } from "../../Desktop/Contexts/RunningAppsContext";
-import { SystemSounds } from "../../SystemSounds";
+import SystemSounds from "../../SystemSounds";
+
 import { SystemAlertProps } from "../SystemAlert/SystemAlert";
 
 export function dialogueMaker(
@@ -14,7 +15,7 @@ export function dialogueMaker(
             alert_props = {
                 message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child", 
                 closeButton: {display:true, text:"Okie Dokie"},
-                soundEffect: SystemSounds.Win95DefaultChimes,
+                soundEffect: SystemSounds.Win95.Default.Chimes,
                 options: {
                     "Where am I?": ()=>{
                     dialogueMaker(runningAppsDispatch, system_alert_id, 1)
@@ -27,7 +28,7 @@ export function dialogueMaker(
                 title:"Where am I?",
                 message: "My world",
                 closeButton: {display:true,text:"Ok.... well bye"},
-                soundEffect: SystemSounds.Win95DefaultTada,
+                soundEffect: SystemSounds.Win95.Default.Tada,
                 options:{
                 "Cool": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, 2)}
                 } 
@@ -39,7 +40,7 @@ export function dialogueMaker(
                 title:"Cool",
                 message:"Thanks.\n Hey, how's your day going?",
                 closeButton: {display:false},
-                soundEffect: SystemSounds.Win95DefaultDings,
+                soundEffect: SystemSounds.Win95.Default.Dings,
                 options:{
                     "Going pretty well, thanks for asking man": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, "3a")},
                     "It's going alright":()=>{dialogueMaker(runningAppsDispatch,system_alert_id, "3b")},
@@ -53,7 +54,7 @@ export function dialogueMaker(
                 title:"= )",
                 message: "No problem, glad it's going well \n Welp I gotta go, don't wanna make more dialogue boxes",
                 closeButton:{display: true, text:"Oh ok, well goodbye"},
-                soundEffect: SystemSounds.FunnyOhMyGod,
+                soundEffect: SystemSounds.Special.OhMyGod,
                 options:{}
             } 
             break
@@ -63,7 +64,7 @@ export function dialogueMaker(
                 title:"= |",
                 message:"Sounds good, hope you're enjoying yourself\n I would stick around but I don't wanna make this go on forever\n Click around and enjoy yourself",
                 closeButton:{display:true, text:"Ok, goodbye"},
-                soundEffect: SystemSounds.FunnyBruh,
+                soundEffect: SystemSounds.Special.Bruh,
 
                 options:{}
             } 
@@ -74,7 +75,7 @@ export function dialogueMaker(
                 title:"= (",
                 message:"Welp, we all have those days. I'm no therapist, I can't help you\n Plus I don't wanna keep making these dialogue boxes\n So, goodbye for now",
                 closeButton:{display:true, text:"Wow, ok, bye."},
-                soundEffect: SystemSounds.Win95DefaultChord,
+                soundEffect: SystemSounds.Win95.Default.Chord,
                 options:{}
             } 
             break;

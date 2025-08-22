@@ -1,7 +1,7 @@
 import { useContext, useLayoutEffect, useRef} from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import "./SystemAlert.css"
-import { SystemSounds } from "../../SystemSounds"
+import SystemSounds from "../../SystemSounds"
 
 
 export type SystemAlertOptions = {
@@ -19,7 +19,7 @@ export type SystemAlertProps = {
     message: string,
     options: SystemAlertOptions,
     closeButton: SystemAlertCloseButton,
-    soundEffect?: SystemSounds|string
+    soundEffect?: typeof SystemSounds|string
 }
 
 export default function SystemAlert({title,titleDetails, message, options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
@@ -96,7 +96,7 @@ export default function SystemAlert({title,titleDetails, message, options, close
             <audio 
                 ref={audioRef}
                 hidden={true}
-                src={soundEffect ?? "./win95errorClipped.mp3"}
+                src={soundEffect?.toString() ?? SystemSounds.Win95.Default.Chord}
                 preload="auto"
                 autoPlay
             />
