@@ -75,6 +75,7 @@ export const AppList : AppListType = {
     props: { message: "Default message", options: {} as SystemAlertOptions, closeButton:{display:true} } as SystemAlertProps,
     defaultHeightRatio: 1/6,
     defaultWidthRatio: 1/4,
+    hidden: true
 
   },
   "Default App Properties Test": {
