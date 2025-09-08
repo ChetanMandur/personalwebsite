@@ -3,6 +3,12 @@ import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/Running
 import "./SystemAlert.css"
 import SystemSounds from "../../SystemSounds"
 
+
+type MessageAnimationData = {
+    animationID: number|null,
+    characterIndex: number
+}
+
 /**
  * Typing used to represent the button options available in the alert
  * The information is structured in a dictionary style, and contains:
@@ -44,6 +50,7 @@ export type SystemAlertProps = {
     title?: "Warning" | "Error" | string & {}, 
     titleDetails?: string,
     message: string,
+    messageAnimation?: {enable:false} | {enable:true, speed:number},
     options: SystemAlertOptions,
     closeButton: SystemAlertCloseButton,
     soundEffect?: typeof SystemSounds|string
@@ -57,11 +64,14 @@ export type SystemAlertProps = {
  * @param props - Takes props listed in `SystemAlertProps`
  * @returns Component
  */
-export default function SystemAlert({title,titleDetails, message, options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
+export default function SystemAlert({title,titleDetails, message,messageAnimation ,options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
     // options = {...options}
 
     // Used to check app props and update app properties
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
+
+    const messageAnimationData = useRef<MessageAnimationData>({animationID:null, characterIndex:0})
+
 
     // Used to check the calculated size of the app 
     const messageRef = useRef<HTMLDivElement>(null)
@@ -70,6 +80,27 @@ export default function SystemAlert({title,titleDetails, message, options, close
     // Used to play/restart the sound
     const audioRef = useRef<HTMLAudioElement>(null)
 
+
+    useEffect(()=>{
+        if (messageAnimation?.enable){
+            function messageWritingEffect(){
+                if (messageAnimationData.current.characterIndex < message.length){
+                    messageRef.current!.textContent += message.charAt(messageAnimationData.current.characterIndex)
+                    messageAnimationData.current.characterIndex += 1
+                }
+                else{
+                    clearInterval(messageAnimationData.current.animationID!)
+                }
+            }
+            messageRef.current!.textContent = null
+            messageAnimationData.current.animationID = setInterval(messageWritingEffect, messageAnimation.speed)
+
+            return () =>{
+                clearInterval(messageAnimationData.current.animationID!)
+                messageAnimationData.current = {animationID:null, characterIndex:0}
+            }
+        }
+    },[runningAppsData[app_running_id].props])
 
     // Used to resize the app based on the size of its content
     // Run each time the props are changed
@@ -163,7 +194,7 @@ export default function SystemAlert({title,titleDetails, message, options, close
                 autoPlay
             />
             <div className="message" ref={messageRef}>
-                {message}
+                {(!messageAnimation?.enable || messageAnimation == undefined) && message}
             </div>
             <div className="options" ref={optionsRef}>
                 {

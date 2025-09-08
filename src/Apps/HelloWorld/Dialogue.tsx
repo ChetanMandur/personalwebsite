@@ -13,7 +13,8 @@ export function dialogueMaker(
     switch (dialogOption) {
         case 0:
             alert_props = {
-                message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child", 
+                message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child",
+                // messageAnimation:{enable:false}, 
                 closeButton: {display:true, text:"Okie Dokie"},
                 soundEffect: SystemSounds.Win95.Default.Chimes,
                 options: {
@@ -26,7 +27,8 @@ export function dialogueMaker(
         case 1:
             alert_props = {
                 title:"Where am I?",
-                message: "My world",
+                message: "My world.",
+                messageAnimation:{enable:true,speed:200},
                 closeButton: {display:true,text:"Ok.... well bye"},
                 soundEffect: SystemSounds.Win95.Default.Tada,
                 options:{
@@ -39,6 +41,7 @@ export function dialogueMaker(
             alert_props = {
                 title:"Cool",
                 message:"Thanks.\n Hey, how's your day going?",
+                messageAnimation:{enable:true,speed:50},
                 closeButton: {display:false},
                 soundEffect: SystemSounds.Win95.Default.Dings,
                 options:{
@@ -85,6 +88,13 @@ export function dialogueMaker(
     }
 
     if (alert_props){
+        alert_props = {
+            title: undefined,
+            titleDetails: undefined,
+            messageAnimation:undefined,
+            soundEffect:undefined,
+            ...alert_props
+        } 
         if (dialogOption == 0){
             runningAppsDispatch({
                 type: "ADD",
