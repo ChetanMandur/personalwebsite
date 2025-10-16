@@ -93,20 +93,22 @@ export default function SystemAlert({title,titleDetails, message,messageAnimatio
     useEffect(()=>{
         if (messageAnimation){
             function messageWritingEffect(){
-                if (messageAnimationData.current.characterIndex < messageAnimation![messageAnimationData.current.arrayIndex].message.length){
-                    messageRef.current!.textContent += messageAnimation![messageAnimationData.current.arrayIndex].message.charAt(messageAnimationData.current.characterIndex)
-                    messageAnimationData.current.characterIndex += 1
-                    if (messageAnimationData.current.characterIndex >= messageAnimation![messageAnimationData.current.arrayIndex].message.length){
-                        messageAnimationData.current.characterIndex = 0
-                        messageAnimationData.current.arrayIndex += 1
+                let {animationID, characterIndex, arrayIndex} = messageAnimationData.current!
+                if (characterIndex < messageAnimation![arrayIndex].message.length){
+                    messageRef.current!.textContent += messageAnimation![arrayIndex].message.charAt(characterIndex)
+                    characterIndex += 1
+                    if (characterIndex >= messageAnimation![arrayIndex].message.length){
+                        characterIndex = 0
+                        arrayIndex += 1
 
-                        clearInterval(messageAnimationData.current.animationID!)
-                        if (messageAnimationData.current.arrayIndex < messageAnimation!.length){
-                            messageAnimationData.current.animationID = setInterval(messageWritingEffect, messageAnimation![messageAnimationData.current.arrayIndex].speed)
+                        clearInterval(animationID!)
+                        if (arrayIndex < messageAnimation!.length){
+                            animationID = setInterval(messageWritingEffect, messageAnimation![arrayIndex].speed)
                         }
 
 
                     }
+                    messageAnimationData.current! = {animationID, characterIndex, arrayIndex}
                 }
             }
             messageRef.current!.textContent = null
