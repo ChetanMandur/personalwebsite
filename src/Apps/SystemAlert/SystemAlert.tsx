@@ -6,7 +6,8 @@ import SystemSounds from "../../SystemSounds"
 
 type MessageAnimationData = {
     animationID: number|null,
-    characterIndex: number
+    characterIndex: number,
+    arrayIndex: number
 }
 
 /**
@@ -49,12 +50,20 @@ export type SystemAlertCloseButton = {
 export type SystemAlertProps = {
     title?: "Warning" | "Error" | string & {}, 
     titleDetails?: string,
-    message: string,
-    messageAnimation?: {enable:false} | {enable:true, speed:number},
     options: SystemAlertOptions,
     closeButton: SystemAlertCloseButton,
     soundEffect?: typeof SystemSounds|string
-}
+} & (
+    {
+        message: string,
+        messageAnimation?: never,
+    } 
+    | 
+    {
+        message?: never,
+        messageAnimation: {message:string, speed:number}[]
+    }
+)
 
 /**
  * App used to display alerts
@@ -70,7 +79,7 @@ export default function SystemAlert({title,titleDetails, message,messageAnimatio
     // Used to check app props and update app properties
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
 
-    const messageAnimationData = useRef<MessageAnimationData>({animationID:null, characterIndex:0})
+    const messageAnimationData = useRef<MessageAnimationData>({animationID:null, characterIndex:0, arrayIndex:0})
 
 
     // Used to check the calculated size of the app 
@@ -82,22 +91,30 @@ export default function SystemAlert({title,titleDetails, message,messageAnimatio
 
 
     useEffect(()=>{
-        if (messageAnimation?.enable){
+        if (messageAnimation){
             function messageWritingEffect(){
-                if (messageAnimationData.current.characterIndex < message.length){
-                    messageRef.current!.textContent += message.charAt(messageAnimationData.current.characterIndex)
+                if (messageAnimationData.current.characterIndex < messageAnimation![messageAnimationData.current.arrayIndex].message.length){
+                    messageRef.current!.textContent += messageAnimation![messageAnimationData.current.arrayIndex].message.charAt(messageAnimationData.current.characterIndex)
                     messageAnimationData.current.characterIndex += 1
-                }
-                else{
-                    clearInterval(messageAnimationData.current.animationID!)
+                    if (messageAnimationData.current.characterIndex >= messageAnimation![messageAnimationData.current.arrayIndex].message.length){
+                        messageAnimationData.current.characterIndex = 0
+                        messageAnimationData.current.arrayIndex += 1
+
+                        clearInterval(messageAnimationData.current.animationID!)
+                        if (messageAnimationData.current.arrayIndex < messageAnimation!.length){
+                            messageAnimationData.current.animationID = setInterval(messageWritingEffect, messageAnimation![messageAnimationData.current.arrayIndex].speed)
+                        }
+
+
+                    }
                 }
             }
             messageRef.current!.textContent = null
-            messageAnimationData.current.animationID = setInterval(messageWritingEffect, messageAnimation.speed)
+            messageAnimationData.current.animationID = setInterval(messageWritingEffect, messageAnimation[0].speed)
 
             return () =>{
                 clearInterval(messageAnimationData.current.animationID!)
-                messageAnimationData.current = {animationID:null, characterIndex:0}
+                messageAnimationData.current = {animationID:null, characterIndex:0, arrayIndex:0}
             }
         }
     },[runningAppsData[app_running_id].props])
@@ -194,7 +211,8 @@ export default function SystemAlert({title,titleDetails, message,messageAnimatio
                 autoPlay
             />
             <div className="message" ref={messageRef}>
-                {(!messageAnimation?.enable || messageAnimation == undefined) && message}
+                {/* {(!messageAnimation?.enable || messageAnimation == undefined) && message} */}
+                {message}
             </div>
             <div className="options" ref={optionsRef}>
                 {

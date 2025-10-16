@@ -14,7 +14,6 @@ export function dialogueMaker(
         case 0:
             alert_props = {
                 message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child",
-                // messageAnimation:{enable:false}, 
                 closeButton: {display:true, text:"Okie Dokie"},
                 soundEffect: SystemSounds.Win95.Default.Chimes,
                 options: {
@@ -27,8 +26,12 @@ export function dialogueMaker(
         case 1:
             alert_props = {
                 title:"Where am I?",
-                message: "My world.",
-                messageAnimation:{enable:true,speed:200},
+                messageAnimation:[
+                    {message:"My world", speed:200},
+                    {message:" ", speed:1000},
+                    {message:"\n Nah just kidding this is just my website", speed:50}
+
+                ],
                 closeButton: {display:true,text:"Ok.... well bye"},
                 soundEffect: SystemSounds.Win95.Default.Tada,
                 options:{
@@ -40,8 +43,13 @@ export function dialogueMaker(
         case 2:
             alert_props = {
                 title:"Cool",
-                message:"Thanks.\n Hey, how's your day going?",
-                messageAnimation:{enable:true,speed:50},
+                messageAnimation:[
+                    {message:"Thanks. \n", speed: 50},
+                    {message:" ", speed: 2000},
+                    {message:"Hey,", speed: 50},
+                    {message:" ", speed: 500},
+                    {message:"how's your day going?", speed: 50},
+                ],
                 closeButton: {display:false},
                 soundEffect: SystemSounds.Win95.Default.Dings,
                 options:{
