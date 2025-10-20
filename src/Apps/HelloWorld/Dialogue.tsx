@@ -26,11 +26,11 @@ export function dialogueMaker(
         case 1:
             alert_props = {
                 title:"Where am I?",
-                messageAnimation:[
+                animatedMessage:[
                     {message:"My world", speed:200},
                     {message:" ", speed:1000},
-                    {message:"\n Nah just kidding this is just my website", speed:50}
-
+                    {message:"\n", speed:1},
+                    {message:"Nah just kidding this is just my website", speed:50},
                 ],
                 closeButton: {display:true,text:"Ok.... well bye"},
                 soundEffect: SystemSounds.Win95.Default.Tada,
@@ -43,7 +43,7 @@ export function dialogueMaker(
         case 2:
             alert_props = {
                 title:"Cool",
-                messageAnimation:[
+                animatedMessage:[
                     {message:"Thanks. \n", speed: 50},
                     {message:" ", speed: 2000},
                     {message:"Hey,", speed: 50},
@@ -99,7 +99,7 @@ export function dialogueMaker(
         alert_props = {
             title: undefined,
             titleDetails: undefined,
-            messageAnimation:undefined,
+            animatedMessage:undefined,
             soundEffect:undefined,
             ...alert_props
         } 

@@ -2,13 +2,7 @@ import { useContext, useEffect, useLayoutEffect, useRef} from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import "./SystemAlert.css"
 import SystemSounds from "../../SystemSounds"
-
-
-type MessageAnimationData = {
-    animationID: number|null,
-    characterIndex: number,
-    arrayIndex: number
-}
+import { AnimatedText, AnimatedTextBox } from "../../Desktop/AnimatedTextBox/AnimatedTextBox"
 
 /**
  * Typing used to represent the button options available in the alert
@@ -56,12 +50,12 @@ export type SystemAlertProps = {
 } & (
     {
         message: string,
-        messageAnimation?: never,
+        animatedMessage?: never,
     } 
     | 
     {
         message?: never,
-        messageAnimation: {message:string, speed:number}[]
+        animatedMessage: AnimatedText
     }
 )
 
@@ -73,14 +67,11 @@ export type SystemAlertProps = {
  * @param props - Takes props listed in `SystemAlertProps`
  * @returns Component
  */
-export default function SystemAlert({title,titleDetails, message,messageAnimation ,options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
+export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
     // options = {...options}
 
     // Used to check app props and update app properties
     const {runningAppsData,runningAppsDispatch} = useContext(RunningAppsContext)
-
-    const messageAnimationData = useRef<MessageAnimationData>({animationID:null, characterIndex:0, arrayIndex:0})
-
 
     // Used to check the calculated size of the app 
     const messageRef = useRef<HTMLDivElement>(null)
@@ -90,36 +81,7 @@ export default function SystemAlert({title,titleDetails, message,messageAnimatio
     const audioRef = useRef<HTMLAudioElement>(null)
 
 
-    useEffect(()=>{
-        if (messageAnimation){
-            function messageWritingEffect(){
-                let {animationID, characterIndex, arrayIndex} = messageAnimationData.current!
-                if (characterIndex < messageAnimation![arrayIndex].message.length){
-                    messageRef.current!.textContent += messageAnimation![arrayIndex].message.charAt(characterIndex)
-                    characterIndex += 1
-                    if (characterIndex >= messageAnimation![arrayIndex].message.length){
-                        characterIndex = 0
-                        arrayIndex += 1
-
-                        clearInterval(animationID!)
-                        if (arrayIndex < messageAnimation!.length){
-                            animationID = setInterval(messageWritingEffect, messageAnimation![arrayIndex].speed)
-                        }
-
-
-                    }
-                    messageAnimationData.current! = {animationID, characterIndex, arrayIndex}
-                }
-            }
-            messageRef.current!.textContent = null
-            messageAnimationData.current.animationID = setInterval(messageWritingEffect, messageAnimation[0].speed)
-
-            return () =>{
-                clearInterval(messageAnimationData.current.animationID!)
-                messageAnimationData.current = {animationID:null, characterIndex:0, arrayIndex:0}
-            }
-        }
-    },[runningAppsData[app_running_id].props])
+    
 
     // Used to resize the app based on the size of its content
     // Run each time the props are changed
@@ -213,8 +175,12 @@ export default function SystemAlert({title,titleDetails, message,messageAnimatio
                 autoPlay
             />
             <div className="message" ref={messageRef}>
-                {/* {(!messageAnimation?.enable || messageAnimation == undefined) && message} */}
-                {message}
+                {
+                    animatedMessage != undefined ? 
+                        <AnimatedTextBox animatedText={animatedMessage} /> 
+                        : 
+                        message
+                }
             </div>
             <div className="options" ref={optionsRef}>
                 {
