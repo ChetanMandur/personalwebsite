@@ -27,7 +27,17 @@ export function dialogueMaker(
             alert_props = {
                 title:"Where am I?",
                 animatedMessage:[
-                    {message:"My world", speed:200},
+                    {message:"My world", speed:200 , 
+                        preFunctions:[()=>(console.log("hi"))], 
+                        intraFunctions:{3:[()=>{
+                            console.log("whaaa");
+                            runningAppsDispatch({type:"UPDATE-APP-PROPS",app_running_id: system_alert_id , props: {soundEffect:SystemSounds.Special.VineBoom}})
+                        }]},
+                        postFunctions:[()=>{
+                            console.log("bruh");
+                            runningAppsDispatch({type:"UPDATE-APP-PROPS",app_running_id: system_alert_id , props: {soundEffect:SystemSounds.Special.OhMyGod}})
+                        }]
+                    },
                     {message:" ", speed:1000},
                     {message:"\n", speed:1},
                     {message:"Nah just kidding this is just my website", speed:50},

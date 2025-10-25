@@ -6,7 +6,13 @@ type AnimatedTextAnimationData = {
     arrayIndex: number
 }
 
-export type AnimatedText = {message:string, speed:number}[]
+export type AnimatedText = {
+        message:string, 
+        speed:number,
+        preFunctions?: (() => (void))[] //Run before animation starts for the line
+        intraFunctions?: {[index:number]: (() => (void))[] } // Run midway thru animation, at a specfic character index
+        postFunctions?: (() => (void))[] //Run after animation ends for the line
+    }[]
 
 type AnimatedTextBoxProps = {
     animatedText: AnimatedText
@@ -23,6 +29,28 @@ export function AnimatedTextBox ({animatedText}:AnimatedTextBoxProps){
             function messageWritingEffect(){
                 let {animationID, characterIndex, arrayIndex} = animatedTextAnimationData.current!
                 if (characterIndex < animatedText![arrayIndex].message.length){
+                    
+                    // // At line start
+                    if (characterIndex == 0 && animatedText[arrayIndex].preFunctions != undefined ){
+                        for (const preFunc of animatedText[arrayIndex].preFunctions!){
+                            preFunc()
+                        }
+                    }
+
+                    // During animation
+                    if (animatedText[arrayIndex].intraFunctions != undefined && animatedText[arrayIndex].intraFunctions![characterIndex] != undefined){
+                        for (const intraFunc of animatedText[arrayIndex].intraFunctions![characterIndex]){
+                            intraFunc()
+                        }
+                    }
+
+                    // At line end
+                    if (characterIndex == animatedText[arrayIndex].message.length -1 && animatedText[arrayIndex].postFunctions != undefined ){
+                        for (const postFunc of animatedText[arrayIndex].postFunctions!){
+                            postFunc() //new music genre
+                        }
+                    }
+
                     textBox.current!.textContent += animatedText![arrayIndex].message.charAt(characterIndex)
                     characterIndex += 1
                     if (characterIndex >= animatedText![arrayIndex].message.length){
