@@ -14,20 +14,21 @@ export type AnimatedText = {
         preFunction?: () => (void) //Run before animation starts for the line
         intraFunction?: {[index:number]: () => (void)} // Run midway thru animation, at a specfic character index
         postFunction?: () => (void) //Run after animation ends for the line
-    }[]
+}[]
 
 type AnimatedTextBoxProps = {
     animatedText: AnimatedText
+    skipAnimation?: boolean 
 }
 
-export function AnimatedTextBox ({animatedText}:AnimatedTextBoxProps){
+export function AnimatedTextBox ({animatedText, skipAnimation}:AnimatedTextBoxProps){
 
     const animatedTextAnimationData = useRef<AnimatedTextAnimationData>({animationID:null, characterIndex:0, arrayIndex:0})
     const textBox = useRef<HTMLDivElement>(null)
     
 
     useEffect(()=>{
-        if (animatedText){
+        if (animatedText && !skipAnimation){
             function messageWritingEffect(){
                 let {animationID, characterIndex, arrayIndex} = animatedTextAnimationData.current!
                 if (characterIndex < animatedText![arrayIndex].message.length){
@@ -71,7 +72,17 @@ export function AnimatedTextBox ({animatedText}:AnimatedTextBoxProps){
                 animatedTextAnimationData.current = {animationID:null, characterIndex:0, arrayIndex:0}
             }
         }
-    },[animatedText])
+        else {
+            clearInterval(animatedTextAnimationData.current.animationID!)
+            let fullMessage:string = ""
+
+            for (const partMessage of animatedText){
+                fullMessage += partMessage.message
+            }
+
+            textBox.current!.textContent = fullMessage
+        }
+    },[animatedText, skipAnimation])
 
     
     return (

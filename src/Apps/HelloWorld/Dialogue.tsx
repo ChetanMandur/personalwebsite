@@ -46,8 +46,9 @@ export function dialogueMaker(
                 ],
                 closeButton: {display:true,text:"Ok.... well bye"},
                 soundEffect: SystemSounds.Win95.Default.Tada,
+                skipSoundEffect: SystemSounds.Special.OOTDialogueNext,
                 options:{
-                "Cool": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, 2)}
+                    "Cool": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, 2)}
                 } 
             } 
             break
@@ -64,6 +65,7 @@ export function dialogueMaker(
                 ],
                 closeButton: {display:false},
                 soundEffect: SystemSounds.Win95.Default.Dings,
+                skipSoundEffect: SystemSounds.Special.OOTDialogueNext,
                 options:{
                     "Going pretty well, thanks for asking man": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, "3a")},
                     "It's going alright":()=>{dialogueMaker(runningAppsDispatch,system_alert_id, "3b")},
@@ -113,6 +115,7 @@ export function dialogueMaker(
             titleDetails: undefined,
             animatedMessage:undefined,
             soundEffect:undefined,
+            skipSoundEffect:undefined,
             ...alert_props
         } 
         if (dialogOption == 0){

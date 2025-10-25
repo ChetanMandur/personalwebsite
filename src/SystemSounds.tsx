@@ -27,7 +27,8 @@ const Special = {
     FunkMasterFlexExplosion: "./sounds/Funny/funkmasterflexexplosion.mp3",
     MyNameJeff: "./sounds/Funny/mynamejeff.mp3",
     TimAllenGrunt: "./sounds/Funny/timallengrunt.mp3",
-    WTHOMG: "./sounds/Funny/wthomg.mp3"
+    WTHOMG: "./sounds/Funny/wthomg.mp3",
+    OOTDialogueNext: "./sounds/Extra/OOTDialogueNext.mp3"
 }
 
 const SystemSounds = {

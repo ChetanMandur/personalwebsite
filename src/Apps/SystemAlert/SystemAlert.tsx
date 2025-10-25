@@ -1,4 +1,4 @@
-import { useContext, useEffect, useLayoutEffect, useRef} from "react"
+import { useContext, useEffect, useLayoutEffect, useRef, useState} from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import "./SystemAlert.css"
 import SystemSounds from "../../SystemSounds"
@@ -51,11 +51,13 @@ export type SystemAlertProps = {
     {
         message: string,
         animatedMessage?: never,
+        skipSoundEffect?: never
     } 
     | 
     {
         message?: never,
-        animatedMessage: AnimatedText
+        animatedMessage: AnimatedText,
+        skipSoundEffect?: typeof SystemSounds|string
     }
 )
 
@@ -67,7 +69,7 @@ export type SystemAlertProps = {
  * @param props - Takes props listed in `SystemAlertProps`
  * @returns Component
  */
-export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton,soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
+export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton,soundEffect,skipSoundEffect, app_running_id}:SystemAlertProps & AppRunningID){
     // options = {...options}
 
     // Used to check app props and update app properties
@@ -80,8 +82,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
     // Used to play/restart the sound
     const audioRef = useRef<HTMLAudioElement>(null)
 
-
-    
+    const [skipAnimation, setSkipAnimation] = useState(false)
 
     // Used to resize the app based on the size of its content
     // Run each time the props are changed
@@ -170,14 +171,23 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
             <audio 
                 ref={audioRef}
                 hidden={true}
-                src={soundEffect?.toString() ?? SystemSounds.Win95.Default.Chord}
+                src={soundEffect?.toString() ?? SystemSounds.Win95.Default.Chord }
                 preload="auto"
                 autoPlay
             />
-            <div className="message" ref={messageRef}>
+            <div className="message" ref={messageRef} 
+                onClick={()=>{
+                    if (animatedMessage != undefined && !skipAnimation){
+                        setSkipAnimation(true)
+                        if (skipSoundEffect != undefined){
+                            runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:skipSoundEffect}})
+                        }
+                    }
+                }} 
+            >
                 {
                     animatedMessage != undefined ? 
-                        <AnimatedTextBox animatedText={animatedMessage} /> 
+                        <AnimatedTextBox animatedText={animatedMessage} skipAnimation={skipAnimation} /> 
                         : 
                         message
                 }
@@ -189,6 +199,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                             <div className="option common-border" 
                                 key={app_running_id+option[0]}
                                 onClick={(event)=>{
+                                    setSkipAnimation(false)
                                     event.stopPropagation()
                                     option[1]()
                                 }}
