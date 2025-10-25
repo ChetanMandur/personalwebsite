@@ -11,9 +11,9 @@ type AnimatedTextAnimationData = {
 export type AnimatedText = {
         message:string, 
         speed:number,
-        preFunctions?: (() => (void))[] //Run before animation starts for the line
-        intraFunctions?: {[index:number]: (() => (void))[] } // Run midway thru animation, at a specfic character index
-        postFunctions?: (() => (void))[] //Run after animation ends for the line
+        preFunction?: () => (void) //Run before animation starts for the line
+        intraFunction?: {[index:number]: () => (void)} // Run midway thru animation, at a specfic character index
+        postFunction?: () => (void) //Run after animation ends for the line
     }[]
 
 type AnimatedTextBoxProps = {
@@ -33,24 +33,18 @@ export function AnimatedTextBox ({animatedText}:AnimatedTextBoxProps){
                 if (characterIndex < animatedText![arrayIndex].message.length){
                     
                     // // At line start
-                    if (characterIndex == 0 && animatedText[arrayIndex].preFunctions != undefined ){
-                        for (const preFunc of animatedText[arrayIndex].preFunctions!){
-                            preFunc()
-                        }
+                    if (characterIndex == 0 && animatedText[arrayIndex].preFunction != undefined){
+                        animatedText[arrayIndex].preFunction!()
                     }
 
                     // During animation
-                    if (animatedText[arrayIndex].intraFunctions != undefined && animatedText[arrayIndex].intraFunctions![characterIndex] != undefined){
-                        for (const intraFunc of animatedText[arrayIndex].intraFunctions![characterIndex]){
-                            intraFunc()
-                        }
+                    if (animatedText[arrayIndex].intraFunction != undefined && animatedText[arrayIndex].intraFunction![characterIndex] != undefined){
+                        animatedText[arrayIndex].intraFunction![characterIndex]()
                     }
 
                     // At line end
-                    if (characterIndex == animatedText[arrayIndex].message.length -1 && animatedText[arrayIndex].postFunctions != undefined ){
-                        for (const postFunc of animatedText[arrayIndex].postFunctions!){
-                            postFunc() //new music genre
-                        }
+                    if (characterIndex == animatedText[arrayIndex].message.length -1 && animatedText[arrayIndex].postFunction != undefined ){
+                        animatedText[arrayIndex].postFunction!()
                     }
 
                     textBox.current!.textContent += animatedText![arrayIndex].message.charAt(characterIndex)

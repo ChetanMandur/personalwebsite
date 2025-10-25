@@ -28,15 +28,17 @@ export function dialogueMaker(
                 title:"Where am I?",
                 animatedMessage:[
                     {message:"My world", speed:200 , 
-                        preFunctions:[()=>(console.log("hi"))], 
-                        intraFunctions:{3:[()=>{
-                            console.log("whaaa");
-                            runningAppsDispatch({type:"UPDATE-APP-PROPS",app_running_id: system_alert_id , props: {soundEffect:SystemSounds.Special.VineBoom}})
-                        }]},
-                        postFunctions:[()=>{
+                        preFunction:()=>(console.log("hi")), 
+                        intraFunction:{
+                            3: ()=>{
+                                console.log("whaaa");
+                                runningAppsDispatch({type:"UPDATE-APP-PROPS",app_running_id: system_alert_id , props: {soundEffect:SystemSounds.Special.VineBoom}})
+                            }
+                        },
+                        postFunction:()=>{
                             console.log("bruh");
                             runningAppsDispatch({type:"UPDATE-APP-PROPS",app_running_id: system_alert_id , props: {soundEffect:SystemSounds.Special.OhMyGod}})
-                        }]
+                        }
                     },
                     {message:" ", speed:1000},
                     {message:"\n", speed:1},
