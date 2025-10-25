@@ -23,6 +23,11 @@ const Special = {
     Bruh:"./sounds/Funny/bruh.mp3" ,
     OhMyGod: "./sounds/Funny/ohmygod.mp3",
     VineBoom: "./sounds/Funny/vineboom.mp3",
+    21: "./sounds/Funny/21.mp3",
+    FunkMasterFlexExplosion: "./sounds/Funny/funkmasterflexexplosion.mp3",
+    MyNameJeff: "./sounds/Funny/mynamejeff.mp3",
+    TimAllenGrunt: "./sounds/Funny/timallengrunt.mp3",
+    WTHOMG: "./sounds/Funny/wthomg.mp3"
 }
 
 const SystemSounds = {
