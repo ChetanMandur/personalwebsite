@@ -1,4 +1,6 @@
+import "./AnimatedTextBox.css"
 import { useEffect, useRef } from "react"
+
 
 type AnimatedTextAnimationData = {
     animationID: number|null,
