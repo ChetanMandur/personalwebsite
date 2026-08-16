@@ -1,5 +1,5 @@
 import "./UserSpace.css"
-import { useContext} from "react"
+import { useContext, useEffect} from "react"
 import { RunningAppsContext} from "../Contexts/RunningAppsContext"
 import { StartMenuContext } from "../Contexts/StartMenuContext"
 import { RunningApp } from "./RunningApp"
@@ -8,9 +8,16 @@ import { RunningApp } from "./RunningApp"
 
 
 export default function UserSpace(){
-  const {runningAppsData}= useContext(RunningAppsContext)
+  const {runningAppsData,runningAppsDispatch}= useContext(RunningAppsContext)
   const {setStartMenuOpen} = useContext(StartMenuContext)
 
+  useEffect(()=>{
+    runningAppsDispatch({type:"ADD", app_name:"HelloWorld", app_running_id:"TESTING"})
+
+    return () =>{
+      runningAppsDispatch({type:"DELETE", app_running_id:"TESTING"})
+    }
+  },[runningAppsDispatch])
 
   return(
 
