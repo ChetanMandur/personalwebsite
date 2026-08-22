@@ -46,7 +46,12 @@ export type SystemAlertProps = {
     titleDetails?: string,
     options: SystemAlertOptions,
     closeButton: SystemAlertCloseButton,
-    soundEffect?: typeof SystemSounds|string
+    soundEffect?: typeof SystemSounds|string,
+    image?: null | {
+        content: string & {} | "Warning" | "Error",
+        style?: React.CSSProperties & { [key: `--${string}`]: string | number | undefined };
+
+    } 
 } & (
     {
         message: string,
@@ -69,7 +74,7 @@ export type SystemAlertProps = {
  * @param props - Takes props listed in `SystemAlertProps`
  * @returns Component
  */
-export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton,soundEffect,skipSoundEffect, app_running_id}:SystemAlertProps & AppRunningID){
+export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton, image, soundEffect,skipSoundEffect, app_running_id}:SystemAlertProps & AppRunningID){
     // options = {...options}
 
     // Used to check app props and update app properties
@@ -175,22 +180,40 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                 preload="auto"
                 autoPlay
             />
-            <div className="message" ref={messageRef} 
-                onClick={()=>{
-                    if (animatedMessage != undefined && !skipAnimation){
-                        setSkipAnimation(true)
-                        if (skipSoundEffect != undefined){
-                            runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:skipSoundEffect}})
-                        }
-                    }
-                }} 
-            >
+            <div className="content">
                 {
-                    animatedMessage != undefined ? 
-                        <AnimatedTextBox animatedText={animatedMessage} skipAnimation={skipAnimation} /> 
-                        : 
-                        message
+                    image !== null && 
+                        <div className="alert-image">
+                            <img 
+                                src={image?.content == "Warning" ? 
+                                    ("https://www.svgrepo.com/show/486907/warning.svg") : (
+                                        (image?.content == "Error" || image == undefined) ? 
+                                        ("https://www.svgrepo.com/show/486662/error.svg") : (image.content)
+                                    )
+                                }
+                                style={image?.style ?? undefined}
+                                alt="" 
+                            />
+                        </div> 
                 }
+                <div className="message" ref={messageRef}
+                    style={((image !== null)) ? {}:{width:"100%", paddingLeft:"0%"}}
+                    onClick={()=>{
+                        if (animatedMessage != undefined && !skipAnimation){
+                            setSkipAnimation(true)
+                            if (skipSoundEffect != undefined){
+                                runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:skipSoundEffect}})
+                            }
+                        }
+                    }} 
+                >
+                    {
+                        animatedMessage != undefined ? 
+                            <AnimatedTextBox animatedText={animatedMessage} skipAnimation={skipAnimation} /> 
+                            : 
+                            message
+                    }
+                </div>
             </div>
             <div className="options" ref={optionsRef}>
                 {

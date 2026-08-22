@@ -8,14 +8,42 @@
     background-color: var(--bar-focused-colour);
     
 
-    .message{
-        padding-top: 1vh;
-        text-align: center;
-        place-content: center;
-        height:50%;
-        width:100%;
-        overflow-y: auto;
-        white-space: break-spaces;
+    .content{
+        display:flex;
+        height: 50%;
+        width: 100%;
+        align-items: center;
+        justify-content: space-evenly;
+        padding:1vh 1vh 0px;
+        box-sizing: border-box;
+        
+        .alert-image{
+            overflow: hidden;
+            height:100%;
+            display: flex;
+            align-items: center;
+            max-width: 80%;
+
+            img{
+                --size: 5vh;
+                object-fit: fill;
+                max-width: 100%;
+                max-height: 100%;
+                width:var(--size);
+                height:var(--size);
+            }
+        }
+        .message{
+            padding-left: 1vh;
+            box-sizing: border-box;
+
+            text-align: center;
+            place-content: center;
+            height:100%;
+            width:80%;
+            overflow-y: auto;
+            white-space: break-spaces;
+        }
     }
     
     .options{

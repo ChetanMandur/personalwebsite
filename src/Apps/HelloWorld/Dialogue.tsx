@@ -16,6 +16,13 @@ export function dialogueMaker(
                 message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child",
                 closeButton: {display:true, text:"Okie Dokie"},
                 soundEffect: SystemSounds.Win95.Default.Chimes,
+                // image:{content:"./placecatneo.jpeg"},
+                // image:{content:"https://c.tenor.com/4kpF986JjZkAAAAd/tenor.gif"},
+                // image:{content:"Warning"},
+                // image:{content:"Error"},
+                // image:undefined,
+                // image:null,
+
                 options: {
                     "Where am I?": ()=>{
                     dialogueMaker(runningAppsDispatch, system_alert_id, 1)
@@ -26,6 +33,10 @@ export function dialogueMaker(
         case 1:
             alert_props = {
                 title:"Where am I?",
+                image:{
+                    content:"https://media1.tenor.com/m/nAYI--YdBzIAAAAd/fell.gif",
+                    style:{borderRadius:"100%", "--size":"6vh"}
+                },
                 animatedMessage:[
                     {message:"My world", speed:200 , 
                         preFunction:()=>(console.log("hi")), 
@@ -116,6 +127,7 @@ export function dialogueMaker(
             animatedMessage:undefined,
             soundEffect:undefined,
             skipSoundEffect:undefined,
+            image: undefined,
             ...alert_props
         } 
         if (dialogOption == 0){
