@@ -46,7 +46,7 @@ export type SystemAlertProps = {
     titleDetails?: string,
     options: SystemAlertOptions,
     closeButton: SystemAlertCloseButton,
-    soundEffect?: typeof SystemSounds|string,
+    soundEffect?: typeof SystemSounds|string|null,
     image?: null | {
         content: string & {} | "Warning" | "Error",
         style?: React.CSSProperties & { [key: `--${string}`]: string | number | undefined };
@@ -141,9 +141,11 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
 
     // Used to handle any changes to the props that don't require info on the contents size
     useEffect(()=>{
-        // Plays audio (resets time to 0 to ensure audio is played when consecutive alerts are quick in a row)
-        audioRef.current!.currentTime = 0
-        audioRef.current!.play()
+        if (soundEffect !== null){
+            // Plays audio (resets time to 0 to ensure audio is played when consecutive alerts are quick in a row)
+            audioRef.current!.currentTime = 0
+            audioRef.current!.play()
+        }
 
         // Updates app title based on props given
         if (title){
@@ -176,7 +178,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
             <audio 
                 ref={audioRef}
                 hidden={true}
-                src={soundEffect?.toString() ?? SystemSounds.Win95.Default.Chord }
+                src={soundEffect !== null ? (soundEffect?.toString() ?? SystemSounds.Win95.Default.Chord) : undefined}
                 preload="auto"
                 autoPlay
             />
