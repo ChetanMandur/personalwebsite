@@ -162,7 +162,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
         else{
             runningAppsDispatch({type:"UPDATE-APP-TITLE-DETAILS", app_running_id, appTitleDetails:undefined})
         }
-    },[runningAppsData[app_running_id].props])
+    },[app_running_id, runningAppsDispatch, soundEffect, title, titleDetails])
 
 
     // Adds a 'close' button if props ask for it

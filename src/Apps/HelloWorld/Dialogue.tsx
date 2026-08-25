@@ -53,13 +53,26 @@ export function dialogueMaker(
                     },
                     {message:" ", speed:1000},
                     {message:"\n", speed:1},
-                    {message:"Nah just kidding this is just my website", speed:50},
+                    {message:"Nah just kidding this is just my website", speed:50,
+                        postFunction: ()=>{
+                                runningAppsDispatch({
+                                    type:"UPDATE-APP-PROPS",app_running_id: system_alert_id , props: {
+                                        soundEffect:SystemSounds.Special.Bruh,
+                                        closeButton: {display:true,text:"Ok.... well bye"},
+                                        options:{
+                                            "Cool": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, 2)}
+                                        } 
+                                    
+                                    }
+                                })
+                        }
+
+                    },
                 ],
-                closeButton: {display:true,text:"Ok.... well bye"},
+                closeButton: {display:false,text:"Ok.... well bye"},
                 soundEffect: SystemSounds.Win95.Default.Tada,
                 skipSoundEffect: SystemSounds.Special.OOTDialogueNext,
                 options:{
-                    "Cool": ()=>{dialogueMaker(runningAppsDispatch,system_alert_id, 2)}
                 } 
             } 
             break
