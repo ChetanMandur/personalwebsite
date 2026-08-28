@@ -8,7 +8,8 @@
     "npm": "9.8.1"
   },
   "scripts": {
-    "dev": "code . && wt split-pane -s 0.8 -d . && vite --open",
+    "dev": "vite",
+    "dev-windows-env": "code . && wt split-pane -s 0.8 -d . && vite --open",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
