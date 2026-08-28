@@ -3,7 +3,7 @@ import { useContext, useEffect} from "react"
 import { RunningAppsContext} from "../Contexts/RunningAppsContext"
 import { StartMenuContext } from "../Contexts/StartMenuContext"
 import { RunningApp } from "./RunningApp"
-import { dialogueMaker } from "../../Apps/HelloWorld/Dialogue"
+import { HelloWorldDialogueInitalizer } from "../../Apps/HelloWorld/Dialogue"
 
 
 
@@ -13,7 +13,9 @@ export default function UserSpace(){
   const {setStartMenuOpen} = useContext(StartMenuContext)
 
   useEffect(()=>{
-    dialogueMaker(runningAppsDispatch, "TESTING", 0)
+    const dialog = HelloWorldDialogueInitalizer("TESTING", runningAppsDispatch)
+
+    dialog.start()
 
     return () =>{
       runningAppsDispatch({type:"DELETE", app_running_id:"TESTING"})

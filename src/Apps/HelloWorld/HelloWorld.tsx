@@ -1,7 +1,7 @@
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext";
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext";
 import { TooltipContext } from "../../Desktop/Contexts/TooltipContext";
-import { dialogueMaker } from "./Dialogue";
+import { HelloWorldDialogueInitalizer} from "./Dialogue";
 import "./HelloWorld.css"
 import { useContext, useEffect, useRef, useState} from "react";
 
@@ -44,8 +44,8 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     "Show me the cat": ()=>{setImageURL("url(https://placecats.com/neo_2/300/200)")},
     "I am blue": ()=>{setImageURL("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")},
     "A message for you": ()=>{
-      const system_alert_id:string = app_running_id + "SystemAlert"
-      dialogueMaker(runningAppsDispatch, system_alert_id, 0)
+      const dialog = HelloWorldDialogueInitalizer(app_running_id + "SystemAlert", runningAppsDispatch)
+      dialog.start()
     }
   }
 
