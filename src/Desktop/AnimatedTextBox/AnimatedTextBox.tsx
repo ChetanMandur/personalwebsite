@@ -5,7 +5,12 @@ import { useEffect, useRef } from "react"
 type AnimatedTextAnimationData = {
     animationID: number|null,
     characterIndex: number,
-    arrayIndex: number
+    animatedTextIndex: number,
+    ranFunctions: { // Functions that ran in current animatedTextIndex/AnimatedText-part
+        pre: {[animatedTextIndex:number]: boolean}, // yes/no pre function has ran
+        intra: {[animatedTextIndex:number]: Set<number>}, // last known characterIndex which ran a function
+        post: {[animatedTextIndex:number]: boolean} // yes/no post function has ran
+    }
 }
 
 export type AnimatedText = {
@@ -23,66 +28,113 @@ type AnimatedTextBoxProps = {
 
 export function AnimatedTextBox ({animatedText, skipAnimation}:AnimatedTextBoxProps){
 
-    const animatedTextAnimationData = useRef<AnimatedTextAnimationData>({animationID:null, characterIndex:0, arrayIndex:0})
-    const textBox = useRef<HTMLDivElement>(null)
-    
-
-    useEffect(()=>{
-        if (animatedText && !skipAnimation){
-            function messageWritingEffect(){
-                let {animationID, characterIndex, arrayIndex} = animatedTextAnimationData.current!
-                if (characterIndex < animatedText![arrayIndex].message.length){
-                    
-                    // // At line start
-                    if (characterIndex == 0 && animatedText[arrayIndex].preFunction != undefined){
-                        animatedText[arrayIndex].preFunction!()
-                    }
-
-                    // During animation
-                    if (animatedText[arrayIndex].intraFunction != undefined && animatedText[arrayIndex].intraFunction![characterIndex] != undefined){
-                        animatedText[arrayIndex].intraFunction![characterIndex]()
-                    }
-
-                    // At line end
-                    if (characterIndex == animatedText[arrayIndex].message.length -1 && animatedText[arrayIndex].postFunction != undefined ){
-                        animatedText[arrayIndex].postFunction!()
-                    }
-
-                    textBox.current!.textContent += animatedText![arrayIndex].message.charAt(characterIndex)
-                    characterIndex += 1
-                    if (characterIndex >= animatedText![arrayIndex].message.length){
-                        characterIndex = 0
-                        arrayIndex += 1
-
-                        clearInterval(animationID!)
-                        if (arrayIndex < animatedText!.length){
-                            animationID = setInterval(messageWritingEffect, animatedText![arrayIndex].speed)
-                        }
-
-
-                    }
-                    animatedTextAnimationData.current! = {animationID, characterIndex, arrayIndex}
-                }
-            }
-            textBox.current!.textContent = null
-            animatedTextAnimationData.current.animationID = setInterval(messageWritingEffect, animatedText[0].speed)
-
-            return () =>{
-                clearInterval(animatedTextAnimationData.current.animationID!)
-                animatedTextAnimationData.current = {animationID:null, characterIndex:0, arrayIndex:0}
+    const animatedTextAnimationData = useRef<AnimatedTextAnimationData>(
+        {
+            animationID:null, 
+            characterIndex:0, 
+            animatedTextIndex:0,
+            ranFunctions: {
+                pre: {},
+                intra: {},
+                post: {}
             }
         }
-        else {
+    )
+    const textBox = useRef<HTMLDivElement>(null)
+    
+    useEffect(()=>{
+        if (skipAnimation){
             clearInterval(animatedTextAnimationData.current.animationID!)
             let fullMessage:string = ""
 
-            for (const partMessage of animatedText){
+            const ranFunctions = animatedTextAnimationData!.current.ranFunctions
+
+            for (const [animatedTextIndex,partMessage] of animatedText.entries()){
+                if (partMessage.preFunction != undefined && !ranFunctions.pre[animatedTextIndex]){
+                    partMessage.preFunction()
+                }
+                if (partMessage.intraFunction != undefined){
+                    for (const [characterIndex,partFunction] of Object.entries(partMessage.intraFunction)){
+                        if (!(ranFunctions.intra[animatedTextIndex].has(Number.parseInt(characterIndex)))){
+                            partFunction()
+                        }
+                    }
+                }
+                if (partMessage.postFunction != undefined && !ranFunctions.post[animatedTextIndex]){
+                    partMessage.postFunction()
+                }
                 fullMessage += partMessage.message
             }
-
             textBox.current!.textContent = fullMessage
         }
-    },[animatedText, skipAnimation])
+    },[animatedText,skipAnimation])
+
+    useEffect(()=>{
+        // Filling in `ranFunctions`
+        const ranFunctions = animatedTextAnimationData.current.ranFunctions
+        for (let i=0; i< animatedText.length; i++){
+            ranFunctions.pre[i] = false
+            ranFunctions.intra[i] = new Set<number>()
+            ranFunctions.post[i] = false
+        }
+        animatedTextAnimationData.current.ranFunctions = ranFunctions
+
+        function messageWritingEffect(){
+            let {animationID, characterIndex, animatedTextIndex} = animatedTextAnimationData.current!
+            const {ranFunctions} = animatedTextAnimationData.current!
+
+            if (characterIndex < animatedText![animatedTextIndex].message.length){
+                
+                // // At line start
+                if (characterIndex == 0 && animatedText[animatedTextIndex].preFunction != undefined){
+                    animatedText[animatedTextIndex].preFunction!()
+                    ranFunctions.pre[animatedTextIndex] = true
+                }
+
+                // During animation
+                if (animatedText[animatedTextIndex].intraFunction != undefined && animatedText[animatedTextIndex].intraFunction![characterIndex] != undefined){
+                    animatedText[animatedTextIndex].intraFunction![characterIndex]()
+                    ranFunctions.intra[animatedTextIndex].add(characterIndex)
+                }
+
+                // At line end
+                if (characterIndex == animatedText[animatedTextIndex].message.length -1 && animatedText[animatedTextIndex].postFunction != undefined ){
+                    animatedText[animatedTextIndex].postFunction!()
+                    ranFunctions.post[animatedTextIndex] = true
+                }
+
+                textBox.current!.textContent += animatedText![animatedTextIndex].message.charAt(characterIndex)
+                characterIndex += 1
+                if (characterIndex >= animatedText![animatedTextIndex].message.length){
+                    clearInterval(animationID!)
+
+                    if (animatedTextIndex < animatedText!.length-1){
+                        characterIndex = 0
+                        animatedTextIndex+=1
+                        animationID = setInterval(messageWritingEffect, animatedText![animatedTextIndex].speed)
+                    }
+
+                }
+                animatedTextAnimationData.current! = {animationID, characterIndex, animatedTextIndex, ranFunctions}
+            }
+        }
+        textBox.current!.textContent = null
+        animatedTextAnimationData.current.animationID = setInterval(messageWritingEffect, animatedText[0].speed)
+
+        return () =>{
+            clearInterval(animatedTextAnimationData.current.animationID!)
+            animatedTextAnimationData.current = {
+                animationID: null,
+                characterIndex: 0,
+                animatedTextIndex: 0,
+                ranFunctions: {
+                    pre: {},
+                    intra: {},
+                    post: {}
+                }
+            }
+        }
+    },[animatedText])
 
     
     return (
