@@ -105,18 +105,19 @@ export function AnimatedTextBox ({animatedText, skipAnimation}:AnimatedTextBoxPr
 
                 textBox.current!.textContent += animatedText![animatedTextIndex].message.charAt(characterIndex)
                 characterIndex += 1
-                if (characterIndex >= animatedText![animatedTextIndex].message.length){
-                    clearInterval(animationID!)
-
-                    if (animatedTextIndex < animatedText!.length-1){
-                        characterIndex = 0
-                        animatedTextIndex+=1
-                        animationID = setInterval(messageWritingEffect, animatedText![animatedTextIndex].speed)
-                    }
-
-                }
-                animatedTextAnimationData.current! = {animationID, characterIndex, animatedTextIndex, ranFunctions}
             }
+            else{
+                clearInterval(animationID!)
+
+                if (animatedTextIndex < animatedText!.length-1){
+                    characterIndex = 0
+                    animatedTextIndex+=1
+                    animationID = setInterval(messageWritingEffect, animatedText![animatedTextIndex].speed)
+                }
+            }
+            
+            animatedTextAnimationData.current! = {animationID, characterIndex, animatedTextIndex, ranFunctions}
+
         }
         textBox.current!.textContent = null
         animatedTextAnimationData.current.animationID = setInterval(messageWritingEffect, animatedText[0].speed)

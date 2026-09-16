@@ -47,8 +47,7 @@ export function HelloWorldDialogueInitalizer(dialogID:string, runningAppsDispatc
                                 dialogue.update({soundEffect: SystemSounds.Special.OhMyGod})
                             }
                         },
-                        {message:" ", speed:1000},
-                        {message:"\n", speed:1},
+                        {message:"\n", speed:500},
                         {message:"Nah just kidding this is just my website", speed:50,
                             postFunction: ()=>{
                                     dialogue.update({
@@ -71,10 +70,10 @@ export function HelloWorldDialogueInitalizer(dialogID:string, runningAppsDispatc
                 2:{
                     title:"Cool",
                     animatedMessage:[
-                        {message:"Thanks. \n", speed: 50},
-                        {message:" ", speed: 2000},
-                        {message:"Hey,", speed: 50},
-                        {message:" ", speed: 500},
+                        {message:"Thanks.", speed: 50},
+                        {message:"\n", speed: 1000},
+                        {message:"Hey, ", speed: 50},
+                        {message:"", speed: 500},
                         {message:"how's your day going?", speed: 50},
                     ],
                     closeButton: {display:false},
