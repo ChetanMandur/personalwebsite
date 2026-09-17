@@ -63,7 +63,10 @@ export function HelloWorldDialogueInitalizer(dialogID:string, runningAppsDispatc
                     ],
                     closeButton: {display:false,text:"Ok.... well bye"},
                     soundEffect: SystemSounds.Win95.Default.Tada,
-                    skipSoundEffect: SystemSounds.Special.OOTDialogueNext,
+                    skipAnimationData:{
+                        enabled: true,
+                        sound:SystemSounds.Special.OOTDialogueNext
+                    },
                     options:{
                     } 
                 },
@@ -78,7 +81,10 @@ export function HelloWorldDialogueInitalizer(dialogID:string, runningAppsDispatc
                     ],
                     closeButton: {display:false},
                     soundEffect: SystemSounds.Win95.Default.Dings,
-                    skipSoundEffect: SystemSounds.Special.OOTDialogueNext,
+                    skipAnimationData:{
+                        enabled: true,
+                        sound:SystemSounds.Special.OOTDialogueNext
+                    },
                     options:{
                         "Going pretty well, thanks for asking man": ()=>{dialogue.goTo("3a")},
                         "It's going alright":()=>{dialogue.goTo("3b")},

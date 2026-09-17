@@ -56,13 +56,21 @@ export type SystemAlertProps = {
     {
         message: string,
         animatedMessage?: never,
-        skipSoundEffect?: never
+        skipAnimationData?: never
     } 
     | 
     {
         message?: never,
         animatedMessage: AnimatedText,
-        skipSoundEffect?: typeof SystemSounds|string
+        skipAnimationData: {
+            enabled: true,
+            sound?:typeof SystemSounds|string
+        }
+        |
+        {
+            enabled: false,
+            sound?: never
+        }
     }
 )
 
@@ -74,7 +82,7 @@ export type SystemAlertProps = {
  * @param props - Takes props listed in `SystemAlertProps`
  * @returns Component
  */
-export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton, image, soundEffect,skipSoundEffect, app_running_id}:SystemAlertProps & AppRunningID){
+export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton, image, soundEffect,skipAnimationData, app_running_id}:SystemAlertProps & AppRunningID){
     // options = {...options}
 
     // Used to check app props and update app properties
@@ -201,11 +209,12 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                 <div className="message" ref={messageRef}
                     style={((image !== null)) ? {}:{width:"100%", paddingLeft:"0%"}}
                     onClick={()=>{
-                        if (animatedMessage != undefined && !skipAnimation){
+                        if (animatedMessage != undefined && !skipAnimation && skipAnimationData != undefined && skipAnimationData.enabled){
                             setSkipAnimation(true)
-                            if (skipSoundEffect != undefined){
-                                runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:skipSoundEffect}})
+                            if (skipAnimationData.sound != undefined){
+                                runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:skipAnimationData.sound}})
                             }
+                            
                         }
                     }} 
                 >
