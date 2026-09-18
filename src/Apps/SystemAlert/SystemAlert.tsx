@@ -220,7 +220,22 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                 >
                     {
                         animatedMessage != undefined ? 
-                            <AnimatedTextBox animatedText={animatedMessage} skipAnimation={skipAnimation} /> 
+                            <AnimatedTextBox 
+                                animatedText={animatedMessage} 
+                                skipAnimation={skipAnimation}
+                                animationCompletedEvent={()=>{
+                                    console.log("animation complete")
+                                    runningAppsDispatch({
+                                        type:"UPDATE-APP-PROPS",
+                                        app_running_id,
+                                        props:{
+                                            skipAnimationData:{
+                                                enabled:false
+                                            }
+                                        }
+                                    })
+                                }}
+                            /> 
                             : 
                             message
                     }

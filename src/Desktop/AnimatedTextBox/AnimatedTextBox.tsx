@@ -23,10 +23,11 @@ export type AnimatedText = {
 
 type AnimatedTextBoxProps = {
     animatedText: AnimatedText
-    skipAnimation?: boolean 
+    skipAnimation?: boolean,
+    animationCompletedEvent?: ()=>undefined
 }
 
-export function AnimatedTextBox ({animatedText, skipAnimation}:AnimatedTextBoxProps){
+export function AnimatedTextBox ({animatedText, skipAnimation,animationCompletedEvent}:AnimatedTextBoxProps){
 
     const animatedTextAnimationData = useRef<AnimatedTextAnimationData>(
         {
@@ -114,6 +115,11 @@ export function AnimatedTextBox ({animatedText, skipAnimation}:AnimatedTextBoxPr
                     animatedTextIndex+=1
                     animationID = setInterval(messageWritingEffect, animatedText![animatedTextIndex].speed)
                 }
+                else{
+                    if (animationCompletedEvent){
+                        animationCompletedEvent()
+                    }
+                }
             }
             
             animatedTextAnimationData.current! = {animationID, characterIndex, animatedTextIndex, ranFunctions}
@@ -135,7 +141,7 @@ export function AnimatedTextBox ({animatedText, skipAnimation}:AnimatedTextBoxPr
                 }
             }
         }
-    },[animatedText])
+    },[animatedText, animationCompletedEvent])
 
     
     return (
