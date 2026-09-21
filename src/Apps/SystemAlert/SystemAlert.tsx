@@ -1,4 +1,4 @@
-import { useContext, useEffect, useLayoutEffect, useRef, useState} from "react"
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState} from "react"
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext"
 import "./SystemAlert.css"
 import SystemSounds from "../../SystemSounds"
@@ -96,6 +96,20 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
     const audioRef = useRef<HTMLAudioElement>(null)
 
     const [skipAnimation, setSkipAnimation] = useState(false)
+
+    const animationCompletedEvent = useCallback(()=>{
+        console.log("animation complete")
+        runningAppsDispatch({
+            type:"UPDATE-APP-PROPS",
+            app_running_id,
+            props:{
+                skipAnimationData:{
+                    enabled:false
+                }
+            }
+        })
+        return undefined
+    },[app_running_id, runningAppsDispatch])
 
     // Used to resize the app based on the size of its content
     // Run each time the props are changed
@@ -223,18 +237,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                             <AnimatedTextBox 
                                 animatedText={animatedMessage} 
                                 skipAnimation={skipAnimation}
-                                animationCompletedEvent={()=>{
-                                    console.log("animation complete")
-                                    runningAppsDispatch({
-                                        type:"UPDATE-APP-PROPS",
-                                        app_running_id,
-                                        props:{
-                                            skipAnimationData:{
-                                                enabled:false
-                                            }
-                                        }
-                                    })
-                                }}
+                                animationCompletedEvent={animationCompletedEvent}
                             /> 
                             : 
                             message
