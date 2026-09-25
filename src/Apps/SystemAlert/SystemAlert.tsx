@@ -111,6 +111,22 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
         return undefined
     },[app_running_id, runningAppsDispatch])
 
+    const animatedTextAddedEvent = useCallback(()=>{
+        const scrollHeight = messageRef.current!.scrollHeight
+        const scrollTop = messageRef.current!.scrollTop
+        const scrollBottom = (scrollHeight - scrollTop)
+        const clientHeight = messageRef.current!.clientHeight
+
+        const bottom = scrollBottom - clientHeight
+
+
+        if (bottom <= clientHeight*0.3){
+            messageRef.current!.scrollTop = messageRef.current!.scrollHeight
+        }
+        
+        return undefined
+    },[])
+
     // Used to resize the app based on the size of its content
     // Run each time the props are changed
     useLayoutEffect(()=>{
@@ -238,6 +254,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                                 animatedText={animatedMessage} 
                                 skipAnimation={skipAnimation}
                                 animationCompletedEvent={animationCompletedEvent}
+                                animatedTextAddedEvent={animatedTextAddedEvent}
                             /> 
                             : 
                             message
