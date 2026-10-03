@@ -111,21 +111,6 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
         return undefined
     },[app_running_id, runningAppsDispatch])
 
-    const animatedTextAddedEvent = useCallback(()=>{
-        const scrollHeight = messageRef.current!.scrollHeight
-        const scrollTop = messageRef.current!.scrollTop
-        const scrollBottom = (scrollHeight - scrollTop)
-        const clientHeight = messageRef.current!.clientHeight
-
-        const bottom = scrollBottom - clientHeight
-
-
-        if (bottom <= clientHeight*0.3){
-            messageRef.current!.scrollTop = messageRef.current!.scrollHeight
-        }
-        
-        return undefined
-    },[])
 
     // Used to resize the app based on the size of its content
     // Run each time the props are changed
@@ -236,7 +221,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                             />
                         </div> 
                 }
-                <div className="message" ref={messageRef}
+                <div className="message-container" 
                     style={((image !== null)) ? {}:{width:"100%", paddingLeft:"0%"}}
                     onClick={()=>{
                         if (animatedMessage != undefined && !skipAnimation && skipAnimationData != undefined && skipAnimationData.enabled){
@@ -254,10 +239,12 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                                 animatedText={animatedMessage} 
                                 skipAnimation={skipAnimation}
                                 animationCompletedEvent={animationCompletedEvent}
-                                animatedTextAddedEvent={animatedTextAddedEvent}
+                                forwardedRef={messageRef}
                             /> 
                             : 
-                            message
+                            <div className="message" ref={messageRef}>
+                                {message}
+                            </div>
                     }
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import "./AnimatedTextBox.css"
-import { useEffect, useRef } from "react"
+import { ForwardedRef, forwardRef, useCallback, useEffect, useRef } from "react"
 
 
 type AnimatedTextAnimationData = {
@@ -25,10 +25,11 @@ type AnimatedTextBoxProps = {
     animatedText: AnimatedText
     skipAnimation?: boolean,
     animationCompletedEvent?: ()=>undefined,
-    animatedTextAddedEvent?: ()=>undefined,
+    forwardedRef?: ForwardedRef<HTMLDivElement>,
 }
 
-export function AnimatedTextBox ({animatedText, skipAnimation,animationCompletedEvent, animatedTextAddedEvent}:AnimatedTextBoxProps){
+// Once I update to React 19+, there will be signs (aka goodbye forwardRef arrow-function component)
+export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animationCompletedEvent, forwardedRef}:AnimatedTextBoxProps)=>{
 
     const animatedTextAnimationData = useRef<AnimatedTextAnimationData>(
         {
@@ -42,7 +43,24 @@ export function AnimatedTextBox ({animatedText, skipAnimation,animationCompleted
             }
         }
     )
+
     const textBox = useRef<HTMLDivElement>(null)
+
+    const animatedTextAddedEvent = useCallback((force:boolean)=>{
+        const scrollHeight = textBox.current!.scrollHeight
+        const scrollTop = textBox.current!.scrollTop
+        const scrollBottom = (scrollHeight - scrollTop)
+        const clientHeight = textBox.current!.clientHeight
+
+        const bottom = scrollBottom - clientHeight
+
+
+        if (bottom <= clientHeight*0.3 || force){
+            textBox.current!.scrollTop = textBox.current!.scrollHeight
+        }
+        
+        return undefined
+    },[])
     
     useEffect(()=>{
         if (skipAnimation){
@@ -68,8 +86,11 @@ export function AnimatedTextBox ({animatedText, skipAnimation,animationCompleted
                 fullMessage += partMessage.message
             }
             textBox.current!.textContent = fullMessage
+            if (animatedTextAddedEvent){
+                animatedTextAddedEvent(true)
+            }
         }
-    },[animatedText,skipAnimation])
+    },[animatedText, animatedTextAddedEvent, skipAnimation])
 
     useEffect(()=>{
         // Filling in `ranFunctions`
@@ -108,7 +129,7 @@ export function AnimatedTextBox ({animatedText, skipAnimation,animationCompleted
                 textBox.current!.textContent += animatedText![animatedTextIndex].message.charAt(characterIndex)
                 characterIndex += 1
                 if (animatedTextAddedEvent){
-                    animatedTextAddedEvent()
+                    animatedTextAddedEvent(false)
                 }
             }
             else{
@@ -145,10 +166,12 @@ export function AnimatedTextBox ({animatedText, skipAnimation,animationCompleted
                 }
             }
         }
-    },[animatedText, animationCompletedEvent])
+    },[animatedText, animatedTextAddedEvent, animationCompletedEvent])
 
     
     return (
-        <div className="AnimatedTextBox" ref={textBox}/>
+        <div className="animated-text-box" ref={forwardedRef}>
+            <div className="animated-text" ref={textBox}/>
+        </div>
     )
-}
+})
