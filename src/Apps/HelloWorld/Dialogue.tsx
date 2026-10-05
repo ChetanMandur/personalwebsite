@@ -64,8 +64,8 @@ export function HelloWorldDialogueInitalizer(dialogID:string, runningAppsDispatc
                     closeButton: {display:false,text:"Ok.... well bye"},
                     soundEffect: SystemSounds.Win95.Default.Tada,
                     skipAnimationData:{
-                        enabled: true,
-                        sound:SystemSounds.Special.OOTDialogueNext
+                        enabled: false,
+                        // sound:SystemSounds.Special.OOTDialogueNext
                     },
                     options:{
                     } 

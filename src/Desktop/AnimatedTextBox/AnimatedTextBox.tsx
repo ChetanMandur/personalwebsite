@@ -55,7 +55,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
         const bottom = scrollBottom - clientHeight
 
 
-        if (bottom <= clientHeight*0.3 || force){
+        if (bottom <= clientHeight*0.22 || force){
             textBox.current!.scrollTop = textBox.current!.scrollHeight
         }
         
