@@ -8,75 +8,136 @@ import { AnimatedText, AnimatedTextBox } from "../../Desktop/AnimatedTextBox/Ani
  * Typing used to represent the button options available in the alert
  * The information is structured in a dictionary style, and contains:
  * - `key` 
+ *   - Value also used as the buttons text
  *   - Represented as a string
  *   - Used to distinguish each button
- *   - Value also used as the buttons text
  * - `value`
- *   - Represented as an arrow function with a void return
  *   - Called when button is pressed
+ *   - Represented as an arrow function with a void return
  */
 export type SystemAlertOptions = {
     [key:string]: () => (void)
 }
 
 /**
- * Typing used to determine properties of the close button  
- * The information contains:
- * -  `display` - A boolean to determine whether or not the button should appear
- * - `text` - An optional string variable for the text on the close button, used if you want the button to have different text
+ * Typing used to determine properties of the close button 
  */
 export type SystemAlertCloseButton = {
+    /** Determines whether or not the button should appear */
     display: boolean,
+    /** Used to replace the text (ie. instead of 'Close', have it say something else) */
     text?: string
 }
 
 /**
- * Typing used to represent all the different props used by the component  
- * The information contains:  
- * - `title` - An optional string variable for the alert's title 
- * - `titleDetails` - An optional string variable for the alert's title detail
- * - `message` - A string for the alert's message, ie the text being displayed
- * - `options` - An object used to hold the different buttons/options used by the alert
- * - `closeButton` - An object used to hold the properties of the close button
- * - `soundEffect` - A variable used to indicate the sound effect used by the alert
- *   - Can either be one of the predefined sounds in 'SystemSounds' or just a URL in string format
+ * Typing used to represent all the different props used by the `SystemAlert` component  
  */
 export type SystemAlertProps = {
-    title?: "Warning" | "Error" | string & {}, 
+    /** 
+     * An optional string variable to define the alerts running app title  
+     * Can be any `string` value, but the other pre-defined options are `"Warning"` and `"Error"`  
+     * By default, the title is `"System Alert"`
+    */
+    title?: "Warning" | "Error" | string & {},
+    
+    /** An optional string value to define the alerts running app title details 
+     * By default, there are no title details
+    */
     titleDetails?: string,
+
+    /** 
+     * Provides the additional options/buttons (besides the built-in 'Close' button)  
+     * If you want no aditional options, just pass an empty object
+    */
     options: SystemAlertOptions,
+
+    /** 
+     * Used to define whether or not the 'Close' button should be displayed  
+     * Also allows for the definiton of another text to use rather than 'Close'
+    */
     closeButton: SystemAlertCloseButton,
+
+    /**
+     * An optional parameter to define the sound effect played at the begining of the alert  
+     * If the sound is given as a `string` it must be in a correct `URL` or `file path` format (both needing to point to a direct sound file link)  
+     * The sound can also be chosen using the `SystemSounds` built-in object (as it is just a 'prettier' way to access the file path to each of the sounds)  
+     * For no sound to be played, the value must be `null`
+     * If the value is `undefined` (ie. not specified), the sound will default to `SystemSounds.Win95.Default.Chord`
+    */
     soundEffect?: typeof SystemSounds|string|null,
+
+    /**
+     * An optional parameter used to define the image shown alongside the message  
+     * If the parameter is `null`, no image will be displayed and the message will take the entire width  
+     * If the parameter is `undefined`, the image will be displayed as the default `Error` image  
+     * If a image is desired to be given, it must be given in proper object format of `{content, style?}`
+    */
     image?: null | {
+        /** 
+         * If a `string` it must be in a correct `URL` or `file path` format (both needing to point to a direct image file link)  
+         * Two built-in options, of 'Warning' and 'Error', are given
+        */
         content: string & {} | "Warning" | "Error",
+
+        /**
+         * An optional parameter to independently style the `<img>` element that houses the image  
+         * Takes any `React.CSSProperties` and also allows for the ability for `'CSS Custom Properties'` (aka CSS Variables) to be: created, edited, and deleted/null-ified
+        */
         style?: React.CSSProperties & { [key: `--${string}`]: string | number | undefined };
 
     } 
-} & (
+} 
+& 
+(
+    // For non-animated messages //
     {
+        /** The message that will appear in the alert */
         message: string,
+        
+        /**The animated message that will appear in the alert*/
         animatedMessage?: never,
+
+        /**
+         * Whether or not the animated message should be skippable  
+         * When enabled, an optional parameter becomes avaiable that defines the sound played when te animation is skiped
+        */
         skipAnimationData?: never
     } 
     | 
+    // For animated messages //
     {
+        // This variable will never be passed alongside an animated message
         message?: never,
+
+        /**The animated message that will appear in the alert*/
         animatedMessage: AnimatedText,
-        skipAnimationData: {
-            enabled: true,
-            sound?:typeof SystemSounds|string
-        }
-        |
-        {
-            enabled: false,
-            sound?: never
-        }
+
+        /**
+         * Whether or not the animated message should be skippable  
+         * When enabled, an optional parameter becomes avaiable that defines the sound played when te animation is skiped
+        */
+        skipAnimationData: 
+        (
+            {
+                enabled: true,
+
+                /**
+                 * Sound effect to be played when the animation is skipped  
+                 * Can be given as a `string` (in the format of a `URL` or a `file path`) or as a value from `SystemSounds`
+                */
+                sound?:typeof SystemSounds|string
+            }
+            |
+            {
+                enabled: false,
+                sound?: never
+            }
+        )
     }
 )
 
 /**
- * App used to display alerts
- * 
+ * App used to display alerts  
  * Meant to be used in place of the browser's native `alert()` call
  * 
  * @param props - Takes props listed in `SystemAlertProps`
@@ -95,10 +156,13 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
     // Used to play/restart the sound
     const audioRef = useRef<HTMLAudioElement>(null)
 
+    // State to handle if animation has been skipped
     const [skipAnimation, setSkipAnimation] = useState(false)
 
+
+    // Event handler used when animation is finished
+        // Once tha animation is finished, disable the ability to skip the animation
     const animationCompletedEvent = useCallback(()=>{
-        console.log("animation complete")
         runningAppsDispatch({
             type:"UPDATE-APP-PROPS",
             app_running_id,
@@ -114,6 +178,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
 
     // Used to resize the app based on the size of its content
     // Run each time the props are changed
+    // (This is such a mess)
     useLayoutEffect(()=>{
         const current_app_properties = runningAppsData[app_running_id]
 
@@ -122,7 +187,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
         const max_width = window.innerWidth * 0.6
         const max_height = window.innerHeight * 0.3
 
-
+        // Grab the width and height from the current running app properties
         let width:number = current_app_properties.width
         let height:number = current_app_properties.height 
 
@@ -164,6 +229,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
 
     // Used to handle any changes to the props that don't require info on the contents size
     useEffect(()=>{
+        // If a soundEffect exists
         if (soundEffect !== null){
             // Plays audio (resets time to 0 to ensure audio is played when consecutive alerts are quick in a row)
             audioRef.current!.currentTime = 0
@@ -197,43 +263,72 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
     }
     
     return (
+        // Main container for the `SystemAlert` component
         <div className="system-alert">
+            {/* <audio> tag used for all sound effects */}
             <audio 
                 ref={audioRef}
                 hidden={true}
+                // If `soundEffect` is null, no sound
+                // If `soundEffect` is undefined, use default sound
+                // If `soundEffect` exists, use that
                 src={soundEffect !== null ? (soundEffect?.toString() ?? SystemSounds.Win95.Default.Chord) : undefined}
                 preload="auto"
                 autoPlay
             />
+            
+            {/* Container where the image and message reside */}
             <div className="content">
+                {/* Image */}
                 {
+                    // Render the image if it IS NOT null
                     image !== null && 
                         <div className="alert-image">
                             <img 
-                                src={image?.content == "Warning" ? 
-                                    ("https://www.svgrepo.com/show/486907/warning.svg") : (
-                                        (image?.content == "Error" || image == undefined) ? 
-                                        ("https://www.svgrepo.com/show/486662/error.svg") : (image.content)
-                                    )
+                                src={
+                                    // If the image is the built-in "Warning"
+                                    image?.content == "Warning" ? 
+                                        ("https://www.svgrepo.com/show/486907/warning.svg") 
+                                        : 
+                                        (
+                                            // If the image is the built-in "Error" or undefined
+                                            (image?.content == "Error" || image == undefined) ? 
+                                                ("https://www.svgrepo.com/show/486662/error.svg")
+                                                :
+                                                // If the image is neither the built-in options or undefined, it must be unique. Use it.
+                                                (image.content)
+                                        )
                                 }
                                 style={image?.style ?? undefined}
                                 alt="" 
                             />
                         </div> 
                 }
+
+                {/* Message */}
                 <div className="message-container" 
-                    style={((image !== null)) ? {}:{width:"100%", paddingLeft:"0%"}}
+                    style={
+                        // If the image is null, give the message the full width
+                        (image !== null) ? 
+                            {}
+                            :
+                            {width:"100%", paddingLeft:"0%"}
+                    }
                     onClick={()=>{
+                        // Skips animation if:
+                            // an animated message exists, animation skip data exists, animation skipping is enabled, and if the animation already hasn't been skipped
                         if (animatedMessage != undefined && !skipAnimation && skipAnimationData != undefined && skipAnimationData.enabled){
                             setSkipAnimation(true)
+
+                            // If there exists skip animation sound, play it
                             if (skipAnimationData.sound != undefined){
                                 runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:skipAnimationData.sound}})
                             }
-                            
                         }
                     }} 
                 >
-                    {
+                    {   
+                        // Determines whether to render an animated message or a stagnant message
                         animatedMessage != undefined ? 
                             <AnimatedTextBox 
                                 animatedText={animatedMessage} 
@@ -248,8 +343,10 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                     }
                 </div>
             </div>
+            {/* Container where the option buttons reside */}
             <div className="options" ref={optionsRef}>
                 {
+                    // For each option, make a button & apply the corrent onClick event handlers
                     Object.entries(options).map((option)=>{
                         return(
                             <div className="option common-border" 

@@ -1,15 +1,4 @@
-// export enum SystemSounds {
-//     Win95DefaultChimes = "./sounds/Win95Sounds/Default/CHIMES.mp3",
-//     Win95DefaultChord = "./sounds/Win95Sounds/Default/CHORD.mp3",
-//     Win95DefaultDings = "./sounds/Win95Sounds/Default/DING.mp3",
-//     Win95DefaultTada = "./sounds/Win95Sounds/Default/TADA.mp3",
-
-//     FunnyBruh = "./sounds/Funny/bruh.mp3",
-//     FunnyOhMyGod = "./sounds/Funny/ohmygod.mp3",
-//     FunnyVineBoom = "./sounds/Funny/vineboom.mp3",
-
-// }
-
+/** Microsoft, please don't yell at me. You guys were cooking with these sounds*/
 const Win95 = {
     Default : {
         Chimes:"./sounds/Win95Sounds/Default/CHIMES.mp3",
@@ -19,6 +8,7 @@ const Win95 = {
     }
 }
 
+/** Funny ha ha */
 const Special = {
     Bruh:"./sounds/Funny/bruh.mp3" ,
     OhMyGod: "./sounds/Funny/ohmygod.mp3",
@@ -31,6 +21,10 @@ const Special = {
     OOTDialogueNext: "./sounds/Extra/OOTDialogueNext.mp3"
 }
 
+/**
+ * Built-in sounds that are available to be used wherever in place for the `src` parameter for `<audio>` tags  
+ * (Or wherever else allows for file paths to `.mp3` files) 
+*/
 const SystemSounds = {
     Win95,
     Special
