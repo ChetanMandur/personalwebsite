@@ -24,7 +24,7 @@ export type SystemAlertOptions = {
  */
 export type SystemAlertCloseButton = {
     /** Determines whether or not the button should appear */
-    display: boolean,
+    enabled: boolean,
     /** Used to replace the text (ie. instead of 'Close', have it say something else) */
     text?: string
 }
@@ -252,7 +252,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
 
 
     // Adds a 'close' button if props ask for it
-    if (closeButton.display){
+    if (closeButton.enabled){
             // If alternative text is given for the close button, use it, if not, use just 'Close'
             options[(closeButton.text ?? "Close")] = () =>{
                 runningAppsDispatch({type:"DELETE", app_running_id})

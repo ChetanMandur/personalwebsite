@@ -110,7 +110,6 @@ export default class DialogueMaker {
             titleDetails: undefined,
             animatedMessage:undefined,
             soundEffect:undefined,
-            skipAnimationData:undefined,
             image: undefined,
             ...props
         }
@@ -166,7 +165,7 @@ export default class DialogueMaker {
                     titleDetails: "Chetan so stupid",
                     message: "Dialogue path doesn't exist!\nIf you see this, that means Chetan messed up",
                     closeButton:{
-                        display: true,
+                        enabled: true,
                         text: "Thanks a lot, Chetan"
                     }
                 } as SystemAlertProps
