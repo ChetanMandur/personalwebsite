@@ -94,14 +94,9 @@ export type SystemAlertProps = {
         /** The message that will appear in the alert */
         message: string,
         
-        /**The animated message that will appear in the alert*/
+        /** Data for the animated message that will appear in the alert */
         animatedMessage?: never,
 
-        /**
-         * Whether or not the animated message should be skippable  
-         * When enabled, an optional parameter becomes avaiable that defines the sound played when te animation is skiped
-        */
-        skipAnimationData?: never
     } 
     | 
     // For animated messages //
@@ -109,30 +104,32 @@ export type SystemAlertProps = {
         // This variable will never be passed alongside an animated message
         message?: never,
 
-        /**The animated message that will appear in the alert*/
-        animatedMessage: AnimatedText,
+        /** Data for the animated message that will appear in the alert */
+        animatedMessage:{
+            /**The animated message that will appear in the alert*/
+            message: AnimatedText,
 
-        /**
-         * Whether or not the animated message should be skippable  
-         * When enabled, an optional parameter becomes avaiable that defines the sound played when te animation is skiped
-        */
-        skipAnimationData: 
-        (
-            {
-                enabled: true,
+            /**
+             * Whether or not the animated message should be skippable  
+             * When enabled, an optional parameter becomes avaiable that defines the sound played when te animation is skiped
+            */
+            skip: (
+                {
+                    enabled: true,
 
-                /**
-                 * Sound effect to be played when the animation is skipped  
-                 * Can be given as a `string` (in the format of a `URL` or a `file path`) or as a value from `SystemSounds`
-                */
-                sound?:typeof SystemSounds|string
-            }
-            |
-            {
-                enabled: false,
-                sound?: never
-            }
-        )
+                    /**
+                     * Sound effect to be played when the animation is skipped  
+                     * Can be given as a `string` (in the format of a `URL` or a `file path`) or as a value from `SystemSounds`
+                    */
+                    sound?:typeof SystemSounds|string
+                }
+                |
+                {
+                    enabled: false,
+                    sound?: never
+                }
+            )
+        }
     }
 )
 
@@ -143,7 +140,7 @@ export type SystemAlertProps = {
  * @param props - Takes props listed in `SystemAlertProps`
  * @returns Component
  */
-export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton, image, soundEffect,skipAnimationData, app_running_id}:SystemAlertProps & AppRunningID){
+export default function SystemAlert({title,titleDetails, message,animatedMessage ,options, closeButton, image, soundEffect, app_running_id}:SystemAlertProps & AppRunningID){
     // options = {...options}
 
     // Used to check app props and update app properties
@@ -317,12 +314,12 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                     onClick={()=>{
                         // Skips animation if:
                             // an animated message exists, animation skip data exists, animation skipping is enabled, and if the animation already hasn't been skipped
-                        if (animatedMessage != undefined && !skipAnimation && skipAnimationData != undefined && skipAnimationData.enabled){
+                        if (animatedMessage != undefined && !skipAnimation && animatedMessage.skip != undefined && animatedMessage.skip.enabled){
                             setSkipAnimation(true)
 
                             // If there exists skip animation sound, play it
-                            if (skipAnimationData.sound != undefined){
-                                runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:skipAnimationData.sound}})
+                            if (animatedMessage.skip.sound != undefined){
+                                runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:animatedMessage.skip.sound}})
                             }
                         }
                     }} 
@@ -331,7 +328,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                         // Determines whether to render an animated message or a stagnant message
                         animatedMessage != undefined ? 
                             <AnimatedTextBox 
-                                animatedText={animatedMessage} 
+                                animatedText={animatedMessage.message} 
                                 skipAnimation={skipAnimation}
                                 animationCompletedEvent={animationCompletedEvent}
                                 forwardedRef={messageRef}

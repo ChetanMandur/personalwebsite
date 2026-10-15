@@ -1,15 +1,18 @@
 import { RunningAppsReducerAction } from "../../Desktop/Contexts/RunningAppsContext";
 import SystemSounds from "../../SystemSounds";
 import DialogueMaker from "../SystemAlert/DialogueMaker";
-
-// import { SystemAlertProps } from "../SystemAlert/SystemAlert";
-
-export function HelloWorldDialogueInitalizer(dialogID:string, runningAppsDispatch: (value: RunningAppsReducerAction) => void){
+/**
+ * Generates the `DialogueMaker` for the `HelloWorld` app
+ * @param dialogID 
+ * @param runningAppsDispatch 
+ * @returns 
+ */
+export function HelloWorldDialogueInitalizer(dialogueID:string, runningAppsDispatch: (value: RunningAppsReducerAction) => void){
     const dialogue = new DialogueMaker(
         {
-            dialogID: dialogID,
+            dialogueID: dialogueID,
             runningAppsDispatch: runningAppsDispatch,
-            dialogueOptions:{
+            dialoguePaths:{
                 0:{
                     message:"Some elements take longer for a tooltip to appear \nHover around and be patient my child",
                     closeButton: {display:true, text:"Okie Dokie"},
@@ -33,58 +36,60 @@ export function HelloWorldDialogueInitalizer(dialogID:string, runningAppsDispatc
                         content:"https://media1.tenor.com/m/nAYI--YdBzIAAAAd/fell.gif",
                         style:{borderRadius:"100%", "--size":"6vh"}
                     },
-                    animatedMessage:[
-                        {message:"My world", speed:200 , 
-                            preFunction:()=>(console.log("hi")), 
-                            intraFunction:{
-                                3: ()=>{
-                                    console.log("whaaa");
-                                    dialogue.update({soundEffect:SystemSounds.Special.VineBoom})
+                    animatedMessage:{
+                        message: [
+                            {message:"My world", speed:200 , 
+                                preFunction:()=>(console.log("hi")), 
+                                intraFunction:{
+                                    3: ()=>{
+                                        console.log("whaaa");
+                                        dialogue.update({soundEffect:SystemSounds.Special.VineBoom})
+                                    }
+                                },
+                                postFunction:()=>{
+                                    console.log("bruh");
+                                    dialogue.update({soundEffect: SystemSounds.Special.OhMyGod})
                                 }
                             },
-                            postFunction:()=>{
-                                console.log("bruh");
-                                dialogue.update({soundEffect: SystemSounds.Special.OhMyGod})
-                            }
-                        },
-                        {message:"\n", speed:500},
-                        {message:"Nah just kidding this is just my website", speed:50,
-                            postFunction: ()=>{
-                                    dialogue.update({
-                                        soundEffect: SystemSounds.Special.Bruh,
-                                        closeButton: {display:true,text:"Ok.... well bye"},
-                                        options:{
-                                            "Cool": ()=>{dialogue.goTo(2)}
-                                        } 
-                                    })
-                            }
+                            {message:"\n", speed:500},
+                            {message:"Nah just kidding this is just my website", speed:50,
+                                postFunction: ()=>{
+                                        dialogue.update({
+                                            soundEffect: SystemSounds.Special.Bruh,
+                                            closeButton: {display:true,text:"Ok.... well bye"},
+                                            options:{
+                                                "Cool": ()=>{dialogue.goTo(2)}
+                                            } 
+                                        })
+                                }
 
-                        },
-                    ],
+                            },
+                        ],
+                        skip:{
+                            enabled: true
+                        }
+                    },
                     closeButton: {display:false,text:"Ok.... well bye"},
                     soundEffect: SystemSounds.Win95.Default.Tada,
-                    skipAnimationData:{
-                        enabled: false,
-                        // sound:SystemSounds.Special.OOTDialogueNext
-                    },
-                    options:{
-                    } 
+                    options:{} 
                 },
                 2:{
                     title:"Cool",
-                    animatedMessage:[
-                        {message:"Thanks.", speed: 50},
-                        {message:"\n", speed: 1000},
-                        {message:"Hey, ", speed: 50},
-                        {message:"", speed: 500},
-                        {message:"how's your day going?", speed: 50},
-                    ],
+                    animatedMessage:{
+                        message: [
+                            {message:"Thanks.", speed: 50},
+                            {message:"\n", speed: 1000},
+                            {message:"Hey, ", speed: 50},
+                            {message:"", speed: 500},
+                            {message:"how's your day going?", speed: 50},
+                        ],
+                        skip:{
+                            enabled: true,
+                            sound:SystemSounds.Special.OOTDialogueNext
+                        }
+                    },
                     closeButton: {display:false},
                     soundEffect: SystemSounds.Win95.Default.Dings,
-                    skipAnimationData:{
-                        enabled: true,
-                        sound:SystemSounds.Special.OOTDialogueNext
-                    },
                     options:{
                         "Going pretty well, thanks for asking man": ()=>{dialogue.goTo("3a")},
                         "It's going alright":()=>{dialogue.goTo("3b")},
