@@ -2,12 +2,12 @@ import "./AnimatedTextBox.css"
 import { ForwardedRef, forwardRef, useCallback, useEffect, useRef } from "react"
 
 /** 
- * Typing for the prop `animatedText`; Provides the format for which animated texts are defined
+ * The format/structure for each segment/part of an {@link AnimatedText}
  *
  * Essentially, an `AnimatedText` is an array of 'sections', with all sections being part of a complete message.
  * This allows for different speeds at different parts of the message 
  */
-export type AnimatedText = {
+export type AnimatedTextSegment = {
     /** The full message to be written for the current section */
     message:string, 
     /** The speed at which each character is written, units is in `ms` */
@@ -18,7 +18,12 @@ export type AnimatedText = {
     intraFunction?: {[index:number]: () => (void)} // Run midway thru animation, at a specfic character index
     /** Function that is run AFTER the final character is written to the screen (ie. function that runs at the end of the section)*/
     postFunction?: () => (void) //Run after animation ends for the line
-}[] 
+}
+
+/** 
+ * Typing for the prop `animatedText`; Provides the format for which animated texts are defined
+ */
+export type AnimatedText = AnimatedTextSegment[]
 
 /** Props used by `AnimatedTextBox` */
 type AnimatedTextBoxProps = {
