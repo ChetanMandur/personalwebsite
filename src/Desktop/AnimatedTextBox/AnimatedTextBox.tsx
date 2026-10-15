@@ -104,7 +104,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
      * The user is able to break out by scrolling up by a fixed amount
      * @param force - Used to bypass check to see if user has passed the 'break' threshold; forces user to the bottom at every text
      */
-    const animatedTextAddedEvent = useCallback((force:boolean)=>{
+    const stickyScrollDown = useCallback((force:boolean)=>{
         // Grab `scrollHeight`, `scrollTop`, and `clientHeight` from the text box
         const scrollHeight = textBox.current!.scrollHeight
         const scrollTop = textBox.current!.scrollTop
@@ -179,12 +179,12 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
             // Once all parts have been stitched together, apply it to the element
             textBox.current!.textContent = fullMessage
 
-            // Trigger the `animatedTextAddedEvent`
-            if (animatedTextAddedEvent){
-                animatedTextAddedEvent(true)
+            // Trigger the `stickyScrollDown`
+            if (stickyScrollDown){
+                stickyScrollDown(true)
             }
         }
-    },[animatedText, animatedTextAddedEvent, skipAnimation])
+    },[animatedText, stickyScrollDown, skipAnimation])
 
 
     /**
@@ -252,9 +252,9 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
                 // Increase the `characterIndex` value, going to the next 
                 characterIndex += 1
 
-                // Fire the `animatedTextAddedEvent`
-                if (animatedTextAddedEvent){
-                    animatedTextAddedEvent(false)
+                // Fire the `stickyScrollDown`
+                if (stickyScrollDown){
+                    stickyScrollDown(false)
                 }
             }
 
@@ -316,7 +316,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
                 }
             }
         }
-    },[animatedText, animatedTextAddedEvent, animationCompletedEvent])
+    },[animatedText, stickyScrollDown, animationCompletedEvent])
 
     
     return (
