@@ -331,6 +331,9 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                                 animatedText={animatedMessage.message} 
                                 skipAnimation={skipAnimation}
                                 animationCompletedEvent={animationCompletedEvent}
+                                // animatedTextAddedEvent={(animatedTextIndex, characterIndex)=>{
+                                //     console.log("joe mama!", animatedTextIndex, characterIndex)
+                                // }}
                                 forwardedRef={messageRef}
                             /> 
                             : 

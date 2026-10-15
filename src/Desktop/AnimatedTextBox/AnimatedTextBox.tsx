@@ -42,6 +42,14 @@ type AnimatedTextBoxProps = {
     */
     animationCompletedEvent?: ()=>undefined,
 
+    /**
+     * Function to be run at each character placed in the animated message
+     * @param animatedTextIndex - The current `section` the animation is on
+     * @param characterIndex - The current `character` within the section the animation is on
+     * @returns 
+     */
+    animatedTextAddedEvent?: (animatedTextIndex:number, characterIndex:number)=>void
+
     /** OPTIONAL: Allows for parent to hook into the element  
      * Only exposes the parent/encapsulation element
      */
@@ -79,7 +87,7 @@ type AnimatedTextAnimationData = {
  * @returns `AnimatedTextBox` component
  */
 // Once I update to React 19+, there will be signs (aka goodbye forwardRef arrow-function component)
-export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animationCompletedEvent, forwardedRef}:AnimatedTextBoxProps)=>{
+export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animationCompletedEvent, animatedTextAddedEvent, forwardedRef}:AnimatedTextBoxProps)=>{
 
     /** Data used to determine current animation data */
     const animatedTextAnimationData = useRef<AnimatedTextAnimationData>(
@@ -248,6 +256,11 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
 
                 // Append the character residing at the current `characterIndex`
                 textBox.current!.textContent += animatedText![animatedTextIndex].message.charAt(characterIndex)
+
+                // Trigger the `animationTextAddedEvent`
+                if (animatedTextAddedEvent){
+                    animatedTextAddedEvent(animatedTextAnimationData!.current.animatedTextIndex, animatedTextAnimationData!.current.characterIndex)
+                }
 
                 // Increase the `characterIndex` value, going to the next 
                 characterIndex += 1
