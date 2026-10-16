@@ -4,12 +4,12 @@ import { ForwardedRef, forwardRef, useCallback, useEffect, useRef } from "react"
 /** 
  * The format/structure for each segment/part of an {@link AnimatedText}
  *
- * Essentially, an `AnimatedText` is an array of 'sections', with all sections being part of a complete message.
- * This allows for different speeds at different parts of the message 
+ * Essentially, an `AnimatedText` is an array of 'sections', with all sections being part of a complete text.
+ * This allows for different speeds at different parts of the text 
  */
 export type AnimatedTextSegment = {
-    /** The full message to be written for the current section */
-    message:string, 
+    /** The full text to be written for the current section */
+    text:string, 
     /** The speed at which each character is written, units is in `ms` */
     speed:number,
     /** Function that is run BEFORE the first character is written to the screen (ie. function that runs at the start of the section) */
@@ -43,7 +43,7 @@ type AnimatedTextBoxProps = {
     animationCompletedEvent?: ()=>undefined,
 
     /**
-     * Function to be run at each character placed in the animated message
+     * Function to be run at each character placed in the animated text
      * @param animatedTextIndex - The current `section` the animation is on
      * @param characterIndex - The current `character` within the section the animation is on
      * @returns 
@@ -65,7 +65,7 @@ type AnimatedTextAnimationData = {
     animationID: number|null,
     /** The current index of the `AnimatedText` Prop (ie. the current 'part' in the `AnimatedText` being animated) */
     animatedTextIndex: number,
-    /** The current character index being 'typed' (ie. the index of the `message` string within the current `AnimatedText` section/array index)*/
+    /** The current character index being 'typed' (ie. the index of the `text` string within the current `AnimatedText` section/array index)*/
     characterIndex: number,
     /** The list (by `animatedTextIndex`) of functions that have ran */
     ranFunctions: {
@@ -140,7 +140,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
      * Handles animation skipping 
      * 
      * Has two main functions:
-     *  - Stiching the whole message together
+     *  - Stitching the whole text together
      *  - Running any remaining functions
      */
     useEffect(()=>{
@@ -148,25 +148,25 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
             // Clears the current interval 
             clearInterval(animatedTextAnimationData.current.animationID!)
 
-            // Where the full message will be stored
-            let fullMessage:string = ""
+            // Where the full text will be stored
+            let fullText:string = ""
 
             // Grab the list of all functions that have already ran
             const ranFunctions = animatedTextAnimationData!.current.ranFunctions
 
             // Parse through all the sections in the animated text
-            for (const [animatedTextIndex,partMessage] of animatedText.entries()){
+            for (const [animatedTextIndex,partText] of animatedText.entries()){
 
                 // If a pre-function exists, and it hasnt been run
-                if (partMessage.preFunction != undefined && !ranFunctions.pre[animatedTextIndex]){
-                    partMessage.preFunction()
+                if (partText.preFunction != undefined && !ranFunctions.pre[animatedTextIndex]){
+                    partText.preFunction()
                 }
                 
                 // If an intra-function exists
-                if (partMessage.intraFunction != undefined){
+                if (partText.intraFunction != undefined){
 
                     // Parse through all the intra-functions
-                    for (const [characterIndex,partFunction] of Object.entries(partMessage.intraFunction)){
+                    for (const [characterIndex,partFunction] of Object.entries(partText.intraFunction)){
                         
                         // If the character index for the associated intra-function has not been run yet
                         if (!(ranFunctions.intra[animatedTextIndex].has(Number.parseInt(characterIndex)))){
@@ -176,16 +176,16 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
                 }
 
                 // If a post-function exists, and it hasnt been run yet
-                if (partMessage.postFunction != undefined && !ranFunctions.post[animatedTextIndex]){
-                    partMessage.postFunction()
+                if (partText.postFunction != undefined && !ranFunctions.post[animatedTextIndex]){
+                    partText.postFunction()
                 }
 
-                // Append the sections message to the full message string
-                fullMessage += partMessage.message
+                // Append the sections text to the full text string
+                fullText += partText.text
             }
             
             // Once all parts have been stitched together, apply it to the element
-            textBox.current!.textContent = fullMessage
+            textBox.current!.textContent = fullText
 
             // Trigger the `stickyScrollDown`
             if (stickyScrollDown){
@@ -224,13 +224,13 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
          * 
          * Is to be used in conjuntion with `setInterval()` (or `setTimeout()` if you so please)
          */
-        function messageWritingEffect(){
+        function textWritingEffect(){
             // Grab the current animation data
             let {animationID, characterIndex, animatedTextIndex} = animatedTextAnimationData.current!
             const {ranFunctions} = animatedTextAnimationData.current!
 
             // Check if the current `characterIndex` is not past the EOL for the current section
-            if (characterIndex < animatedText![animatedTextIndex].message.length){
+            if (characterIndex < animatedText![animatedTextIndex].text.length){
                 
                 // Checks if the current `characterIndex` is at the starting/beginning of line (BOL) for the current section
                     // Also checks if a `preFunction` for the current section even exists
@@ -249,13 +249,13 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
 
                 // Checks if the current `characterIndex` is at the EOL for the current section
                     // Also checks if a `postFunction` for the current section even exists
-                if (characterIndex == animatedText[animatedTextIndex].message.length -1 && animatedText[animatedTextIndex].postFunction != undefined ){
+                if (characterIndex == animatedText[animatedTextIndex].text.length -1 && animatedText[animatedTextIndex].postFunction != undefined ){
                     animatedText[animatedTextIndex].postFunction!()
                     ranFunctions.post[animatedTextIndex] = true
                 }
 
                 // Append the character residing at the current `characterIndex`
-                textBox.current!.textContent += animatedText![animatedTextIndex].message.charAt(characterIndex)
+                textBox.current!.textContent += animatedText![animatedTextIndex].text.charAt(characterIndex)
 
                 // Trigger the `animationTextAddedEvent`
                 if (animatedTextAddedEvent){
@@ -273,13 +273,13 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
 
             // Else-statement for when the current `characterIndex` is past EOL
                 // Due to this structure, this means that the final character waits `speed` amount of time before moving past the section
-                    // For example, if section `0` has a speed of `50` and a message of "Hi", and section 1 has a speed of `100` and a message of "Bye":
+                    // For example, if section `0` has a speed of `50` and a text of "Hi", and section 1 has a speed of `100` and a text of "Bye":
                         //  Section 0 will write `"i"` to the screen, wait 50ms, moves to section 1, waits 100ms, and then writes `"B"`
             else{
                 // Clear the interval, as it pertains to the current section
                 clearInterval(animationID!)
 
-                // Checks if the current section index (`animatedTextIndex`) is not the final one for the `AnimatedMessage`
+                // Checks if the current section index (`animatedTextIndex`) is not the final one for the `AnimatedText`
                     // Goal is to set `aniamtedTextData` so that it is ready for the next section
                 if (animatedTextIndex < animatedText!.length-1){
                     // Reset `characterIndex` since we are about to start a new line
@@ -287,10 +287,10 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
                     // Increment line number
                     animatedTextIndex+=1
                     // Begin interval for the next section
-                    animationID = setInterval(messageWritingEffect, animatedText![animatedTextIndex].speed)
+                    animationID = setInterval(textWritingEffect, animatedText![animatedTextIndex].speed)
                 }
 
-                // Else-statement for when the current `characterIndex` is the final one for the `AnimatedMessage`
+                // Else-statement for when the current `characterIndex` is the final one for the `AnimatedText`
                 else{
                     // If `animatedCompletedEvent` exists, run it
                         // This is a lay-over from when the function was a prop
@@ -309,7 +309,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
         // Clears the current text before begining the animation from the start
             // Don't think this is really needed, but doesn't hurt clean up the text box
         textBox.current!.textContent = null
-        animatedTextAnimationData.current.animationID = setInterval(messageWritingEffect, animatedText[0].speed)
+        animatedTextAnimationData.current.animationID = setInterval(textWritingEffect, animatedText[0].speed)
 
         // Cleanup when the component unmounts
         return () =>{

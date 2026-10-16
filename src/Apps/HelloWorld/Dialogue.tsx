@@ -38,7 +38,8 @@ export function HelloWorldDialogueInitalizer(dialogueID:string, runningAppsDispa
                     },
                     animatedMessage:{
                         message: [
-                            {message:"My world", speed:200 , 
+                            // {text:"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", speed:10},
+                            {text:"My world", speed:200 , 
                                 preFunction:()=>(console.log("hi")), 
                                 intraFunction:{
                                     3: ()=>{
@@ -51,8 +52,8 @@ export function HelloWorldDialogueInitalizer(dialogueID:string, runningAppsDispa
                                     dialogue.update({soundEffect: SystemSounds.Special.OhMyGod})
                                 }
                             },
-                            {message:"\n", speed:500},
-                            {message:"Nah just kidding this is just my website", speed:50,
+                            {text:"\n", speed:500},
+                            {text:"Nah just kidding this is just my website", speed:50,
                                 postFunction: ()=>{
                                         dialogue.update({
                                             soundEffect: SystemSounds.Special.Bruh,
@@ -77,11 +78,11 @@ export function HelloWorldDialogueInitalizer(dialogueID:string, runningAppsDispa
                     title:"Cool",
                     animatedMessage:{
                         message: [
-                            {message:"Thanks.", speed: 50},
-                            {message:"\n", speed: 1000},
-                            {message:"Hey, ", speed: 50},
-                            {message:"", speed: 500},
-                            {message:"how's your day going?", speed: 50},
+                            {text:"Thanks.", speed: 50},
+                            {text:"\n", speed: 1000},
+                            {text:"Hey, ", speed: 50},
+                            {text:"", speed: 500},
+                            {text:"how's your day going?", speed: 50},
                         ],
                         skip:{
                             enabled: true,
