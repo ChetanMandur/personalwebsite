@@ -105,6 +105,7 @@
     row-gap: 0.5vh;
     border-left: var(--bar-focused-border-outline);
     border-left-width: 0.1vh;
+    pointer-events: auto;
 
     .common{
       flex: 0 1 50%;

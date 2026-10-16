@@ -4,7 +4,7 @@ import { AppList } from "../../../Apps/Apps"
 import { StartMenuContext } from "../../Contexts/StartMenuContext"
 import { RunningAppsContext } from "../../Contexts/RunningAppsContext"
 import { FileExplorerProps } from "../../../Apps/FileExplorer/FileExplorer"
-import { HelloWorldProps } from "../../../Apps/HelloWorld/HelloWorld"
+import { SystemAlertProps } from "../../../Apps/SystemAlert/SystemAlert"
 
 export default function StartMenu(){
   const {setStartMenuOpen} = useContext(StartMenuContext)
@@ -39,7 +39,23 @@ export default function StartMenu(){
         <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Photos"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="https://www.svgrepo.com/show/486698/image.svg" alt="" /> Photos</div>
         <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Videos"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="https://www.svgrepo.com/show/486906/video-file.svg" alt="" /> Videos</div>
         <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Documents"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="https://www.svgrepo.com/show/486674/folder-open.svg" alt="" /> Documents</div>
-        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"HelloWorld", props:{name:"I dont have settings app yet", ohmylord:"dont yell at me"} as HelloWorldProps}); setStartMenuOpen(false)}}> <img src="https://www.svgrepo.com/show/435417/settings.svg" alt="" />Settings</div>
+        <div className="common-border action-button" onClick={()=>{
+            runningAppsDispatch({
+              type:"ADD",
+              app_name:"SystemAlert",
+              props:{
+                title:"Error",
+                titleDetails:"Feature Not Implemented",
+                message:"The Settings app does not exist yet!\n I'm sorry to disappoint :(\nComing soon!",
+                closeButton:{enabled:true, text:"Lame."}
+              } as SystemAlertProps
+            }); 
+            setStartMenuOpen(false)
+          }}
+        > 
+          <img src="https://www.svgrepo.com/show/435417/settings.svg" alt="" />
+          Settings
+        </div>
 
       </div>
     </div>
