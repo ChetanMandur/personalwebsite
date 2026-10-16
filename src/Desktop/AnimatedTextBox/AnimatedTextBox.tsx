@@ -155,18 +155,18 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
             const ranFunctions = animatedTextAnimationData!.current.ranFunctions
 
             // Parse through all the sections in the animated text
-            for (const [animatedTextIndex,partText] of animatedText.entries()){
+            for (const [animatedTextIndex,segment] of animatedText.entries()){
 
                 // If a pre-function exists, and it hasnt been run
-                if (partText.preFunction != undefined && !ranFunctions.pre[animatedTextIndex]){
-                    partText.preFunction()
+                if (segment.preFunction != undefined && !ranFunctions.pre[animatedTextIndex]){
+                    segment.preFunction()
                 }
                 
                 // If an intra-function exists
-                if (partText.intraFunction != undefined){
+                if (segment.intraFunction != undefined){
 
                     // Parse through all the intra-functions
-                    for (const [characterIndex,partFunction] of Object.entries(partText.intraFunction)){
+                    for (const [characterIndex,partFunction] of Object.entries(segment.intraFunction)){
                         
                         // If the character index for the associated intra-function has not been run yet
                         if (!(ranFunctions.intra[animatedTextIndex].has(Number.parseInt(characterIndex)))){
@@ -176,12 +176,12 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
                 }
 
                 // If a post-function exists, and it hasnt been run yet
-                if (partText.postFunction != undefined && !ranFunctions.post[animatedTextIndex]){
-                    partText.postFunction()
+                if (segment.postFunction != undefined && !ranFunctions.post[animatedTextIndex]){
+                    segment.postFunction()
                 }
 
                 // Append the sections text to the full text string
-                fullText += partText.text
+                fullText += segment.text
             }
             
             // Once all parts have been stitched together, apply it to the element
