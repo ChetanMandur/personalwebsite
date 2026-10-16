@@ -116,6 +116,7 @@ export default class DialogueMaker {
             animatedMessage:undefined,
             soundEffect:undefined,
             image: undefined,
+            options: undefined,
             ...props
         }
     }

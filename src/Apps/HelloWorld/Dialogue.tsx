@@ -72,7 +72,6 @@ export function HelloWorldDialogueInitalizer(dialogueID:string, runningAppsDispa
                     },
                     closeButton: {enabled:false,text:"Ok.... well bye"},
                     soundEffect: SystemSounds.Win95.Default.Tada,
-                    options:{} 
                 },
                 2:{
                     title:"Cool",
@@ -102,21 +101,18 @@ export function HelloWorldDialogueInitalizer(dialogueID:string, runningAppsDispa
                     message: "No problem, glad it's going well \n Welp I gotta go, don't wanna make more dialogue boxes",
                     closeButton:{enabled: true, text:"Oh ok, well goodbye"},
                     soundEffect: SystemSounds.Special.OhMyGod,
-                    options:{}
                 },
                 "3b":{
                     title:"= |",
                     message:"Sounds good, hope you're enjoying yourself\n I would stick around but I don't wanna make this go on forever\n Click around and enjoy yourself",
                     closeButton:{enabled:true, text:"Ok, goodbye"},
                     soundEffect: SystemSounds.Special.Bruh,
-                    options:{}
                 },
                 "3c":{
                     title:"= (",
                     message:"Welp, we all have those days. I'm no therapist, I can't help you\n Plus I don't wanna keep making these dialogue boxes\n So, goodbye for now",
                     closeButton:{enabled:true, text:"Wow, ok, bye."},
                     soundEffect: SystemSounds.Win95.Default.Chord,
-                    options:{}
                 }
             }
         }

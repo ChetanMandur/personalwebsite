@@ -2,7 +2,7 @@ import FileExplorer,{ FileExplorerProps }  from "./FileExplorer/FileExplorer";
 import HelloWorld, { HelloWorldProps } from "./HelloWorld/HelloWorld";
 import { MediaController, MediaControllerProps } from "./MediaController/MediaController";
 import { MediaViewer, MediaViewerProps } from "./MediaViewer/MediaViewer";
-import SystemAlert, { SystemAlertOptions, SystemAlertProps } from "./SystemAlert/SystemAlert";
+import SystemAlert, { SystemAlertProps } from "./SystemAlert/SystemAlert";
 
 export type AppProperties = {
   name: string;
@@ -72,7 +72,7 @@ export const AppList : AppListType = {
     name: "System Alert",
     icon: "https://www.svgrepo.com/show/498918/alert-box.svg",
     app: SystemAlert,
-    props: { message: "Default message", options: {} as SystemAlertOptions, closeButton:{display:true} } as SystemAlertProps,
+    props: { message: "Default message", closeButton:{enabled:true} } satisfies SystemAlertProps,
     defaultHeightRatio: 1/6,
     defaultWidthRatio: 1/4,
     hidden: true

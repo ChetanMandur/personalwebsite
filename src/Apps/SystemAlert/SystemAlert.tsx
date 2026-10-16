@@ -34,31 +34,31 @@ export type SystemAlertCloseButton = {
  */
 export type SystemAlertProps = {
     /** 
-     * An optional string variable to define the alerts running app title  
+     * Defines the alerts running app title  
      * Can be any `string` value, but the other pre-defined options are `"Warning"` and `"Error"`  
      * By default, the title is `"System Alert"`
     */
     title?: "Warning" | "Error" | string & {},
     
-    /** An optional string value to define the alerts running app title details 
+    /** Defines the alerts running app title details 
      * By default, there are no title details
     */
     titleDetails?: string,
 
     /** 
      * Provides the additional options/buttons (besides the built-in 'Close' button)  
-     * If you want no aditional options, just pass an empty object
     */
-    options: SystemAlertOptions,
+    options?: SystemAlertOptions,
 
     /** 
-     * Used to define whether or not the 'Close' button should be displayed  
+     * Defines whether or not the 'Close' button should be displayed  
      * Also allows for the definiton of another text to use rather than 'Close'
     */
     closeButton: SystemAlertCloseButton,
 
     /**
-     * An optional parameter to define the sound effect played at the begining of the alert  
+     * Defines the sound effect played at the begining of the alert  
+     * Can be updated after the fact to play aditional sounds
      * If the sound is given as a `string` it must be in a correct `URL` or `file path` format (both needing to point to a direct sound file link)  
      * The sound can also be chosen using the `SystemSounds` built-in object (as it is just a 'prettier' way to access the file path to each of the sounds)  
      * For no sound to be played, the value must be `null`
@@ -67,7 +67,7 @@ export type SystemAlertProps = {
     soundEffect?: typeof SystemSounds|string|null,
 
     /**
-     * An optional parameter used to define the image shown alongside the message  
+     * Provides the image shown alongside the message  
      * If the parameter is `null`, no image will be displayed and the message will take the entire width  
      * If the parameter is `undefined`, the image will be displayed as the default `Error` image  
      * If a image is desired to be given, it must be given in proper object format of `{content, style?}`
@@ -80,7 +80,7 @@ export type SystemAlertProps = {
         content: string & {} | "Warning" | "Error",
 
         /**
-         * An optional parameter to independently style the `<img>` element that houses the image  
+         * Allows for independent style of the `<img>` element that houses the image  
          * Takes any `React.CSSProperties` and also allows for the ability for `'CSS Custom Properties'` (aka CSS Variables) to be: created, edited, and deleted/null-ified
         */
         style?: React.CSSProperties & { [key: `--${string}`]: string | number | undefined };
@@ -216,15 +216,8 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
     },[runningAppsData[app_running_id].props])
 
 
-    // Used to handle any changes to the props that don't require info on the contents size
-    useEffect(()=>{
-        // If a soundEffect exists
-        if (soundEffect !== null){
-            // Plays audio (resets time to 0 to ensure audio is played when consecutive alerts are quick in a row)
-            audioRef.current!.currentTime = 0
-            audioRef.current!.play()
-        }
-
+    // Used to handle any changes to the running app properties (ie. `title` and `titleDetails`)
+    useLayoutEffect(()=>{
         // Updates app title based on props given
         if (title){
             runningAppsDispatch({type:"UPDATE-APP-TITLE-NAME", app_running_id, appTitleName:title})
@@ -240,16 +233,18 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
         else{
             runningAppsDispatch({type:"UPDATE-APP-TITLE-DETAILS", app_running_id, appTitleDetails:undefined})
         }
-    },[app_running_id, runningAppsDispatch, soundEffect, title, titleDetails])
+    },[app_running_id, runningAppsDispatch, title, titleDetails])
 
-
-    // Adds a 'close' button if props ask for it
-    if (closeButton.enabled){
-            // If alternative text is given for the close button, use it, if not, use just 'Close'
-            options[(closeButton.text ?? "Close")] = () =>{
-                runningAppsDispatch({type:"DELETE", app_running_id})
-            }
-    }
+    
+    // Used to handle sound effect playback
+    useEffect(()=>{
+        // If a soundEffect exists
+        if (soundEffect !== null){
+            // Plays audio (resets time to 0 to ensure audio is played when consecutive alerts are quick in a row)
+            audioRef.current!.currentTime = 0
+            audioRef.current!.play()
+        }
+    }, [soundEffect])
     
     return (
         // Main container for the `SystemAlert` component
@@ -342,20 +337,38 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
             <div className="options" ref={optionsRef}>
                 {
                     // For each option, make a button & apply the corrent onClick event handlers
-                    Object.entries(options).map((option)=>{
-                        return(
-                            <div className="option common-border" 
-                                key={app_running_id+option[0]}
-                                onClick={(event)=>{
-                                    setSkipAnimation(false)
-                                    event.stopPropagation()
-                                    option[1]()
-                                }}
-                            >
-                                {option[0]}
-                            </div>
-                        )
-                    })
+                    options ? 
+                        Object.entries(options).map((option)=>{
+                            return(
+                                <div className="option common-border" 
+                                    key={app_running_id+option[0]}
+                                    onClick={(event)=>{
+                                        setSkipAnimation(false)
+                                        event.stopPropagation()
+                                        option[1]()
+                                    }}
+                                >
+                                    {option[0]}
+                                </div>
+                            )
+                        })
+                        :
+                        <></>
+                }
+                {
+                    closeButton.enabled ?
+                        <div className="option common-border" 
+                            key={app_running_id+"closeButton"}
+                            onClick={(event)=>{
+                                setSkipAnimation(false)
+                                event.stopPropagation()
+                                runningAppsDispatch({type:"DELETE", app_running_id})
+                            }}
+                        >
+                            {closeButton.text ?? "Close"}
+                        </div>
+                        :
+                        <></>
                 }
             </div>
         </div>
