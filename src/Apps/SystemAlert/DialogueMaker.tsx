@@ -42,16 +42,20 @@ type DialogueMakerConstructorType = {
  * Once an instance is made, the dialogue tree will not automatically start. To start it, must call its `.start()` function to launch a `SystemAlert` app with the tree
  * @see {@link HelloWorldDialogueInitalizer} for an example usage
  * @example
- * const dialogue = new DialogueMaker({
+ *  const dialogue = new DialogueMaker({
  *      dialogueID, 
  *      runningAppsDispatch, // Fed from a component/hook 
  *      dialoguePaths: {
  *          0: {
- *              animatedMessage:[
- *                  {message:"Welcome to the example dialogue tree!", speed:50}
- *              ],
- *              skipAnimationData:{enabled: false},
- *              closeButton: {display: true, text: "Get me out of here!"},
+ *              animatedMessage:{
+ *                   message: [
+ *                       {text:"Welcome to the example dialogue tree!", speed:50}
+ *                   ],
+ *                   skipping:{
+ *                       enabled: true
+ *                   }
+ *              },
+ *              closeButton: {enabled: true, text: "Get me out of here!"},
  *              options:{
  *                  "Thank you!": ()=>{dialogue.goTo(1)},
  *                  "Shut up!": ()=>{dialogue.goTo("1b")}
@@ -59,16 +63,16 @@ type DialogueMakerConstructorType = {
  *          },
  *          1: {
  *              message: "You're very welcome! Hope you enjoyed your time!",
- *              closeButton: {display: true},
+ *              closeButton: {enabled: true},
  *              options: {}
  *          },
  *          "1b": {
  *              message: "Ok, rude",
- *              closeButton: {display: true},
+ *              closeButton: {enabled: true},
  *              options: {}
  *          }
  *      }
- * })
+ *  })
 */
 export default class DialogueMaker {
     // Private data used to represent the instance
@@ -108,6 +112,7 @@ export default class DialogueMaker {
         return {
             title: undefined,
             titleDetails: undefined,
+            message:undefined,
             animatedMessage:undefined,
             soundEffect:undefined,
             image: undefined,
@@ -182,15 +187,17 @@ export default class DialogueMaker {
      *     dialogueID:"tete", runningAppsDispatch:()=>{}, // Pretend these are defined
      *     dialoguePaths: {
      *         0:{
-     *             animatedMessage:[
-     *                 {
-     *                     message: "hii",
-     *                     speed:50,
-     *                     preFunction: ()=>{
-     *                         dialogue.update({soundEffect: SystemSounds.Special.VineBoom})
-     *                     }
-     *                 }
-     *             ]
+     *             animatedMessage:{
+     *                  message:[
+     *                      {
+     *                          text:"hii",
+     *                          speed:50,
+     *                          preFunction: ()=>{
+     *                              dialogue.update({soundEffect: SystemSounds.Special.VineBoom})
+     *                          }
+     *                      }
+     *                  ]
+     *             }
      *         }
      *     }
      * })
