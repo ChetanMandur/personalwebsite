@@ -162,7 +162,6 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
         // Once the animation is finished, mark the animation state as completed
     const animationCompletedEvent = useCallback(()=>{
         setAnimationCompleted(true)
-        return undefined
     },[])
 
 

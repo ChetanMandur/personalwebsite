@@ -40,7 +40,7 @@ type AnimatedTextBoxProps = {
     /** Function to run after the animation has complete  
      * Also runs if `skipAnimation` is true
     */
-    animationCompletedEvent?: ()=>undefined,
+    animationCompletedEvent?: ()=>void,
 
     /**
      * Function to be run at each character placed in the animated text
