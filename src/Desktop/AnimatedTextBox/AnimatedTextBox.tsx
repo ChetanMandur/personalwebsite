@@ -71,8 +71,8 @@ type AnimatedTextAnimationData = {
     ranFunctions: {
         /** Boolean for whether the `pre` function has ran yet */
         pre: {[animatedTextIndex:number]: boolean},
-        /** List of `characterIndex`s that have ran */
-        intra: {[animatedTextIndex:number]: Set<number>},
+        /** Number to represent the last `characterIndex` that has ran an `intra` function */
+        intra: {[animatedTextIndex:number]: number},
         /** Boolean for wheter the `post` function has ran yet */
         post: {[animatedTextIndex:number]: boolean} // yes/no post function has ran
     }
@@ -167,9 +167,9 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
 
                     // Parse through all the intra-functions
                     for (const [characterIndex,partFunction] of Object.entries(segment.intraFunction)){
-                        
                         // If the character index for the associated intra-function has not been run yet
-                        if (!(ranFunctions.intra[animatedTextIndex].has(Number.parseInt(characterIndex)))){
+                            // 'not run yet' means that the index is greater than the last known ran index
+                        if (ranFunctions.intra[animatedTextIndex] < (Number.parseInt(characterIndex))){
                             partFunction()
                         }
                     }
@@ -212,7 +212,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
                 // ie. Iterate through sections in `animatedText` and define default values
         for (let i=0; i< animatedText.length; i++){
             ranFunctions.pre[i] = false
-            ranFunctions.intra[i] = new Set<number>()
+            ranFunctions.intra[i] = -1
             ranFunctions.post[i] = false
         }
         
@@ -244,7 +244,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
                     // Also checks if a `intraFunction` object for the current section even exists (as if it does, this means SOME `intra-function` exists)
                 if (animatedText[animatedTextIndex].intraFunction != undefined && animatedText[animatedTextIndex].intraFunction![characterIndex] != undefined){
                     animatedText[animatedTextIndex].intraFunction![characterIndex]()
-                    ranFunctions.intra[animatedTextIndex].add(characterIndex)
+                    ranFunctions.intra[animatedTextIndex] = characterIndex
                 }
 
                 // Checks if the current `characterIndex` is at the EOL for the current section
