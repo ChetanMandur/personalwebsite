@@ -155,22 +155,15 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
 
     // State to handle if animation has been skipped
     const [skipAnimation, setSkipAnimation] = useState(false)
+    const [animationCompleted, setAnimationCompleted] = useState(false)
 
 
     // Event handler used when animation is finished
-        // Once tha animation is finished, disable the ability to skip the animation
+        // Once the animation is finished, mark the animation state as completed
     const animationCompletedEvent = useCallback(()=>{
-        runningAppsDispatch({
-            type:"UPDATE-APP-PROPS",
-            app_running_id,
-            props:{
-                skipAnimationData:{
-                    enabled:false
-                }
-            }
-        })
+        setAnimationCompleted(true)
         return undefined
-    },[app_running_id, runningAppsDispatch])
+    },[])
 
 
     // Used to resize the app based on the size of its content
@@ -313,8 +306,11 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                     }
                     onClick={()=>{
                         // Skips animation if:
-                            // an animated message exists, animation skip data exists, animation skipping is enabled, and if the animation already hasn't been skipped
-                        if (animatedMessage != undefined && !skipAnimation && animatedMessage.skipping != undefined && animatedMessage.skipping.enabled){
+                            // an animated message exists, 
+                            // animation skipping is enabled,
+                            // if the animation already hasn't been skipped, 
+                            // if the animation isn't already completed
+                        if (animatedMessage != undefined && animatedMessage.skipping.enabled && !skipAnimation && !animationCompleted ){
                             setSkipAnimation(true)
 
                             // If there exists skip animation sound, play it
