@@ -113,7 +113,7 @@ export type SystemAlertProps = {
              * Whether or not the animated message should be skippable  
              * When enabled, an optional parameter becomes avaiable that defines the sound played when te animation is skiped
             */
-            skip: (
+            skipping: (
                 {
                     enabled: true,
 
@@ -314,12 +314,12 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                     onClick={()=>{
                         // Skips animation if:
                             // an animated message exists, animation skip data exists, animation skipping is enabled, and if the animation already hasn't been skipped
-                        if (animatedMessage != undefined && !skipAnimation && animatedMessage.skip != undefined && animatedMessage.skip.enabled){
+                        if (animatedMessage != undefined && !skipAnimation && animatedMessage.skipping != undefined && animatedMessage.skipping.enabled){
                             setSkipAnimation(true)
 
                             // If there exists skip animation sound, play it
-                            if (animatedMessage.skip.sound != undefined){
-                                runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:animatedMessage.skip.sound}})
+                            if (animatedMessage.skipping.sound != undefined){
+                                runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id, props:{soundEffect:animatedMessage.skipping.sound}})
                             }
                         }
                     }} 

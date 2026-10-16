@@ -66,7 +66,7 @@ export function HelloWorldDialogueInitalizer(dialogueID:string, runningAppsDispa
 
                             },
                         ],
-                        skip:{
+                        skipping:{
                             enabled: true
                         }
                     },
@@ -84,7 +84,7 @@ export function HelloWorldDialogueInitalizer(dialogueID:string, runningAppsDispa
                             {text:"", speed: 500},
                             {text:"how's your day going?", speed: 50},
                         ],
-                        skip:{
+                        skipping:{
                             enabled: true,
                             sound:SystemSounds.Special.OOTDialogueNext
                         }
