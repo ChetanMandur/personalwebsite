@@ -284,7 +284,8 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                                         )
                                 }
                                 style={image?.style ?? undefined}
-                                alt="" 
+                                alt=""
+                                draggable={false}
                             />
                         </div> 
                 }
