@@ -6,6 +6,7 @@ import { StartMenuContext } from "../Contexts/StartMenuContext";
 import { RunningAppsContext, titlebarTextGenerator } from "../Contexts/RunningAppsContext";
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../Contexts/ContextMenuContext";
 import { TooltipContext } from "../Contexts/TooltipContext";
+import { SystemAlertProps } from "../../Apps/SystemAlert/SystemAlert";
 
 
 
@@ -86,7 +87,18 @@ export default function Taskbar(){
            }
 
         </div>
-        <div className="time-and-date">
+        <div className="time-and-date" onClick={()=>{
+          runningAppsDispatch({
+              type:"ADD",
+              app_name:"SystemAlert",
+              props:{
+                title:"Error",
+                titleDetails: "Feature Not Implemented",
+                message: "This widget/popup is not available yet!\nThank you for clicking here and trying things\nI'm sorry to disappoint\nHopefully soon you can enjoy this widget\n(I don't have anything ab it fully planned yet tbh)",
+                closeButton:{enabled:true, text:"Thanks for rewarding me with nothing. This website sucks."},
+              } as SystemAlertProps
+          })
+        }}>
           <div className="common time">{time_hour}<div className="blink">:</div>{time_minute < 10 ? "0":""}{time_minute} {time_half ? "PM" : "AM"}</div>
           <div className="common date">{date.getMonth()+1}/{date.getDate()}/{date.getFullYear()}</div>
         </div>

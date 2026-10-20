@@ -30,7 +30,8 @@ export type RunningAppProperties = {
   props:object,
 
   appProperties: AppProperties,
-  appAdditionalTitle?: string,
+  appTitleDetails?: string,
+  appTitleName?: string,
 }
 
 
@@ -39,10 +40,11 @@ export type RunningAppListType = {
 }
 
  export type RunningAppsReducerAction = 
- {type: "ADD", app_name: string, props?: object} |
+ {type: "ADD", app_name: string, props?: object, app_running_id?: string} |
  {type:"DELETE"} & AppRunningID |
  {type:"UPDATE-APP-FOCUS"} & AppRunningID |
- {type:"UPDATE-APP-ADDITIONAL-TITLE", appAdditionalTitle: string|undefined} & AppRunningID |
+ {type:"UPDATE-APP-TITLE-DETAILS", appTitleDetails: string|undefined} & AppRunningID |
+ {type:"UPDATE-APP-TITLE-NAME", appTitleName: string|undefined} & AppRunningID |
  {type:"UPDATE-APP-PROPS", props: object} & AppRunningID |
  {type:"TITLEBAR-CLICKED"} & AppRunningID & ReactPointerEvent |
  {type:"TITLEBAR-UNCLICKED"} & AppRunningID |
@@ -51,8 +53,10 @@ export type RunningAppListType = {
  {type:"WINDOW-MOVE", event: PointerEvent} & AppRunningID |
  {type:"WINDOW-RESIZE", event: PointerEvent} & AppRunningID |
  {type:"MINIMIZE-HANDLER", forceMinimize: boolean} & AppRunningID|
- {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]}  & AppRunningID 
-  
+ {type:"MAXIMIZE", maximizeType: RunningAppProperties["maximizeType"]} & AppRunningID |
+ {type:"WINDOW-DIRECT-MOVE", x?: number, y?: number} & AppRunningID |
+ {type:"WINDOW-DIRECT-RESIZE", width?: number, height?: number} & AppRunningID 
+
 /**
  * Given the name of an app, return a default set of properties for the app
  * @param app_name - The name of the app you wish to generate properties for
@@ -77,7 +81,8 @@ function DefaultRunningAppPropertiesGenerator(app_name:string): RunningAppProper
     zIndex: 999,
     props:{...app_properties.props},
     appProperties: app_properties,
-    appAdditionalTitle: undefined,
+    appTitleDetails: undefined,
+    appTitleName: undefined,
   })
 }
 
@@ -140,10 +145,12 @@ function focusChange(data:RunningAppListType, app_running_id:string, app_removed
 }
 
 export function titlebarTextGenerator(running_properties: RunningAppProperties):string{
-  if (running_properties.appAdditionalTitle != undefined){
-    return running_properties.appProperties.name + " - " + running_properties.appAdditionalTitle
+  const app_name:string = running_properties.appTitleName ?? running_properties.appProperties.name
+
+  if (running_properties.appTitleDetails != undefined){
+    return app_name + " - " + running_properties.appTitleDetails
   } else {
-    return running_properties.appProperties.name
+    return app_name
   }
 }
 
@@ -154,12 +161,24 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     // Used for added an app to the running apps list
     // Ie. used when opening a new app
     case "ADD": {
-      // Generate an app_running_id for the new app
-      let app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
 
-      // If by chance the app_running_id is being used, generate a new app_running_id
-      while (newData[app_running_id] != undefined){
+      // Create a variable to store the app running id
+      let app_running_id: string
+      
+      // If no predetermined app running id is given, auto generate one 
+      if (!action.app_running_id){
+        // Generate an app_running_id for the new app
         app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
+
+        // If by chance the app_running_id is being used, generate a new app_running_id
+        while (newData[app_running_id] != undefined){
+          app_running_id = action.app_name + "#" + (Math.floor(Math.random() *100 ))
+        }
+      }
+
+      // If a predetermined app running id is given, use that
+      else{
+        app_running_id = action.app_running_id
       }
 
       // Give default properties to the new app 
@@ -266,8 +285,14 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
     }
 
     // Used to update an app's additional title
-    case "UPDATE-APP-ADDITIONAL-TITLE":{
-      newData[action.app_running_id!]["appAdditionalTitle"] = action.appAdditionalTitle!
+    case "UPDATE-APP-TITLE-DETAILS":{
+      newData[action.app_running_id!]["appTitleDetails"] = action.appTitleDetails!
+      break;
+    }
+
+    // Used to update an app's title name to use a custom name
+    case "UPDATE-APP-TITLE-NAME":{
+      newData[action.app_running_id!]["appTitleName"] = action.appTitleName!
       break;
     }
 
@@ -542,6 +567,38 @@ export function runningAppsReducer(runningAppsData:RunningAppListType, action:Ru
       }
 
       newData[action.app_running_id!] = currentApp
+      break;
+    }
+
+    // Used for giving an app window an exact x/y coord to move to
+    case "WINDOW-DIRECT-MOVE":{
+      const current_app = {...newData[action.app_running_id]}
+      
+      // Since x/y coords are not mandatory, check if any are given before applying
+      if (action.x){
+        current_app["x"] = action.x
+      }
+      if (action.y){
+        current_app["y"] = action.y
+      }
+      
+      newData[action.app_running_id] = current_app
+      break;
+    }
+
+    // Used for giving an app window an exact width/height to resize to
+    case "WINDOW-DIRECT-RESIZE":{
+      const current_app = {...newData[action.app_running_id]}
+      
+      // Since width/height are not mandatory, check if any are given before applying
+      if (action.width){
+        current_app["width"] = action.width
+      }
+      if (action.height){
+        current_app["height"] = action.height
+      }
+      
+      newData[action.app_running_id] = current_app
       break;
     }
 
