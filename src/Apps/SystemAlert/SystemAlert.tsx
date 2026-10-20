@@ -329,7 +329,8 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                                 skipAnimation={skipAnimation}
                                 animationCompletedEvent={animationCompletedEvent}
                                 // animatedTextAddedEvent={animationTextAddedEvent}
-                                forwardedRef={messageRef}
+                                // forwardedRef={messageRef} // You will return one day
+                                ref={messageRef}
                             /> 
                             : 
                             <div className="message" ref={messageRef}>

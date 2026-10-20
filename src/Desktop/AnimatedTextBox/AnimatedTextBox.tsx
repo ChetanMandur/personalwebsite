@@ -1,5 +1,5 @@
 import "./AnimatedTextBox.css"
-import { ForwardedRef, forwardRef, useCallback, useEffect, useRef } from "react"
+import { forwardRef, useCallback, useEffect, useRef } from "react"
 
 /** 
  * The format/structure for each segment/part of an {@link AnimatedText}
@@ -52,8 +52,9 @@ type AnimatedTextBoxProps = {
 
     /** OPTIONAL: Allows for parent to hook into the element  
      * Only exposes the parent/encapsulation element
+     * One day, when I go to React 19, this will be undusted and revived. Until then, rest easy my son
      */
-    forwardedRef?: ForwardedRef<HTMLDivElement>,
+    // forwardedRef?: ForwardedRef<HTMLDivElement>,
 }
 
 
@@ -87,7 +88,7 @@ type AnimatedTextAnimationData = {
  * @returns `AnimatedTextBox` component
  */
 // Once I update to React 19+, there will be signs (aka goodbye forwardRef arrow-function component)
-export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animationCompletedEvent, animatedTextAddedEvent, forwardedRef}:AnimatedTextBoxProps)=>{
+export const AnimatedTextBox = forwardRef<HTMLDivElement, AnimatedTextBoxProps>(({animatedText, skipAnimation,animationCompletedEvent, animatedTextAddedEvent}:AnimatedTextBoxProps, ref)=>{
 
     /** Data used to determine current animation data */
     const animatedTextAnimationData = useRef<AnimatedTextAnimationData>(
@@ -333,7 +334,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
 
     
     return (
-        <div className="animated-text-box" ref={forwardedRef}>
+        <div className="animated-text-box" ref={ref}>
             <div className="animated-text" ref={textBox}/>
         </div>
     )
