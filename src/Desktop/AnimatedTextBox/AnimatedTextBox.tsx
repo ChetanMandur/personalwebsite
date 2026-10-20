@@ -329,7 +329,7 @@ export const AnimatedTextBox = forwardRef(({animatedText, skipAnimation,animatio
                 }
             }
         }
-    },[animatedText, stickyScrollDown, animationCompletedEvent])
+    },[animatedText, stickyScrollDown, animationCompletedEvent, animatedTextAddedEvent])
 
     
     return (

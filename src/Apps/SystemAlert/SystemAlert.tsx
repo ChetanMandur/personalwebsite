@@ -165,6 +165,12 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
     },[])
 
 
+    // // Event handler used when the animation is running
+    //     // Just an example used for testing
+    // const animationTextAddedEvent = useCallback((animatedTextIndex:number, characterIndex:number)=>{
+    //     console.log("joe mama!", animatedTextIndex, characterIndex)
+    // },[])
+
     // Used to resize the app based on the size of its content
     // Run each time the props are changed
     // (This is such a mess)
@@ -322,9 +328,7 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                                 animatedText={animatedMessage.message} 
                                 skipAnimation={skipAnimation}
                                 animationCompletedEvent={animationCompletedEvent}
-                                // animatedTextAddedEvent={(animatedTextIndex, characterIndex)=>{
-                                //     console.log("joe mama!", animatedTextIndex, characterIndex)
-                                // }}
+                                // animatedTextAddedEvent={animationTextAddedEvent}
                                 forwardedRef={messageRef}
                             /> 
                             : 
