@@ -3,6 +3,8 @@ import { useContext, useEffect} from "react"
 import { RunningAppsContext} from "../Contexts/RunningAppsContext"
 import { StartMenuContext } from "../Contexts/StartMenuContext"
 import { RunningApp } from "./RunningApp"
+import { SystemAlertProps } from "../../Apps/SystemAlert/SystemAlert"
+import SystemSounds from "../../SystemSounds"
 
 
 
@@ -13,9 +15,34 @@ export default function UserSpace(){
 
   useEffect(()=>{
     // 'ADD' from `runningAppsDispatch` (with pre-defined `app_running_id`)
+    runningAppsDispatch({
+      type:"ADD",
+      app_name:"SystemAlert",
+      app_running_id:"OnBootAlert",
+      props:{
+        message:
+        `
+Welcome to my website!
+This website is not feature complete.
+Please consider this an early preview of the website.
+I hope you enjoy!
+        `,
+        closeButton:{enabled:true, text:"okie dokie"},
+        title:"Welcome!",
+        titleDetails:"Hope you enjoy your stay :)",
+        image:{
+          content:"./happyface.png",
+        },
+        soundEffect:SystemSounds.Win95.Default.Tada
+      } as SystemAlertProps
+    })
 
     return () =>{
       // 'DELETE` from `runningAppsDispatch
+      runningAppsDispatch({
+        type:"DELETE",
+        app_running_id:"OnBootAlert"
+      })
     }
   },[runningAppsDispatch])
 
