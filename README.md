@@ -1,7 +1,7 @@
 # My personal website
 ## *Simulating a Desktop Environment from a simpler time*
 >[!NOTE]
-> Live Production URL can be found: <ins>**[here](https://personalwebsite-5zq.pages.dev/)**</ins>
+> Live Production URL can be found: **[here](https://personalwebsite-5zq.pages.dev/)**
 > I currently do not have it hosted on my personal domain
 
 This is my personal website.
