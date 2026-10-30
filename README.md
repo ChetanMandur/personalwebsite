@@ -2,7 +2,8 @@
 ## *Simulating a Desktop Environment from a simpler time*
 >[!NOTE]
 > Live Production URL can be found: **[here](https://personalwebsite-5zq.pages.dev/)**
-> I currently do not have it hosted on my personal domain
+>
+>(I currently do not have it hosted on my personal domain)
 
 This is my personal website.
 
