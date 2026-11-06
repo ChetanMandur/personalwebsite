@@ -13,7 +13,7 @@ export type HelloWorldProps = AppRunningID & {
 
 export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldProps){
   const [test, setTest] = useState(false)
-  const [appRunningIDpicker, setAppRunningIDpicker] = useState(app_running_id)
+  // const [appRunningIDpicker, setAppRunningIDpicker] = useState(app_running_id)
   const [imageURL, setImageURL] = useState("url(https://static.wikia.nocookie.net/aesthetics/images/a/a3/Pure_blue.png")
 
   const appRef =useRef<HTMLDivElement|null>(null)
@@ -59,8 +59,8 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
           tooltipDispatch({type:"SET", event:event,duration:0 , dataType: "TEXT", data:"Magic"})
         }}
       />
-      <input type="checkbox"   onChange={()=>{runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id:appRunningIDpicker, props:{...runningAppsData[appRunningIDpicker]["props"], ohmylord: Math.random().toString()} as HelloWorldProps}); console.log("props changed!!!!!!!!!")}} name="propChangeBox" id="propChangeBox" />
-      <input type="text" name="appRunningIDpicker" id="appRunningIDpicker" value={appRunningIDpicker} onChange={(event)=>{setAppRunningIDpicker(event.target.value)}} />    
+      {/* <input type="checkbox"   onChange={()=>{runningAppsDispatch({type:"UPDATE-APP-PROPS", app_running_id:appRunningIDpicker, props:{...runningAppsData[appRunningIDpicker]["props"], ohmylord: Math.random().toString()} as HelloWorldProps}); console.log("props changed!!!!!!!!!")}} name="propChangeBox" id="propChangeBox" />
+      <input type="text" name="appRunningIDpicker" id="appRunningIDpicker" value={appRunningIDpicker} onChange={(event)=>{setAppRunningIDpicker(event.target.value)}} />     */}
     </form>
     <div className="long-form" tabIndex={-1}
     onMouseMove={(event)=>{
@@ -142,6 +142,6 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
       onMouseMove={(event)=>{if (contextMenuData.source != app_running_id+"bottomImage"){
         tooltipDispatch({type:"SET", event: event, duration: 0 , data:"Right click me!", dataType:"TEXT"})
       }}}
-    > {app_running_id} hi {name} {ohmylord} </div>
+    > {app_running_id} {name} {ohmylord} </div>
   </div>) 
 } 

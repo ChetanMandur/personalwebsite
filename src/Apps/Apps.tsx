@@ -36,7 +36,7 @@ export const AppList : AppListType = {
     name:"Hello World",
     icon:"https://www.svgrepo.com/show/521265/world-1.svg",
     app: HelloWorld,
-    props:{name:"Hello World", ohmylord:"Yes my child"} as HelloWorldProps,
+    props:{name:"", ohmylord:""} as HelloWorldProps,
     defaultHeightRatio:1/2,
     defaultWidthRatio:1/2.5
   },
@@ -77,8 +77,10 @@ export const AppList : AppListType = {
     defaultWidthRatio: 1/4,
     hidden: true
 
-  },
-  "Default App Properties Test": {
-    ...defaultAppProperties,
   }
+
+  
+  // ,"Default App Properties Test": {
+  //   ...defaultAppProperties,
+  // }
 }
