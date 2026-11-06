@@ -39,7 +39,7 @@
             height:100%;
             width:80%;
             overflow-y: hidden;
-            white-space: break-spaces;
+            white-space: pre-line;
             user-select: none;
             
             .message{

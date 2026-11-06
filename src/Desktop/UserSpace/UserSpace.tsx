@@ -20,12 +20,10 @@ export default function UserSpace(){
       app_name:"SystemAlert",
       app_running_id:"OnBootAlert",
       props:{
-        message:
-        `
-Welcome to my website!
-This website is not feature complete.
-Please consider this an early preview of the website.
-I hope you enjoy!
+        message: `Welcome to my website!
+          This website is not feature complete.
+          Please consider this an early preview of the website.
+          I hope you enjoy!
         `,
         closeButton:{enabled:true, text:"okie dokie"},
         title:"Welcome!",
