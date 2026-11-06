@@ -635,7 +635,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                     restartVideo()
                 }
             }}
-            hidden={true} autoPlay />
+            hidden={true} autoPlay playsInline />
 
             {/* Overlay that displays over the canvas */}
             <div className="video-overlay">

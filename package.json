@@ -8,11 +8,11 @@
     "npm": "9.8.1"
   },
   "scripts": {
-    "dev": "vite",
-    "dev-windows-env": "code . && wt split-pane -s 0.8 -d . && vite --open",
+    "dev": "vite --host",
+    "dev-windows-env": "code . && wt split-pane -s 0.8 -d . && vite --open --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --host"
   },
   "dependencies": {
     "react": "^18.3.1",
