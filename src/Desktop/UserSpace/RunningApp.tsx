@@ -169,7 +169,7 @@ export function RunningApp({app_running_id, running_properties}:RunningAppPropsT
       <div className={"outline " + running_properties["maximizeType"]} ref={outlineRef}/>
       <div className={
           "common-border app-window " + 
-          (running_properties["maximizeType"] != null ? "app-maximized-"+running_properties["maximizeType"] : " ") + 
+          (running_properties["maximizeType"] != null ? "app-maximized-"+running_properties["maximizeType"]+" " : " ") + 
           (running_properties["isMinimized"] ? "app-minimized " : " ") +
           (isAppFocused ? "" : "app-unfocused ") 
         } 
