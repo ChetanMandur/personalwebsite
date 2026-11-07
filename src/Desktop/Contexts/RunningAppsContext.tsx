@@ -87,7 +87,7 @@ function DefaultRunningAppPropertiesGenerator(app_name:string): RunningAppProper
 }
 
 
-function focusChange(data:RunningAppListType, app_running_id:string, app_removed:boolean){
+function focusChange(data:RunningAppListType, app_running_id:string, app_removed:boolean):RunningAppListType{
   const newData = {...data}
 
   // If app is removed/minimized
@@ -107,7 +107,7 @@ function focusChange(data:RunningAppListType, app_running_id:string, app_removed
 
     // If second place exists, update focus to main
     if (second_place["app_running_id"] != "" && second_place["zIndex"] !=0){
-      const second_place_app = newData[second_place["app_running_id"]]
+      const second_place_app = {...newData[second_place["app_running_id"]]}
       second_place_app["zIndex"] = 999
       newData[second_place["app_running_id"]] = second_place_app
     }
@@ -118,7 +118,7 @@ function focusChange(data:RunningAppListType, app_running_id:string, app_removed
     // Go thru all the currently running apps
     for (const i of Object.entries(newData)){
       const current_app_running_id = i[0]
-      const current_app_properties = i[1]
+      const current_app_properties = {...i[1]}
   
       // If i is the current app, update focus to main
       if (current_app_running_id == app_running_id){
