@@ -432,7 +432,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
         */}
         <div className="menu-bar"> 
             <div className="back-button" onMouseDown={(event)=>{event.preventDefault();backButtonPressed()}}>
-                <img src="https://www.svgrepo.com/show/500777/back.svg" />
+                <img src="apps/FileExplorer/back[500777].svg" />
             </div>
             <input type="text" 
                 onFocus={()=>{
@@ -580,7 +580,7 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                             }}
                         >
                             {/* goated  */}
-                            <div className="icon"><img draggable= "false" src={itemType == "FILE" ? fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"]) :"https://www.svgrepo.com/show/535397/folder-open.svg"} alt="" /></div>
+                            <div className="icon"><img draggable= "false" src={itemType == "FILE" ? fileThumbnailGetter((item[1] as MyFileSystemFile).type as MyFileSystemFile["type"]) :"apps/FileExplorer/folder-open[535397].svg"} alt="" /></div>
                             <div className="name">{(item[0])}</div>
                         </div>
                     )

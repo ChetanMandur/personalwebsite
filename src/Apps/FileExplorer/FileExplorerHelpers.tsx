@@ -208,12 +208,12 @@ export function fileThumbnailGetter(fileType: MyFileSystemFile["type"]):string{
 
         switch (fileType){
             case "IMAGE":
-                return "https://www.svgrepo.com/show/141793/image-file.svg"
+                return "apps/FileExplorer/image-file[141793].svg"
             case "VIDEO":
-                return "https://www.svgrepo.com/show/357253/video-file.svg"
+                return "apps/FileExplorer/video-file[357253].svg"
             case "PDF":
-                return "https://www.svgrepo.com/show/64173/pdf-file.svg"
+                return "apps/FileExplorer/pdf-file[64173].svg"
             default:
-                return "https://www.svgrepo.com/show/535388/file.svg"
+                return "apps/FileExplorer/file[535388].svg"
         }
     }
