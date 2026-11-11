@@ -36,9 +36,9 @@ export default function StartMenu(){
         <div className="profile-name">Chetan Mandur</div>
       </div>
       <div className="actions">
-        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Photos"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="https://www.svgrepo.com/show/486698/image.svg" alt="" /> Photos</div>
-        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Videos"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="https://www.svgrepo.com/show/486906/video-file.svg" alt="" /> Videos</div>
-        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Documents"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="https://www.svgrepo.com/show/486674/folder-open.svg" alt="" /> Documents</div>
+        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Photos"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="system/images/StartMenu/image[486698].svg" alt="" /> Photos</div>
+        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Videos"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="system/images/StartMenu/video-file[486906].svg" alt="" /> Videos</div>
+        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Documents"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="system/images/StartMenu/folder-open[486674].svg" alt="" /> Documents</div>
         <div className="common-border action-button" onClick={()=>{
             runningAppsDispatch({
               type:"ADD",
@@ -53,7 +53,7 @@ export default function StartMenu(){
             setStartMenuOpen(false)
           }}
         > 
-          <img src="https://www.svgrepo.com/show/435417/settings.svg" alt="" />
+          <img src="system/images/StartMenu/settings[435417].svg" alt="" />
           Settings
         </div>
 

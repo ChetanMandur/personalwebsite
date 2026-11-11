@@ -52,7 +52,7 @@
 
   /* Resizer styling */
   ::-webkit-resizer{
-    background-image: url(https://www.svgrepo.com/show/532207/resize-handle.svg);
+    background-image: url(system/images/resize-handle[532207].svg);
     background-size: contain;
   }
 

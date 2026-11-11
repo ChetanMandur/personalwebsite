@@ -41,7 +41,7 @@ export default function Taskbar(){
 
   return(
       <div className="taskbar"> 
-        <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="https://www.svgrepo.com/show/512467/menu-navigation-grid-1530.svg"/></div>
+        <div className="start-button" onClick={()=>{setStartMenuOpen(!startMenuOpen)}}><img className="common-border" src="system/images/StartMenu/menu-navigation-grid-1530[512467].svg"/></div>
         {startMenuOpen ? <StartMenu/>:<></>}
         <div className="active-apps" onClick={()=>{setStartMenuOpen(false)}}> 
            {
