@@ -278,12 +278,12 @@ export default function SystemAlert({title,titleDetails, message,animatedMessage
                                 src={
                                     // If the image is the built-in "Warning"
                                     image?.content == "Warning" ? 
-                                        ("https://www.svgrepo.com/show/486907/warning.svg") 
+                                        ("apps/SystemAlert/warning[486907].svg") 
                                         : 
                                         (
                                             // If the image is the built-in "Error" or undefined
                                             (image?.content == "Error" || image == undefined) ? 
-                                                ("https://www.svgrepo.com/show/486662/error.svg")
+                                                ("apps/SystemAlert/error[486662].svg")
                                                 :
                                                 // If the image is neither the built-in options or undefined, it must be unique. Use it.
                                                 (image.content)

@@ -653,7 +653,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             tooltipDispatch({type:"SET",source: app_running_id + "videoOverlay" ,event:event, dataType:"TEXT", data:(videoProperties.playing == false ? "Play" : "Pause")})
                         }}
                     >
-                        <img src={videoProperties.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" />
+                        <img src={videoProperties.playing == false ? "apps/Media/Video/play[486784].svg " : "apps/Media/Video/pause[506666].svg"} alt="" />
                     </div> 
 
                     {/* Main container for the seekbar */}
@@ -706,7 +706,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             tooltipDispatch({type:"SET",source: app_running_id + "videoOverlay", event:event, dataType:"TEXT", data:(controllerAppRunningID == "" ? "Open Media Controller" : "Focus Media Controller")})
                         }}
                     >
-                        <img src="https://www.svgrepo.com/show/480630/controller-3.svg" alt="" />
+                        <img src="apps/Media/MediaController/controller-3[480630].svg" alt="" />
                     </div> 
 
                     {/* Button for changing video fill mode */}
@@ -716,7 +716,7 @@ export function VideoMedia ({app_running_id, fileContentData}:VideoMediaProps) {
                             tooltipDispatch({type:"SET",source: app_running_id + "videoOverlay", event:event, dataType:"TEXT", data:(videoProperties.videoFill ? "Fit video into window" : "Fill video into window")})
                         }}
                     >
-                        <img src={videoProperties.videoFill ? "https://www.svgrepo.com/show/509227/size-actual.svg" : "https://www.svgrepo.com/show/509229/size-fullscreen.svg"} alt="" />
+                        <img src={videoProperties.videoFill ? "apps/Media/Video/size-actual[509227].svg" : "apps/Media/Video/size-fullscreen[509229].svg"} alt="" />
                     </div> 
 
 

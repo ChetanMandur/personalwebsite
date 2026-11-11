@@ -276,7 +276,7 @@ export function VideoMediaController({app_running_id,startingValues, videoRef,ca
                         }}
                         onMouseMove={(event)=>{tooltipDispatch({type:"SET", event:event, dataType: "TEXT", data:(currentOptions.playing ? "Pause" : "Play")})}}
                     >
-                            <img src={currentOptions.playing == false ? "https://www.svgrepo.com/show/486784/play.svg " : "https://www.svgrepo.com/show/506666/pause.svg"} alt="" /> 
+                            <img src={currentOptions.playing == false ? "apps/Media/Video/play[486784].svg " : "apps/Media/Video/pause[506666].svg"} alt="" /> 
                     </div>
                     {/* Progress bar as a range input */}
                     <input type="range"  tabIndex={-1} value={currentOptions.currentTime} min={0} max={videoRef.current?.duration} step={0.000001} 
