@@ -119,7 +119,7 @@ export const MyFileSystem : MyFileSystemFolder = {
     "test":{
         hidden:false,
         type:"IMAGE",
-        data:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Khone_Phapheng_Falls%2C_Si_Phan_Don%2C_Laos%2C_widest_waterfall_in_the_world.jpg/750px-Khone_Phapheng_Falls%2C_Si_Phan_Don%2C_Laos%2C_widest_waterfall_in_the_world.jpg"
+        data:"https://upload.wikimedia.org/wikipedia/commons/a/af/Khone_Phapheng_Falls%2C_Si_Phan_Don%2C_Laos%2C_widest_waterfall_in_the_world.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original"
     },
     TestHidden:{
         hidden:true,
