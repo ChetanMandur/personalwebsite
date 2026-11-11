@@ -29,7 +29,7 @@ export default function UserSpace(){
         title:"Welcome!",
         titleDetails:"Hope you enjoy your stay :)",
         image:{
-          content:"./happyface.png",
+          content:"system/images/happyface.png",
         },
         soundEffect:SystemSounds.Win95.Default.Tada
       } as SystemAlertProps
