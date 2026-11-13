@@ -11,9 +11,10 @@ export default function Tooltip(){
 
     const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({})
 
-    const abortController:AbortController = new AbortController()
     
     useEffect(()=>{
+        const abortController:AbortController = new AbortController()
+
         const abortSignal: AbortSignal = abortController.signal
 
         const hide = () =>{
@@ -21,11 +22,19 @@ export default function Tooltip(){
             abortController.abort()
         }
         
-        tooltipData.event!.target.addEventListener("pointerdown", hide, {signal:abortSignal})
+        document.addEventListener("pointerdown", hide, {signal:abortSignal})
         tooltipData.event!.target.addEventListener("mouseout", hide, {signal:abortSignal})
         tooltipData.event!.target.addEventListener("mouseleave", hide, {signal:abortSignal})
         tooltipData.event!.target.addEventListener("focus", hide, {signal:abortSignal})
-    },[])
+
+        return () =>{
+            abortController.abort()
+            document.removeEventListener("pointerdown", hide)
+            tooltipData.event!.target.removeEventListener("mouseout", hide)
+            tooltipData.event!.target.removeEventListener("mouseleave", hide)
+            tooltipData.event!.target.removeEventListener("focus", hide)
+        }
+    },[tooltipData.event, tooltipDispatch])
 
     useLayoutEffect(()=>{
 
