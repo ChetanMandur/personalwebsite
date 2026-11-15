@@ -1,6 +1,7 @@
 import { ContextMenuContext, ContextMenuOptions, contextMenuPropagation } from "../../Desktop/Contexts/ContextMenuContext";
 import { AppRunningID, RunningAppsContext } from "../../Desktop/Contexts/RunningAppsContext";
 import { TooltipContext } from "../../Desktop/Contexts/TooltipContext";
+import useUniversalPointerEvent from "../../Desktop/Hooks/useUniversalPointerEvent";
 import { HelloWorldDialogueInitalizer} from "./Dialogue";
 import "./HelloWorld.css"
 import { useContext, useEffect, useRef, useState} from "react";
@@ -134,7 +135,24 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
 
     {test ? <div className="image2"   style={{backgroundImage:"url(https://placecats.com/neo_2/300/200)"}} > hi</div> : <></>}
     
-    <div className="image"   style={{backgroundImage:imageURL}} 
+    <div className="image"   style={{backgroundImage:imageURL}}
+      {...useUniversalPointerEvent(
+        {
+          downAction:(event)=>{
+            console.log("hello", event)
+            contextMenuDispatch({type:"HIDE"})
+          },
+          upAction:(event)=>{console.log("world",event)},
+          holdAction:{
+            // action: (event)=>{console.log("im held", event)},
+            action: (event)=>{
+              contextMenuPropagation(event); 
+              contextMenuDispatch({type:"SET",source:app_running_id+"bottomImage" ,options:imageContextMenuOptions, event:event});
+            },
+            timeout:500
+          }
+        }
+      )} 
       onContextMenu={(event)=>{
         contextMenuPropagation(event); 
         contextMenuDispatch({type:"SET",source:app_running_id+"bottomImage" ,options:imageContextMenuOptions, event:event});
