@@ -570,8 +570,8 @@ export default function FileExplorer({path, app_running_id}:FileExplorerProps){
                                     })
                                 }
                             }}  
-                            onClick={(event)=>{itemClickedHandler(item, event);}} 
-                            onDoubleClick={(event)=>{itemDoubleClickedHandler(item,event)}}
+                            onClick={(event)=>{requestAnimationFrame(()=>{itemClickedHandler(item, event);})}}
+                            onDoubleClick={(event)=>{requestAnimationFrame(()=>{itemDoubleClickedHandler(item,event)})}}
                             onMouseMove={(event)=>{tooltipDispatch({type:"SET", event: event, data:item[0], dataType:"TEXT"})}}
                             draggable= {itemType == "FILE" ? "true" : "false"}
                             onDragStart={(event)=>{

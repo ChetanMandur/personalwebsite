@@ -19,7 +19,7 @@ export default function StartMenu(){
         return !item[1].hidden
       }).map( (item) => { 
           return ( 
-            <div className="app-entry" key={item[0]+"startMenuEntry"} onClick={()=>{runningAppsDispatch({type:"ADD", app_name:item[0]});setStartMenuOpen(false)}}> 
+            <div className="app-entry" key={item[0]+"startMenuEntry"} onClick={()=>{requestAnimationFrame(()=>{runningAppsDispatch({type:"ADD", app_name:item[0]});setStartMenuOpen(false)})}}>
               <div className="app-entry-icon"> <img src={item[1].icon}/></div>
               <div className="app-entry-name"> {item[1].name}</div>
             </div>
@@ -36,10 +36,11 @@ export default function StartMenu(){
         <div className="profile-name">Chetan Mandur</div>
       </div>
       <div className="actions">
-        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Photos"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="system/images/StartMenu/image[486698].svg" alt="" /> Photos</div>
-        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Videos"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="system/images/StartMenu/video-file[486906].svg" alt="" /> Videos</div>
-        <div className="common-border action-button" onClick={()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Documents"} as FileExplorerProps}); setStartMenuOpen(false)}}> <img src="system/images/StartMenu/folder-open[486674].svg" alt="" /> Documents</div>
+        <div className="common-border action-button" onClick={()=>{requestAnimationFrame(()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Photos"} as FileExplorerProps}); setStartMenuOpen(false)})}}> <img src="system/images/StartMenu/image[486698].svg" alt="" /> Photos</div>
+        <div className="common-border action-button" onClick={()=>{requestAnimationFrame(()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Videos"} as FileExplorerProps}); setStartMenuOpen(false)})}}> <img src="system/images/StartMenu/video-file[486906].svg" alt="" /> Videos</div>
+        <div className="common-border action-button" onClick={()=>{requestAnimationFrame(()=>{runningAppsDispatch({type:"ADD", app_name:"FileExplorer", props:{path:"Documents"} as FileExplorerProps}); setStartMenuOpen(false)})}}> <img src="system/images/StartMenu/folder-open[486674].svg" alt="" /> Documents</div>
         <div className="common-border action-button" onClick={()=>{
+          requestAnimationFrame(()=>{
             runningAppsDispatch({
               type:"ADD",
               app_name:"SystemAlert",
@@ -51,8 +52,9 @@ export default function StartMenu(){
               } as SystemAlertProps
             }); 
             setStartMenuOpen(false)
-          }}
-        > 
+          })
+        }}
+        >
           <img src="system/images/StartMenu/settings[435417].svg" alt="" />
           Settings
         </div>
