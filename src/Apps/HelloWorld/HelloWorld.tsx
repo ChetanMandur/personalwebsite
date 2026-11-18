@@ -138,11 +138,16 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     <div className="image"   style={{backgroundImage:imageURL}}
       {...useUniversalPointerEvent(
         {
-          downAction:(event)=>{
-            console.log("hello", event)
+          downAction:()=>{
+            // console.log("hello", event)
             contextMenuDispatch({type:"HIDE"})
           },
-          upAction:(event)=>{console.log("world",event)},
+          upAction:()=>{
+            // console.log("world",event)
+          },
+          clickAction(event) {
+            console.log("u clicked me,hello", event)
+          },
           holdAction:{
             // action: (event)=>{console.log("im held", event)},
             action: (event)=>{
