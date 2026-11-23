@@ -35,11 +35,22 @@ export default function UserSpace(){
       } as SystemAlertProps
     })
 
+    runningAppsDispatch({
+      type:"ADD",
+      app_name:"HelloWorld",
+      app_running_id:"OnBootHelloWorld"
+    })
+
     return () =>{
       // 'DELETE` from `runningAppsDispatch
       runningAppsDispatch({
         type:"DELETE",
         app_running_id:"OnBootAlert"
+      })
+
+      runningAppsDispatch({
+        type:"DELETE",
+        app_running_id:"OnBootHelloWorld"
       })
     }
   },[runningAppsDispatch])

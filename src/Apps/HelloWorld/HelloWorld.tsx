@@ -138,15 +138,44 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
     <div className="image"   style={{backgroundImage:imageURL}}
       {...useUniversalPointerEvent(
         {
-          downAction:()=>{
-            // console.log("hello", event)
-            contextMenuDispatch({type:"HIDE"})
-          },
-          upAction:()=>{
-            // console.log("world",event)
-          },
+          // downAction:(event)=>{
+          //   console.log("down", event)
+          //   contextMenuDispatch({type:"HIDE"})
+          // },
+          // upAction:(event)=>{
+          //   console.log("up",event)
+          // },
           clickAction(event) {
             console.log("u clicked me,hello", event)
+          },
+          multiClickAction:{
+            2: (event)=>{
+              console.log("double click!", event)
+            },
+            3: (event)=>{
+              console.log("triple click!", event)
+            },
+            4:(event)=>{
+              console.log("over-click (4)",event)
+            },
+            5:(event)=>{
+              console.log("click-tacular (5)",event)
+            },
+            6:(event)=>{
+              console.log("click-trocity (6)", event)
+            },
+            7:(event)=>{
+              console.log("click-imanjaro (7)",event)
+            },
+            8:(event)=>{
+              console.log("click-tastrophe (8)",event)
+            },
+            9:(event)=>{
+              console.log("click-pocalypse (9)", event)
+            },
+            10:(event)=>{
+              console.log("click-ionaire (10)",event)
+            }
           },
           holdAction:{
             // action: (event)=>{console.log("im held", event)},
