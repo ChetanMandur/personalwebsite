@@ -145,7 +145,8 @@ export default function HelloWorld ({ohmylord, name, app_running_id}:HelloWorldP
           // upAction:(event)=>{
           //   console.log("up",event)
           // },
-          clickAction(event) {
+          
+          clickAction(event) { // I just noticed this typo, idk how I didn't clock this earlier when i was typing it out, but now I know a new thing I guess (but its also not a new thing I guess since this makes sense with what I know and how im handling using `useUniversalPointerEvent`)
             console.log("u clicked me,hello", event)
           },
           multiClickAction:{
