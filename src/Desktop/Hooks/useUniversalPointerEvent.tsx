@@ -20,7 +20,6 @@ type useUniversalPointerEventPropsType = {
 }
 
 const MULTI_CLICK_SPEED = 230
-const MULTI_CLICK_TIMEOUT = MULTI_CLICK_SPEED + 1
 
 export default function useUniversalPointerEvent(
     {
@@ -47,12 +46,6 @@ export default function useUniversalPointerEvent(
 
 
     // Variables used for managing the `click` events
-    
-    /**
-     * The date/time which a click was last registered  
-     * This is measured in milliseconds, how the `Date` object measures it
-    */
-    const clickLastDate = useRef<number>(-1)
 
     /**
      * The amount of clicks done in succession (adhearing to the click speed)  
@@ -75,29 +68,7 @@ export default function useUniversalPointerEvent(
     */
     const clickCountTimeoutID = useRef<number>(-1)
 
-    /**
-     * Helper handler used within `onPointerClick` to handle single and double click actions  
-     * Within `onPointerClick`, this is repeat logic. So, it is placed within its own function to reduce redundancy  
-     * The goal of this function is to check for a single or double click action, either in `clickAction`, `doubleClickAction`, and/or `multiClickAction` and execute the action  
-    */
-    const onPointerStandardClick = useCallback((event:PointerEvent)=>{
-        if (clickLastValidCount.current == 1){
-            if (clickAction){
-                clickAction(event)
-            }
-            if (multiClickAction && multiClickAction[1]){
-                multiClickAction[1](event)
-            }
-        }
-        else if (clickLastValidCount.current == 2){
-            if (doubleClickAction){
-                doubleClickAction(event)
-            }
-            if (multiClickAction && multiClickAction[2]){
-                multiClickAction[2](event)
-            }
-        }
-    },[clickAction, doubleClickAction, multiClickAction])
+
 
     /**
      * Handler for click events used within `onPointerDown`
@@ -106,67 +77,59 @@ export default function useUniversalPointerEvent(
     */
     const onPointerClick = useCallback((event:PointerEvent)=>{
         // Since this is coming from a `pointerUp` event attached to `document`, the `event.target` can differ from the intented element
-        // (aka, `onPointerDown` is attached to `element1`, but since `pointerUp` is attached to the whole page, its `event.target` can be different than `element1`)
         // Need to check if `pointerUp` occured on the element we are targetting
         if (event.target == element.current){
-            // If there has already been a click
-            if (clickCount.current > 1){
-                if (Date.now() - clickLastDate.current <= MULTI_CLICK_SPEED){
-                    clickCount.current += 1
+            // Clear any current timeout from the previous click
+            clearTimeout(clickCountTimeoutID.current)
 
-                    // Check if the current click count has an action associated with it
-                    // If so, need to mark that as the latest valid click action
-                    if (multiClickAction && multiClickAction[clickCount.current]){
-                        clickLastValidCount.current = clickCount.current
-                    }
+            // Increase click count by one
+            clickCount.current += 1
 
-                    // Clear any current timeout from the previous click & set a new timeout
-                    clearTimeout(clickCountTimeoutID.current)
-                    clickCountTimeoutID.current = setTimeout(()=>{
-                        // If a list of multi click actions exist, and the last valid click action exists
-                            // This second check is only in case the latest valid click action was `clickAction`
-                        if (multiClickAction && multiClickAction[clickLastValidCount.current] && clickLastValidCount.current > 2){
-                            multiClickAction[clickLastValidCount.current](event)
-                        }
-                        else{
-                            onPointerStandardClick(event)
-                        }
 
-                        // Clear click count and the last valid count
-                        clickCount.current = 0
-                        clickLastValidCount.current = -1
-                    }, MULTI_CLICK_TIMEOUT)
-                }
+            // Check if the current click count has an action associated with it
+            // If so, need to mark that as the latest valid click action
+            if (
+                (clickCount.current == 1 && (clickAction || (multiClickAction && multiClickAction[1])))
+                ||
+                (clickCount.current == 2 && (doubleClickAction || (multiClickAction && multiClickAction[2])))
+                ||
+                (clickCount.current > 2 && (multiClickAction && multiClickAction[clickCount.current]))
+            ){
+                clickLastValidCount.current = clickCount.current
             }
 
-            // If there hasn't been a click yet
-            // Used to handle `clickAction`
-            else{
-                clickCount.current += 1
-                clearTimeout(clickCountTimeoutID.current)
-
-                if (
-                    (clickCount.current == 1 && (clickAction || (multiClickAction && multiClickAction[1])))
-                    ||
-                    (clickCount.current == 2 && (doubleClickAction || (multiClickAction && multiClickAction[2])))
-                ){
-                    clickLastValidCount.current = clickCount.current
+            // Set the new timeout with the new click values
+            clickCountTimeoutID.current = setTimeout(()=>{
+                switch (clickLastValidCount.current) {
+                    case 1:
+                        if (clickAction){
+                            clickAction(event)
+                        }
+                        break;
+                    case 2:
+                        if (doubleClickAction){
+                            doubleClickAction(event)
+                        }
+                        break;
+                    default:
+                        break;
                 }
 
+                if (multiClickAction && multiClickAction[clickLastValidCount.current]){
+                    multiClickAction[clickLastValidCount.current](event)
+                }
 
-                clickCountTimeoutID.current = setTimeout(()=>{
-                    onPointerStandardClick(event)
-
-                    clickCount.current = 0 
-                    clickLastValidCount.current = -1
-
-                },MULTI_CLICK_TIMEOUT)
-            }
-            clickLastDate.current = Date.now()
+                // Clear click count and the last valid count
+                clickCount.current = 0
+                clickLastValidCount.current = -1
+            }, MULTI_CLICK_SPEED)
+            
+            // console.log("clickCount:", clickCount.current, " | clickLastValid", clickLastValidCount.current)
         }
-        console.log("clickCount:", clickCount.current, " | clickLastValid", clickLastValidCount.current)
+        
+        // Clear whatever current element reference is
         element.current = null
-    },[clickAction, doubleClickAction, multiClickAction, onPointerStandardClick])
+    },[clickAction, doubleClickAction, multiClickAction])
 
     /**
      * The returned `onPointerDown` handler
