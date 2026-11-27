@@ -16,7 +16,8 @@ type useUniversalPointerEventPropsType = {
     doubleClickAction?:(event:PointerEvent)=>void
     multiClickAction?:{
         [clickCount:number]: (event:PointerEvent)=>void
-    }
+    },
+    clickStrictMode?: boolean
 }
 
 const MULTI_CLICK_SPEED = 230
@@ -29,6 +30,7 @@ export default function useUniversalPointerEvent(
         clickAction,
         doubleClickAction,
         multiClickAction,
+        clickStrictMode,
     }:useUniversalPointerEventPropsType
 
 ):UniversalPointerEventType{
@@ -100,7 +102,9 @@ export default function useUniversalPointerEvent(
 
             // Set the new timeout with the new click values
             clickCountTimeoutID.current = setTimeout(()=>{
-                switch (clickLastValidCount.current) {
+                const clickUsedValue = (clickStrictMode == undefined || clickStrictMode) ? clickCount.current : clickLastValidCount.current
+                
+                switch (clickUsedValue) {
                     case 1:
                         if (clickAction){
                             clickAction(event)
@@ -115,8 +119,8 @@ export default function useUniversalPointerEvent(
                         break;
                 }
 
-                if (multiClickAction && multiClickAction[clickLastValidCount.current]){
-                    multiClickAction[clickLastValidCount.current](event)
+                if (multiClickAction && multiClickAction[clickUsedValue]){
+                    multiClickAction[clickUsedValue](event)
                 }
 
                 // Clear click count and the last valid count
@@ -129,7 +133,7 @@ export default function useUniversalPointerEvent(
         
         // Clear whatever current element reference is
         element.current = null
-    },[clickAction, doubleClickAction, multiClickAction])
+    },[clickAction, doubleClickAction, multiClickAction, clickStrictMode])
 
     /**
      * The returned `onPointerDown` handler
