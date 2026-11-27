@@ -91,11 +91,11 @@ export default function useUniversalPointerEvent(
             // Check if the current click count has an action associated with it
             // If so, need to mark that as the latest valid click action
             if (
-                (clickCount.current == 1 && (clickAction || (multiClickAction && multiClickAction[1])))
+                (clickCount.current == 1 && clickAction)
                 ||
-                (clickCount.current == 2 && (doubleClickAction || (multiClickAction && multiClickAction[2])))
+                (clickCount.current == 2 && doubleClickAction)
                 ||
-                (clickCount.current > 2 && (multiClickAction && multiClickAction[clickCount.current]))
+                multiClickAction && multiClickAction[clickCount.current]
             ){
                 clickLastValidCount.current = clickCount.current
             }
